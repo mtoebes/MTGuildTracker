@@ -59,7 +59,7 @@
 					<Anchors>
 						<Anchor point="LEFT">
 							<Offset>
-								<AbsDimension x="175" y="0" />
+								<AbsDimension x="265" y="0" />
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -144,7 +144,7 @@
 				</FontString>
 				<FontString name="$parentTextPlayerClass" inherits="GameFontNormalSmall" justifyH="LEFT">
 					<Size>
-						<AbsDimension x="75" y="10" />
+						<AbsDimension x="50" y="10" />
 					</Size>
 					<Anchors>
 						<Anchor point="LEFT" relativeTo="$parentTextVotebox" relativePoint="RIGHT">
@@ -166,14 +166,38 @@
 						</Anchor>
 					</Anchors>
 				</FontString>
-				<FontString name="$parentTextItemName" inherits="GameFontNormalSmall" justifyH="LEFT">
+					<FontString name="$parentTextPlayerAttendanceToDate" inherits="GameFontNormalSmall" justifyH="CENTER">
 					<Size>
-						<AbsDimension x="200" y="10" />
+						<AbsDimension x="60" y="10" />
 					</Size>
 					<Anchors>
 						<Anchor point="LEFT" relativeTo="$parentTextPlayerName" relativePoint="RIGHT">
 							<Offset>
 								<AbsDimension x="0" y="0" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="$parentTextPlayerAttendanceLast5" inherits="GameFontNormalSmall" justifyH="CENTER">
+					<Size>
+						<AbsDimension x="50" y="10" />
+					</Size>
+					<Anchors>
+						<Anchor point="LEFT" relativeTo="$parentTextPlayerAttendanceToDate" relativePoint="RIGHT">
+							<Offset>
+								<AbsDimension x="0" y="0" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="$parentTextItemName" inherits="GameFontNormalSmall" justifyH="LEFT">
+					<Size>
+						<AbsDimension x="200" y="10" />
+					</Size>
+					<Anchors>
+						<Anchor point="LEFT" relativeTo="$parentTextPlayerAttendanceLast5" relativePoint="RIGHT">
+							<Offset>
+								<AbsDimension x="5" y="0" />
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -821,6 +845,39 @@
 									<OnClick>MemeTracker_Sort_OnClick("player_name");</OnClick>
 								</Scripts>
 							</Button>
+
+							<Button name="MemeTracker_SortPlayerAttendanceToDate" inherits="MemeTracker_SortButtonTemplate" text="All Raids">
+								<Size>
+									<AbsDimension x="60" y="16" />
+								</Size>
+								<Anchors>
+									<Anchor point="BOTTOMLEFT" relativeTo="MemeTracker_List1TextPlayerAttendanceToDate" relativePoint="TOPLEFT">
+										<Offset>
+											<AbsDimension x="-5" y="2" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnClick>MemeTracker_Sort_OnClick("attendance_to_date");</OnClick>
+								</Scripts>
+							</Button>
+
+							<Button name="MemeTracker_SortPlayerAttendanceLast5" inherits="MemeTracker_SortButtonTemplate" text="Last 5">
+								<Size>
+									<AbsDimension x="50" y="16" />
+								</Size>
+								<Anchors>
+									<Anchor point="BOTTOMLEFT" relativeTo="MemeTracker_List1TextPlayerAttendanceLast5" relativePoint="TOPLEFT">
+										<Offset>
+											<AbsDimension x="-5" y="2" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnClick>MemeTracker_Sort_OnClick("attendance_last_5");</OnClick>
+								</Scripts>
+							</Button>
+
 							<Button name="MemeTracker_SortItemName" inherits="MemeTracker_SortButtonTemplate" text="ItemName">
 								<Size>
 									<AbsDimension x="200" y="16" />

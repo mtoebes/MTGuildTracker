@@ -27,7 +27,7 @@ local votes_needed
 local loot_in_session = nil
 local in_session = false
 
-local MT_MESSAGE_PREFIX		= "MTv1.0"
+local MT_MESSAGE_PREFIX		= "MTv1.2"
 	
 	MemeTracker_color_common = "ffffffff"
 	MemeTracker_color_uncommon = "ff1eff00"
@@ -172,6 +172,20 @@ local function EntryTable_Add(player_name, item_link)
 	MemeTracker_EntryTable[index].item_id = item_id
 	MemeTracker_EntryTable[index].item_link = item_link
 	MemeTracker_EntryTable[index].item_name = item_name
+
+	local attendance = MemeTracker_Attendance[player_name]
+
+	if attendance then
+		to_date = 	 MemeTracker_Attendance[player_name].to_date
+		last_5 = MemeTracker_Attendance[player_name].last_5
+	else 
+		to_date = 0
+		last_5 = 0
+	end
+
+	MemeTracker_EntryTable[index].attendance_to_date = to_date.."%"
+	MemeTracker_EntryTable[index].attendance_last_5 = last_5.."%"
+
 end
 
 local function VoteTable_Tally()
@@ -301,7 +315,10 @@ function MemeTracker_ListScrollFrame_Update()
 	EntryTable_Sort()
 
 	getglobal("MemeTracker_OverviewButtonTextItemName"):SetText(MemeTracker_OverviewTable.item_link)
-	getglobal("MemeTracker_OverviewButtonTextVotes"):SetText(MemeTracker_OverviewTable.votes)
+
+	if MemeTracker_OverviewTable.votes and MemeTracker_OverviewTable.votes_needed then
+		getglobal("MemeTracker_OverviewButtonTextVotes"):SetText(MemeTracker_OverviewTable.votes .. "/" .. MemeTracker_OverviewTable.votes_needed)
+end
 	getglobal("MemeTracker_OverviewButtonTextVoters"):SetText(table.concat(MemeTracker_OverviewTable.voters, ", "))
 
 	if (MemeTracker_OverviewTable.in_session == true) then
@@ -329,6 +346,9 @@ function MemeTracker_ListScrollFrame_Update()
 
 			getglobal("MemeTracker_List"..line.."TextVotes"):SetText(entry.votes)
 			getglobal("MemeTracker_List"..line.."TextVoters"):SetText(entry.voters_text)
+
+			getglobal("MemeTracker_List"..line.."TextPlayerAttendanceToDate"):SetText(entry.attendance_to_date)
+			getglobal("MemeTracker_List"..line.."TextPlayerAttendanceLast5"):SetText(entry.attendance_last_5)
 
 			if my_vote ~= nil and my_vote == entry.player_name then
 				getglobal("MemeTracker_Checkbox"..line):SetChecked(true)
@@ -393,6 +413,12 @@ function MemeTracker_LootHistoryTable_Build()
 		MemeTracker_LootHistoryScrollFrame_Update()
 end
 
+function MemeTracker_AttendanceTable_Build()
+	if not MemeTracker_Attendance then
+		MemeTracker_Attendance = {}
+	end
+end
+
 local function MemeTracker_LootHistory_Sort_Function(loot_sort_direction, loot_sort_field, a, b)
 	if loot_sort_field then
 		if loot_sort_direction == "ascending" then
@@ -417,11 +443,9 @@ function MemeTracker_LootHistory_Sort()
 	table.sort(MemeTracker_LootHistoryTable_Filtered, function(a,b) return MemeTracker_LootHistory_Sort_Function(loot_sort_direction, loot_sort_field, a, b) end)
 end
 
-
 local function String_Starts_With(full_string, partical_string)
    return string.sub(string.lower(full_string),1,string.len(partical_string))==string.lower(partical_string)
 end
-
 
 local function Parse_String_List(string_list)
 	local list = {}
@@ -550,7 +574,13 @@ end
 
 function MemeTracker_Handle_Session_Start(message, sender)
 
-		local _, _, item_link = string.find(message, "([^/]+)")	
+		local _, _, item_link, votes_needed = string.find(message, "([^/]+%]|h|r)%s*(.*)")	
+
+		if not votes_needed or votes_needed == "" then
+			votes_needed = DEFAULT_VOTES_NEEDED
+		else 
+			votes_needed = tonumber(votes_needed)
+		end
 
 		local item_link, item_quality, item_id, item_name = MemeTracker_ParseItemLink(item_link)
 
@@ -559,7 +589,7 @@ function MemeTracker_Handle_Session_Start(message, sender)
 		MemeTracker_OverviewTable.item_id = item_id
 		MemeTracker_OverviewTable.item_link = item_link
 		MemeTracker_OverviewTable.item_name = item_name
-		MemeTracker_OverviewTable.votes_needed = DEFAULT_VOTES_NEEDED
+		MemeTracker_OverviewTable.votes_needed = votes_needed
 		MemeTracker_OverviewTable.votes = 0
 		MemeTracker_OverviewTable.voters = ""
 
@@ -568,13 +598,11 @@ function MemeTracker_Handle_Session_Start(message, sender)
 		Session_Clear()
 		MemeTracker_ListScrollFrame_Update()
 
-
 		sample_itemlink = "|c" .. MemeTracker_color_common .. "|Hitem:" .. 8952 .. ":0:0:0|h[" .. "Your Current Item" .. "]|h|r"
 
 		leaderRaidEcho("Session started : ".. item_link)
 		leaderRaidEcho("To be considered for the item type in raid chat \"mt "..sample_itemlink.."\"")
 end
-
 
 function MemeTracker_Handle_Session_End(message, sender, cancel)
 	MemeTracker_OverviewTable.in_session = false	
@@ -668,7 +696,6 @@ function MemeTracker_SessionEndButton_OnClick()
 	MemeTracker_Broadcast_Session_End()
 end
 
-
 function MemeTracker_SessionCancelButton_OnClick()
 	MemeTracker_Broadcast_Session_Cancel()
 end
@@ -684,9 +711,9 @@ function MemeTracker_OnLoad()
 
 end
 
-
 local function MemeTracker_Initialize()
 	MemeTracker_LootHistoryTable_Build();
+	MemeTracker_AttendanceTable_Build();
 end
 
 function MemeTracker_OnEvent(event, arg1, arg2, arg3, arg4, arg5)
@@ -702,7 +729,6 @@ function MemeTracker_OnEvent(event, arg1, arg2, arg3, arg4, arg5)
 	end
 end
 
-
 function MemeTracker_Main_OnShow()
 	MemeTracker_FrameTitle:SetText(MemeTracker_Title .. " v" .. MemeTracker_Version);
 end
@@ -717,7 +743,6 @@ function MemeTracker_ListButton_OnClick(button, index)
 		end
 	end
 end
-
 
 function MemeTracker_LootHistoryButton_OnClick(button, index)
 	 if button == "LeftButton" then
@@ -736,7 +761,6 @@ function MemeTracker_OverviewButton_OnClick()
 		end
 	end		
 end
-
 
 -- UI Drag
 function MemeTracker_Main_OnMouseDown(button)

@@ -4,6 +4,7 @@ MemeTracker is an addon Villageburn developed to aid the guild's Loot Council pr
 2. A history of all loot that has been handed out in past raids.  Results can be filtered based on player name, use commas to show loot received multiple players. This is the same information available within the Guild Tracker Google Sheet (sans ZG loot).
 
 Addon Installation Instructions:
+1. Rename this folder from "MemeTracker-master" to "MemeTracker"
 1. In a file browser, navigate to your "World of Warcraft" directory.
 2. Navigate to your addons directory (Interface/AddOns/).
 3. Place the "MemeTracker" folder here. Overwrite any existing versions of the addon.
@@ -12,16 +13,16 @@ Loot History Saving Instructions:
 1. Exit World of Warcraft completely.
 2. In a file browser, navigate to your "World of Warcraft" directory.
 3. Navigate to your account's saved variable directory (WTF/Account/<account_name>/SavedVariables/).
-4. Place the "MemeTracker.lua" file here. Overwrite any existing versions of the addon.
-5. To keep this information up to date, you will need to re-save the latest version of the file found the add-ons discord channel prior to each raid.
+4. Place the "MemeTracker.lua" file found in the "SavedVariables" folder here. Overwrite any existing versions of the file.
+5. To keep this information up to date, you will need to re-save the latest version of the file found the add-ons discord channel (or this github page) prior to each raid.
 
 Base Commands:
 Open MemeTracker:	/mt
 Print help:  		/mt help
 
 Loot Council (Officer) only commands:
-Start session:   	/mt start [item link]
-End session:   		/mt end")
+Start session:   	/mt start [item link] <optional # of votes_needed (defaults to 5)>
+End session:   		/mt end
 Cancel session: 	/mt cancel
 
 Loot Session Process:
@@ -35,3 +36,4 @@ Loot Session Process:
 7. A session can be canceled (ended without announcing a winner) using the /mt cancel command or by clicking the button in the top left corner.
 8. The information concerning the last loot session will remain visible until the next session is started.
 
+Disclaimer: I am not a lua developer, this addon works just well enough to be functional, not efficient or clean. 

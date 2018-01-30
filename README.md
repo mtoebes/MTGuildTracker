@@ -17,13 +17,13 @@ Loot History Saving Instructions:
 5. To keep this information up to date, you will need to re-save the latest version of the file found the add-ons discord channel (or this github page) prior to each raid.
 
 Base Commands:
-Open MemeTracker:	/mt
-Print help:  		/mt help
+* Open MemeTracker:	/mt
+* Print help:  		/mt help
 
 Loot Council (Officer) only commands:
-Start session:   	/mt start [item link] <optional # of votes_needed (defaults to 5)>
-End session:   		/mt end
-Cancel session: 	/mt cancel
+* Start session:   	/mt start [item link] <optional # of votes_needed (defaults to 5)>
+* End session:   		/mt end
+* Cancel session: 	/mt cancel
 
 Loot Session Process:
 1. Each piece of loot is voted on within its own loot session.

@@ -8,7 +8,7 @@ local WHISPER_CHANNEL			= "WHISPER"
 local OFFICER_CHANNEL			= "OFFICER"
 
 MemeTracker_Title = "MemeTracker"
-MemeTracker_Version = "1.2"
+MemeTracker_Version = "1.2.1"
 MemeTracker_EntryTable = {}
 MemeTracker_LootHistoryTable = {}
 MemeTracker_LootHistoryTable_Filtered = {}
@@ -27,7 +27,7 @@ local votes_needed
 local loot_in_session = nil
 local in_session = false
 
-local MT_MESSAGE_PREFIX		= "MTv1.2"
+local MT_MESSAGE_PREFIX		= "MemeTracker"
 	
 	MemeTracker_color_common = "ffffffff"
 	MemeTracker_color_uncommon = "ff1eff00"

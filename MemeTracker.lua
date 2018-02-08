@@ -8,7 +8,7 @@ local WHISPER_CHANNEL			= "WHISPER"
 local OFFICER_CHANNEL			= "OFFICER"
 
 MemeTracker_Title = "MemeTracker"
-MemeTracker_Version = "1.2.1"
+MemeTracker_Version = "1.2.2"
 MemeTracker_EntryTable = {}
 MemeTracker_LootHistoryTable = {}
 MemeTracker_LootHistoryTable_Filtered = {}
@@ -207,9 +207,13 @@ local function VoteTable_Add(player_name, sender)
 	MemeTracker_VoteTable[sender] = player_name
 end
 
+local function MemeTracker_IsAutoClose()
+	return getglobal("MemeTracker_AutoEndCheckButton"):GetChecked() == 1
+end
+
 local function Session_CanEnd()
 
-	if MemeTracker_OverviewTable.in_session == true then
+	if MemeTracker_OverviewTable.in_session == true and MemeTracker_IsAutoClose() == true then
 		vote_total = {}
 		votes = 0
 
@@ -558,6 +562,13 @@ function MemeTracker_Broadcast_Session_Cancel()
 	end
 end
 
+function MemeTracker_Broadcast_AutoEnd(autoclose) 
+	if autoclose then 
+		addonEcho("TX_SESSION_AUTOCLOSE#".."1".."#");
+	else
+		addonEcho("TX_SESSION_AUTOCLOSE#".."0".."#");
+	end
+end
 -- Handle functions
 function MemeTracker_Handle_EntryTable_Add(message, sender)
 	local _, _, player_name, item_link = string.find(message, "([^/]*)/(.*)")	
@@ -639,6 +650,16 @@ function MemeTracker_Handle_Session_End(message, sender, cancel)
 	MemeTracker_ListScrollFrame_Update()
 end
 
+function MemeTracker_Handle_AutoClose(message, sender)
+	local _, _, state = string.find(message, "(.*)");
+
+	if state == "1" then
+		getglobal("MemeTracker_AutoEndCheckButton"):SetChecked(true)
+	else
+		getglobal("MemeTracker_AutoEndCheckButton"):SetChecked(false)
+	end
+end
+
 function MemeTracker_VoteCheckButton_OnClick(line)
 	local offset = FauxScrollFrame_GetOffset(MemeTracker_ListScrollFrame);
 	local index = line + offset
@@ -679,6 +700,8 @@ function MemeTracker_OnChatMsgAddon(event, prefix, msg, channel, sender)
 				MemeTracker_Handle_VoteTable_Add(message, sender)
 			elseif cmd == "TX_SESSION_START" then
 					MemeTracker_Handle_Session_Start(message, sender)
+			elseif cmd == "TX_SESSION_AUTOCLOSE" then
+					MemeTracker_Handle_AutoClose(message, sender)
 			elseif cmd == "TX_SESSION_END" then
 					MemeTracker_Handle_Session_End(message, sender, 0)
 			elseif cmd == "TX_SESSION_CANCEL" then
@@ -969,6 +992,37 @@ function MemeTracker_Search_Update()
 
 	MemeTracker_LootHistoryScrollFrame_Update()
 end 
+
+function MemeTracker_AutoEndCheckButton_OnLoad()
+	getglobal("MemeTracker_AutoEndCheckButton"):SetChecked(true)
+
+	if isLeader() then
+		getglobal("MemeTracker_AutoEndCheckButton"):Enable()
+	else
+		getglobal("MemeTracker_AutoEndCheckButton"):Disable()
+	end
+end
+
+function MemeTracker_AutoEndCheckButton_OnEnter()
+		if isLeader() then
+				echo("MemeTracker_AutoEndCheckButton_OnEnter enable")
+
+			getglobal("MemeTracker_AutoEndCheckButton"):Enable()
+		else
+				echo("MemeTracker_AutoEndCheckButton_OnEnter disable")
+
+			getglobal("MemeTracker_AutoEndCheckButton"):Disable()
+		end
+end
+
+function MemeTracker_AutoEndCheckButton_OnClick()
+	if isLeader() then
+		MemeTracker_Broadcast_AutoEnd(getglobal("MemeTracker_AutoEndCheckButton"):GetChecked())
+		if Session_CanEnd() then
+			MemeTracker_Broadcast_Session_End()
+		end
+	end
+end
 
 SlashCmdList["MemeTracker"] = MemeTracker_SlashCommand;
 SLASH_MemeTracker1 = "/memetracker";

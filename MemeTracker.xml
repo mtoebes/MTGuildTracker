@@ -439,6 +439,18 @@
 						</Anchor>
 					</Anchors>
 				</FontString>
+				<FontString name="MemeTracker_AutoEnd_FontString" inherits="GameFontHighlightSmall" text="Auto End Sessions">
+						<Size>
+							<AbsDimension x="120" y="22" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="25" y="-30" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+				</FontString>
 			</Layer>
 		</Layers>
 		<Scripts>
@@ -480,6 +492,34 @@
 							<OnClick>MemeTracker_SessionEndButton_OnClick();</OnClick>
 						</Scripts>
 					</Button>
+					<CheckButton name="MemeTracker_AutoEndCheckButton">
+						<HitRectInsets>
+							<AbsInset left="0" right="-100" top="0" bottom="0" />
+						</HitRectInsets>
+						<Size>
+							<AbsDimension x="20" y="20" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT">
+								<Offset>
+									<AbsDimension x="15" y="-32" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<NormalTexture file="Interface\Buttons\UI-CheckBox-Up" />
+						<PushedTexture file="Interface\Buttons\UI-CheckBox-Down" />
+						<HighlightTexture file="Interface\Buttons\UI-CheckBox-Highlight" alphaMode="ADD" />
+						<CheckedTexture file="Interface\Buttons\UI-CheckBox-Check" />
+						<DisabledCheckedTexture file="Interface\Buttons\UI-CheckBox-Check-Disabled" />
+						<Scripts>
+							<OnClick>MemeTracker_AutoEndCheckButton_OnClick();</OnClick>
+							<OnLoad>MemeTracker_AutoEndCheckButton_OnLoad();</OnLoad>
+							<OnShow>MemeTracker_AutoEndCheckButton_OnEnter();</OnShow>
+							<OnEnter>MemeTracker_AutoEndCheckButton_OnEnter();</OnEnter>
+						</Scripts>
+					</CheckButton>
+
+
 					<Button name="MemeTracker_SessionCancelButton" inherits="UIPanelButtonTemplate" text="Cancel Session">
 						<Size>
 							<AbsDimension x="120" y="22" />

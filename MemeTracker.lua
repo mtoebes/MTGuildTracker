@@ -1005,12 +1005,8 @@ end
 
 function MemeTracker_AutoEndCheckButton_OnEnter()
 		if isLeader() then
-				echo("MemeTracker_AutoEndCheckButton_OnEnter enable")
-
 			getglobal("MemeTracker_AutoEndCheckButton"):Enable()
 		else
-				echo("MemeTracker_AutoEndCheckButton_OnEnter disable")
-
 			getglobal("MemeTracker_AutoEndCheckButton"):Disable()
 		end
 end

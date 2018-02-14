@@ -965,12 +965,14 @@ function MemeTracker_PlayerLootHistoryButton_OnClick()
 end 
 
 function MemeTracker_EntryTable_Show()
+	getglobal("MemeTracker_AutoEnd_FontString"):Show()
 	MemeTracker_ListScrollFrame_Update();
 	MemeTracker_ListBrowse:Show();
 	MemeTracker_LootHistoryBrowse:Hide();
 end
 
 function MemeTracker_LootHistoryTable_Show()
+	getglobal("MemeTracker_AutoEnd_FontString"):Hide()
 	MemeTracker_LootHistoryScrollFrame_Update();
 	MemeTracker_ListBrowse:Hide();
 	MemeTracker_LootHistoryBrowse:Show();

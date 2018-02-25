@@ -2,5 +2,5 @@
 ## Version: 1.0
 ## Author: Villageburn
 ## Interface: 11200
-## SavedVariables: MemeTrackerDB, MemeTracker_Attendance
+## SavedVariables: MemeTrackerDB, MemeTracker_Attendance, MemeTracker_LastUpdate
 MemeTracker.xml

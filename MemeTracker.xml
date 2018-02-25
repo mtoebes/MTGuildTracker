@@ -1004,6 +1004,23 @@
 							<OnClick>MemeTracker_EntryTable_Show();</OnClick>
 						</Scripts>
 					</Button>
+
+					<Button name="MemeTracker_LootHistorySyncButton" inherits="UIPanelButtonTemplate" text="Sync">
+						<Size>
+							<AbsDimension x="150" y="22" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="-75" y="-30" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>MemeTracker_LootHistorySyncButton_OnClick();</OnClick>
+						</Scripts>
+					</Button>
+
 					<ScrollFrame name="MemeTracker_LootHistoryScrollFrame" inherits="FauxScrollFrameTemplate">
 						<Size>
 							<AbsDimension x="700" y="240" />
@@ -1352,6 +1369,7 @@
 		<Scripts>
 			<OnLoad>MemeTracker_OnLoad();</OnLoad>
 			<OnEvent>MemeTracker_OnEvent(event, arg1, arg2, arg3, arg4, arg5);</OnEvent>
+			<OnUpdate>MemeTracker_OnUpdate(arg1)</OnUpdate>
 		</Scripts>
 	</Frame>
 </Ui>

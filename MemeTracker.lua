@@ -746,7 +746,7 @@ function MemeTracker_ReadSync_Entry(table_name, fields_string)
 		string.find(fields_string, "(.*)/(.*)/(.*)/(.*)/(.*)/(.*)/(.*)/(.*)/(.*)/(.*)");
 
 		entry["date"] = date
-		entry["time_stamp"] = ""
+		entry["time_stamp"] = time_stamp
 		entry["raid_id"] = raid_id
 		entry["raid_name"] = raid_name
 		entry["boss_name"] = boss_name

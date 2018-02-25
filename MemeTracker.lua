@@ -831,7 +831,7 @@ function MemeTracker_Save_Sync()
 	MemeTracker_Attendance = {}
 
 	for k,v in pairs(MemeTracker_Attendance_Temp) do
-		table.insert(MemeTracker_Attendance, v)
+		MemeTracker_Attendance[k] = v
 	end
 
 	MemeTracker_Attendance_Temp = {}

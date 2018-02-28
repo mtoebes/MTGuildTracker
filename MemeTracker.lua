@@ -141,14 +141,14 @@ local function firstToUpper(name)
 end
 
 local function EntryTable_GetPlayerIndex(player_name)
-       local index = 1;
-       while MemeTracker_EntryTable[index] do
-               if ( player_name == MemeTracker_EntryTable[index].player_name ) then
-                       return index;
-               end
-               index = index + 1;
-       end
-       return nil;
+   local index = 1;
+   while MemeTracker_EntryTable[index] do
+           if ( player_name == MemeTracker_EntryTable[index].player_name ) then
+                   return index;
+           end
+           index = index + 1;
+   end
+   return nil;
 end
 
 local function MemeTracker_ParseItemLink(item_link)
@@ -629,34 +629,34 @@ end
 
 function MemeTracker_Handle_Session_Start(message, sender)
 
-		local _, _, item_link, votes_needed = string.find(message, "([^/]+%]|h|r)%s*(.*)")	
+	local _, _, item_link, votes_needed = string.find(message, "([^/]+%]|h|r)%s*(.*)")	
 
-		if not votes_needed or votes_needed == "" then
-			votes_needed = DEFAULT_VOTES_NEEDED
-		else 
-			votes_needed = tonumber(votes_needed)
-		end
+	if not votes_needed or votes_needed == "" then
+		votes_needed = DEFAULT_VOTES_NEEDED
+	else 
+		votes_needed = tonumber(votes_needed)
+	end
 
-		local item_link, item_quality, item_id, item_name = MemeTracker_ParseItemLink(item_link)
+	local item_link, item_quality, item_id, item_name = MemeTracker_ParseItemLink(item_link)
 
-		MemeTracker_OverviewTable = {}
-		MemeTracker_OverviewTable.in_session = true	
-		MemeTracker_OverviewTable.item_id = item_id
-		MemeTracker_OverviewTable.item_link = item_link
-		MemeTracker_OverviewTable.item_name = item_name
-		MemeTracker_OverviewTable.votes_needed = votes_needed
-		MemeTracker_OverviewTable.votes = 0
-		MemeTracker_OverviewTable.voters = ""
+	MemeTracker_OverviewTable = {}
+	MemeTracker_OverviewTable.in_session = true	
+	MemeTracker_OverviewTable.item_id = item_id
+	MemeTracker_OverviewTable.item_link = item_link
+	MemeTracker_OverviewTable.item_name = item_name
+	MemeTracker_OverviewTable.votes_needed = votes_needed
+	MemeTracker_OverviewTable.votes = 0
+	MemeTracker_OverviewTable.voters = ""
 
-		echo("Session started : ".. item_link)
+	echo("Session started : ".. item_link)
 
-		Session_Clear()
-		MemeTracker_ListScrollFrame_Update()
+	Session_Clear()
+	MemeTracker_ListScrollFrame_Update()
 
-		sample_itemlink = "|c" .. MemeTracker_color_common .. "|Hitem:" .. 8952 .. ":0:0:0|h[" .. "Your Current Item" .. "]|h|r"
+	sample_itemlink = "|c" .. MemeTracker_color_common .. "|Hitem:" .. 8952 .. ":0:0:0|h[" .. "Your Current Item" .. "]|h|r"
 
-		leaderRaidEcho("Session started : ".. item_link)
-		leaderRaidEcho("To be considered for the item type in raid chat \"mt "..sample_itemlink.."\"")
+	leaderRaidEcho("Session started : ".. item_link)
+	leaderRaidEcho("To be considered for the item type in raid chat \"mt "..sample_itemlink.."\"")
 end
 
 function MemeTracker_Handle_Session_End(message, sender, cancel)
@@ -1307,7 +1307,7 @@ function MemeTracker_SlashCommand(msg)
 		end
 		cmd = string.lower(cmd)
 
-		if is_officer() then
+		if isLeader() then
 			if (cmd == "start") then
 				_,_, item_link = string.find(cmd_msg, "(.*)");
 				MemeTracker_Broadcast_Session_Start(item_link)

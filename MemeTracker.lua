@@ -30,7 +30,7 @@ version_request_in_progress = false
 debug_enabled = false
 
 local in_session = false
-
+local session_queue = {}
 local MT_MESSAGE_PREFIX		= "MemeTracker"
 	
 	MemeTracker_color_common = "ffffffff"
@@ -344,10 +344,13 @@ local function MemeTracker_LootHistory_Sort_Function(loot_sort_direction, loot_s
 	end
 end 
 
-TimeSinceLastUpdate = 0
+TimeSinceLastUpdate=0
+TimeSinceLastSessionStart = 0
 local version_request_time_limit = 2;
 function MemeTracker_OnUpdate(elapsed)
-	TimeSinceLastUpdate = TimeSinceLastUpdate + elapsed; 	
+	TimeSinceLastUpdate = TimeSinceLastUpdate + elapsed; 
+	TimeSinceLastSessionStart = TimeSinceLastSessionStart + elapsed
+
 	if version_request_in_progress then
 		--debug("TimeSinceLastUpdate", TimeSinceLastUpdate)
   		if (TimeSinceLastUpdate > version_request_time_limit) then
@@ -356,6 +359,16 @@ function MemeTracker_OnUpdate(elapsed)
    		end
 	else
   		TimeSinceLastUpdate = 0;
+	end
+
+	if not MemeTracker_OverviewTable.in_session and getn(session_queue) > 0 then
+		if TimeSinceLastSessionStart > 1 then
+				item_link = table.remove(session_queue, 1)
+				MemeTracker_Broadcast_Session_Start(item_link)
+				TimeSinceLastSessionStart = 0
+		end
+	else
+		TimeSinceLastSessionStart = 0
 	end
 end
 
@@ -577,6 +590,41 @@ function MemeTracker_Broadcast_VoteTable_Add(player_name)
 	else
 		echo("No session in progress")
 	end
+end
+
+function MemeTracker_Session_Queue(item_link)
+
+	if not session_queue then
+		session_queue = {}
+	end
+
+
+	if item_link == nil or item_link=="" then
+		echo("Cannot start a session without loot")
+	elseif not (MemeTracker_OverviewTable.in_session==true) and getn(session_queue) == 0 then
+		MemeTracker_Broadcast_Session_Start(item_link)
+	else 
+		echo("A session for "..item_link.." has been queued")
+		table.insert(session_queue, item_link)
+	end
+end
+
+function MemeTracker_Session_List()
+	for k,v in pairs(session_queue) do
+		echo(k, v)
+	end
+	-- body
+end
+
+function MemeTracker_Session_Dequeue(index)
+
+	if not session_queue or not index or tonumber(index) < 1 or tonumber(index) > getn(session_queue) then
+		echo("Please provide a valid queue list index")
+	else 
+		item_link = table.remove(session_queue, index)
+		echo("Removed queued session for ", item_link)
+	end
+	-- body
 end
 
 function MemeTracker_Broadcast_Session_Start(item_link)
@@ -1306,11 +1354,20 @@ function MemeTracker_SlashCommand(msg)
 			cmd = msg
 		end
 		cmd = string.lower(cmd)
+		if not cmd_msg then
+			cmd_msg = ""
+		end
 
 		if isLeader() then
-			if (cmd == "start") then
+			if (cmd == "start") then 
 				_,_, item_link = string.find(cmd_msg, "(.*)");
-				MemeTracker_Broadcast_Session_Start(item_link)
+				MemeTracker_Session_Queue(item_link)
+			elseif (cmd == "list") then
+				debug("list")
+				MemeTracker_Session_List()
+			elseif (cmd == "remove") then
+				MemeTracker_Session_Dequeue(cmd_msg)
+				-- 	local _,_,item_quality, item_id, item_name= string.find(item_link , ".*c(%w+).*item:(.*):.*%[(.*)%]")
 			elseif (cmd == "end") then
 				MemeTracker_Broadcast_Session_End()
 			elseif (cmd == "cancel") then
@@ -1332,7 +1389,13 @@ function MemeTracker_SlashCommand(msg)
 			--	VoteTable_Add(player_name, sender)
 			--	MemeTracker_ListScrollFrame_Update()
 			else
-				echo("Unknown command"..cmd.. ". Type /mt help to see a list of commands")
+				local _,_, item_link = string.find(msg , "(.*c%w+.*item:.*:.*%[.*%].*)")
+				if item_link then
+					MemeTracker_Session_Queue(item_link)
+					echo("item_id", item_id)
+				else
+					echo("Unknown command "..msg.. ". Type /mt help to see a list of commands")
+				end
 			end
 		else
 			if (cmd == "help") then

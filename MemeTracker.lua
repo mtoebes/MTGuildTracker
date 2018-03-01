@@ -8,7 +8,7 @@ local WHISPER_CHANNEL			= "WHISPER"
 local OFFICER_CHANNEL			= "OFFICER"
 
 MemeTracker_Title = "MemeTracker"
-MemeTracker_Version = "2.0.0"
+MemeTracker_Version = "2.1.0"
 MemeTracker_EntryTable = {}
 MemeTracker_LootHistoryTable = {}
 MemeTracker_LootHistoryTable_Filtered = {}

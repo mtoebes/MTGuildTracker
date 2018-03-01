@@ -1206,7 +1206,6 @@ function MemeTracker_OnLoad()
 	this:RegisterEvent("CHAT_MSG_RAID");
 	this:RegisterEvent("CHAT_MSG_RAID_LEADER");
 	this:RegisterEvent("CHAT_MSG_OFFIER");
-
 end
 
 local function MemeTracker_Initialize()
@@ -1467,8 +1466,10 @@ end
 function MemeTracker_LootHistoryTable_Show()
 	getglobal("MemeTracker_AutoEnd_FontString"):Hide()
 	if isLeader() then
+		getglobal("MemeTracker_LootHistorySyncButton"):Show()
 		getglobal("MemeTracker_LootHistorySyncButton"):Enable()
 	else
+		getglobal("MemeTracker_LootHistorySyncButton"):Disable()
 		getglobal("MemeTracker_LootHistorySyncButton"):Hide()
 	end
 

@@ -1375,8 +1375,11 @@ function MemeTracker_SlashCommand(msg)
 			elseif (cmd == "help") then
 				echo("MemeTracker v"..MemeTracker_Version.." Commands")
 				echo("Open MemeTracker:   /mt")
-				echo("Start session:   /mt start [item link]")
+				echo("Start session:   /mt start [item link] OR /mt [item link]")
 				echo("End session:  /mt end")
+				echo("List queued sessions:  /mt list")
+				echo("Remove queued session:  /mt remove [index]")
+
 				echo("Cancel session:   /mt cancel")
 				echo("Print help:   /mt help")
 			--elseif cmd == "add" then

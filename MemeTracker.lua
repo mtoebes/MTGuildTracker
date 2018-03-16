@@ -1188,7 +1188,7 @@ function MemeTracker_ListButton_OnEnter(index)
 end
 
 function MemeTracker_ListButton_OnLeave()
-	MemeTracker_Tooltip_Hide
+	MemeTracker_Tooltip_Hide()
 end
 
 function MemeTracker_OverviewButton_OnEnter()
@@ -1197,7 +1197,7 @@ function MemeTracker_OverviewButton_OnEnter()
 end
 
 function MemeTracker_OverviewButton_OnLeave()
-	MemeTracker_Tooltip_Hide
+	MemeTracker_Tooltip_Hide()
 end
 
 function MemeTracker_LootHistoryButton_OnEnter(index)
@@ -1206,7 +1206,7 @@ function MemeTracker_LootHistoryButton_OnEnter(index)
 end
 
 function MemeTracker_LootHistoryButton_OnLeave()
-	MemeTracker_Tooltip_Hide
+	MemeTracker_Tooltip_Hide()
 end
 
 -- Session UI 
@@ -1536,7 +1536,7 @@ function MemeTracker_OnLoad()
 	this:RegisterEvent("CHAT_MSG_OFFIER");
 end
 
-local function MemeTracker_Initialize()
+function MemeTracker_Initialize()
 	MemeTracker_LootHistoryTable_Build();
 	MemeTracker_AttendanceTable_Build();
 end

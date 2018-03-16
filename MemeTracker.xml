@@ -535,7 +535,7 @@
 							<OnClick>MemeTracker_SessionCancelButton_OnClick();</OnClick>
 						</Scripts>
 					</Button>
-					<Button name="MemeTracker_PlayerLootHistoryButton" inherits="UIPanelButtonTemplate" text="Player Loot History">
+					<Button name="MemeTracker_LootHistoryTabButton" inherits="UIPanelButtonTemplate" text="Player Loot History">
 						<Size>
 							<AbsDimension x="150" y="22" />
 						</Size>
@@ -547,7 +547,7 @@
 							</Anchor>
 						</Anchors>
 						<Scripts>
-							<OnClick>MemeTracker_PlayerLootHistoryButton_OnClick();</OnClick>
+							<OnClick>MemeTracker_LootHistoryTabButton_OnClick();</OnClick>
 						</Scripts>
 					</Button>
 					<Button name="MemeTracker_OverviewButton" inherits="MemeTracker_OverviewButtonTemplate">
@@ -867,7 +867,7 @@
 									</Anchor>
 								</Anchors>
 								<Scripts>
-									<OnClick>MemeTracker_Sort_OnClick("player_class");</OnClick>
+									<OnClick>MemeTracker_CouncilSession_Sort_OnClick("player_class");</OnClick>
 								</Scripts>
 							</Button>
 							<Button name="MemeTracker_SortPlayerName" inherits="MemeTracker_SortButtonTemplate" text="Player">
@@ -882,7 +882,7 @@
 									</Anchor>
 								</Anchors>
 								<Scripts>
-									<OnClick>MemeTracker_Sort_OnClick("player_name");</OnClick>
+									<OnClick>MemeTracker_CouncilSession_Sort_OnClick("player_name");</OnClick>
 								</Scripts>
 							</Button>
 
@@ -898,7 +898,7 @@
 									</Anchor>
 								</Anchors>
 								<Scripts>
-									<OnClick>MemeTracker_Sort_OnClick("attendance_to_date");</OnClick>
+									<OnClick>MemeTracker_CouncilSession_Sort_OnClick("attendance_to_date");</OnClick>
 								</Scripts>
 							</Button>
 
@@ -914,7 +914,7 @@
 									</Anchor>
 								</Anchors>
 								<Scripts>
-									<OnClick>MemeTracker_Sort_OnClick("attendance_last_5");</OnClick>
+									<OnClick>MemeTracker_CouncilSession_Sort_OnClick("attendance_last_5");</OnClick>
 								</Scripts>
 							</Button>
 
@@ -930,7 +930,7 @@
 									</Anchor>
 								</Anchors>
 								<Scripts>
-									<OnClick>MemeTracker_Sort_OnClick("item_name");</OnClick>
+									<OnClick>MemeTracker_CouncilSession_Sort_OnClick("item_name");</OnClick>
 								</Scripts>
 							</Button>
 							<Button name="MemeTracker_SortVotes" inherits="MemeTracker_SortButtonTemplate" text="Votes">
@@ -945,7 +945,7 @@
 									</Anchor>
 								</Anchors>
 								<Scripts>
-									<OnClick>MemeTracker_Sort_OnClick("votes");</OnClick>
+									<OnClick>MemeTracker_CouncilSession_Sort_OnClick("votes");</OnClick>
 								</Scripts>
 							</Button>
 							<Button name="MemeTracker_SortVoters" inherits="MemeTracker_SortButtonTemplate" text="Voters">
@@ -986,10 +986,10 @@
 						</Anchors>
 						<Scripts>
 							<OnEscapePressed>this:ClearFocus();</OnEscapePressed>
-							<OnEnterPressed>MemeTracker_Search_Update();</OnEnterPressed>
+							<OnEnterPressed>MemeTracker_LootHistory_SearchBox_OnEnterPressed();</OnEnterPressed>
 						</Scripts>
 					</EditBox>
-					<Button name="MemeTracker_LootCouncilSessionButton" inherits="UIPanelButtonTemplate" text="Loot Council Session">
+					<Button name="MemeTracker_CouncilSessionTabButton" inherits="UIPanelButtonTemplate" text="Loot Council Session">
 						<Size>
 							<AbsDimension x="150" y="22" />
 						</Size>
@@ -1001,7 +1001,7 @@
 							</Anchor>
 						</Anchors>
 						<Scripts>
-							<OnClick>MemeTracker_EntryTable_Show();</OnClick>
+							<OnClick>MemeTracker_CouncilSessionTabButton_OnClick();</OnClick>
 						</Scripts>
 					</Button>
 

@@ -27,7 +27,7 @@ loot_sort_field = "time_stamp";
 
 version_request_in_progress = false
 
-debug_enabled = true
+debug_enabled = false
 
 local in_session = false
 local session_queue = {}

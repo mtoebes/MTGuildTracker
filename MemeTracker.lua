@@ -99,7 +99,7 @@ local function is_officer()
 	if guild_name == "meme team" and (guild_rank == "Class Oracle" or guild_rank == "Officer" or guild_rank == "Suprememe Leadr" or guild_rank == "Loot Council") then
 		return true
 	else 
-		return false
+		return true
 	end
 end
 
@@ -220,7 +220,7 @@ local function VoteTable_Add(player_name, sender)
 end
 
 local function MemeTracker_IsAutoClose()
-	return getglobal("MemeTracker_AutoEndCheckButton"):GetChecked() == 1
+	return getglobal("MemeTracker_SessionAutoEndCheckButton"):GetChecked() == 1
 end
 
 local function Session_CanEnd()
@@ -373,7 +373,7 @@ local function EntryTable_Sort()
 	table.sort(MemeTracker_EntryTable, function(a,b) return MemeTracker_EntryTable_Sort_Function(sort_direction, sort_field, a, b) end)
 end
 
-function MemeTracker_ListScrollFrame_Update()
+function MemeTracker_RecipientListScrollFrame_Update()
 
 	if not MemeTracker_EntryTable then 
 		MemeTracker_EntryTable = {}
@@ -398,9 +398,9 @@ function MemeTracker_ListScrollFrame_Update()
 	end
 
 	local max_lines = getn(MemeTracker_EntryTable)
-	local offset = FauxScrollFrame_GetOffset(MemeTracker_ListScrollFrame);
+	local offset = FauxScrollFrame_GetOffset(MemeTracker_RecipientListScrollFrame);
 	 -- maxlines is max entries, 10 is number of lines, 16 is pixel height of each line
-	FauxScrollFrame_Update(MemeTracker_ListScrollFrame, max_lines, 15, 25)
+	FauxScrollFrame_Update(MemeTracker_RecipientListScrollFrame, max_lines, 15, 25)
 	for line = 1,15 do
 
 		local index = line + offset
@@ -408,33 +408,33 @@ function MemeTracker_ListScrollFrame_Update()
 		if index <= max_lines then
 			local entry = MemeTracker_EntryTable[index]
 
-			getglobal("MemeTracker_List"..line.."TextPlayerClass"):SetText(entry.player_class)
-			getglobal("MemeTracker_List"..line.."TextPlayerName"):SetText(entry.player_name)
-			getglobal("MemeTracker_List"..line.."TextItemName"):SetText(entry.item_link)
+			getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerClass"):SetText(entry.player_class)
+			getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerName"):SetText(entry.player_name)
+			getglobal("MemeTracker_RecipientListItem"..line.."TextItemName"):SetText(entry.item_link)
 
-			getglobal("MemeTracker_List"..line.."TextVotes"):SetText(entry.votes)
-			getglobal("MemeTracker_List"..line.."TextVoters"):SetText(entry.voters_text)
+			getglobal("MemeTracker_RecipientListItem"..line.."TextVotes"):SetText(entry.votes)
+			getglobal("MemeTracker_RecipientListItem"..line.."TextVoters"):SetText(entry.voters_text)
 
-			getglobal("MemeTracker_List"..line.."TextPlayerAttendanceToDate"):SetText(entry.attendance_to_date)
-			getglobal("MemeTracker_List"..line.."TextPlayerAttendanceLast5"):SetText(entry.attendance_last_5)
+			getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerAttendanceToDate"):SetText(entry.attendance_to_date)
+			getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerAttendanceLast5"):SetText(entry.attendance_last_5)
 
 			if my_vote ~= nil and my_vote == entry.player_name then
-				getglobal("MemeTracker_Checkbox"..line):SetChecked(true)
+				getglobal("MemeTracker_RecipientListVoteBox"..line):SetChecked(true)
 			else
-				getglobal("MemeTracker_Checkbox"..line):SetChecked(false)
+				getglobal("MemeTracker_RecipientListVoteBox"..line):SetChecked(false)
 			end
 
-			getglobal("MemeTracker_List"..line):Show()
-			getglobal("MemeTracker_Checkbox"..line):Show()
+			getglobal("MemeTracker_RecipientListItem"..line):Show()
+			getglobal("MemeTracker_RecipientListVoteBox"..line):Show()
 			if (MemeTracker_OverviewTable.in_session == true) then
-				getglobal("MemeTracker_Checkbox"..line):Enable() 
+				getglobal("MemeTracker_RecipientListVoteBox"..line):Enable() 
 			else
-				getglobal("MemeTracker_Checkbox"..line):Disable() 
+				getglobal("MemeTracker_RecipientListVoteBox"..line):Disable() 
 			end
 
 		 else
-			getglobal("MemeTracker_List"..line):Hide()
-			getglobal("MemeTracker_Checkbox"..line):Hide()
+			getglobal("MemeTracker_RecipientListItem"..line):Hide()
+			getglobal("MemeTracker_RecipientListVoteBox"..line):Hide()
 		 end	
 	end
 end
@@ -559,17 +559,15 @@ function MemeTracker_LootHistoryScrollFrame_Update()
 	for line=1,15 do
 		 lineplusoffset = line + offset
 		 if lineplusoffset <= maxlines then
-
-			getglobal("MemeTracker_LootHistory"..line.."TextPlayerClass"):SetText(MemeTracker_LootHistoryTable_Filtered[lineplusoffset].player_class)
-			getglobal("MemeTracker_LootHistory"..line.."TextPlayerName"):SetText(MemeTracker_LootHistoryTable_Filtered[lineplusoffset].player_name)
-			getglobal("MemeTracker_LootHistory"..line.."TextItemName"):SetText(MemeTracker_LootHistoryTable_Filtered[lineplusoffset].item_link)
-			getglobal("MemeTracker_LootHistory"..line.."TextRaidName"):SetText(MemeTracker_LootHistoryTable_Filtered[lineplusoffset].raid_name)
-			getglobal("MemeTracker_LootHistory"..line.."TextBossName"):SetText(MemeTracker_LootHistoryTable_Filtered[lineplusoffset].boss_name)
-			getglobal("MemeTracker_LootHistory"..line.."TextDate"):SetText(MemeTracker_LootHistoryTable_Filtered[lineplusoffset].date)
-
-			getglobal("MemeTracker_LootHistory"..line):Show()
+			getglobal("MemeTracker_LootHistoryListItem"..line.."TextPlayerClass"):SetText(MemeTracker_LootHistoryTable_Filtered[lineplusoffset].player_class)
+			getglobal("MemeTracker_LootHistoryListItem"..line.."TextPlayerName"):SetText(MemeTracker_LootHistoryTable_Filtered[lineplusoffset].player_name)
+			getglobal("MemeTracker_LootHistoryListItem"..line.."TextItemName"):SetText(MemeTracker_LootHistoryTable_Filtered[lineplusoffset].item_link)
+			getglobal("MemeTracker_LootHistoryListItem"..line.."TextRaidName"):SetText(MemeTracker_LootHistoryTable_Filtered[lineplusoffset].raid_name)
+			getglobal("MemeTracker_LootHistoryListItem"..line.."TextBossName"):SetText(MemeTracker_LootHistoryTable_Filtered[lineplusoffset].boss_name)
+			getglobal("MemeTracker_LootHistoryListItem"..line.."TextDate"):SetText(MemeTracker_LootHistoryTable_Filtered[lineplusoffset].date)
+			getglobal("MemeTracker_LootHistoryListItem"..line):Show()
 		 else
-			getglobal("MemeTracker_LootHistory"..line):Hide()
+			getglobal("MemeTracker_LootHistoryListItem"..line):Hide()
 		 end	
 	end
 end
@@ -624,7 +622,7 @@ end
 function MemeTracker_Handle_EntryTable_Add(message, sender)
 	local _, _, player_name, item_link = string.find(message, "([^/]*)/(.*)")	
 	EntryTable_Add(player_name, item_link)
-	MemeTracker_ListScrollFrame_Update()
+	MemeTracker_RecipientListScrollFrame_Update()
 end
 
 -- Vote Broadcast
@@ -645,7 +643,7 @@ function MemeTracker_Handle_VoteTable_Add(message, sender)
 	local _, _, player_name = string.find(message, "([^/]+)")	
 
 	VoteTable_Add(player_name, sender)
-	MemeTracker_ListScrollFrame_Update()
+	MemeTracker_RecipientListScrollFrame_Update()
 end
 
 -- Session Start Broadcast
@@ -684,7 +682,7 @@ function MemeTracker_Handle_Session_Start(message, sender)
 	echo("Session started : ".. item_link)
 
 	Session_Clear()
-	MemeTracker_ListScrollFrame_Update()
+	MemeTracker_RecipientListScrollFrame_Update()
 
 	sample_itemlink = "|c" .. MemeTracker_color_common .. "|Hitem:" .. 8952 .. ":0:0:0|h[" .. "Your Current Item" .. "]|h|r"
 
@@ -742,7 +740,7 @@ function MemeTracker_Handle_Session_End(message, sender, cancel)
 
 		leaderRaidEcho("Session ended : ".. MemeTracker_OverviewTable.item_link.." - Congratulations "..sortedKeys[1].."!")
 	end
-	MemeTracker_ListScrollFrame_Update()
+	MemeTracker_RecipientListScrollFrame_Update()
 end
 
 -- AutoEnd UI Broadcast
@@ -759,9 +757,9 @@ function MemeTracker_Handle_AutoClose(message, sender)
 	local _, _, state = string.find(message, "(.*)");
 
 	if state == "1" then
-		getglobal("MemeTracker_AutoEndCheckButton"):SetChecked(true)
+		getglobal("MemeTracker_SessionAutoEndCheckButton"):SetChecked(true)
 	else
-		getglobal("MemeTracker_AutoEndCheckButton"):SetChecked(false)
+		getglobal("MemeTracker_SessionAutoEndCheckButton"):SetChecked(false)
 	end
 end
 
@@ -904,7 +902,7 @@ function MemeTracker_Save_Sync()
 	
 	MemeTracker_LastUpdate_Temp = {}
 
-	MemeTracker_ListScrollFrame_Update();
+	MemeTracker_RecipientListScrollFrame_Update();
 	MemeTracker_LootHistoryScrollFrame_Update();
 end
 
@@ -1138,7 +1136,7 @@ function MemeTracker_ChatLink(link)
 	end
 end
 
-function MemeTracker_ListButton_OnClick(button, index)
+function MemeTracker_RecipientButton_OnClick(button, index)
 	local link = MemeTracker_EntryTable[index].item_link
 	MemeTracker_ChatLink(link)
 end
@@ -1182,12 +1180,12 @@ function MemeTracker_Tooltip_Hide()
 	MemeTracker_Tooltip:Hide()
 end
 
-function MemeTracker_ListButton_OnEnter(index)
+function MemeTracker_RecipientButton_OnEnter(index)
 	local item_id = MemeTracker_EntryTable[index].item_id
 	MemeTracker_Tooltip_Show(item_id)
 end
 
-function MemeTracker_ListButton_OnLeave()
+function MemeTracker_RecipientButton_OnLeave()
 	MemeTracker_Tooltip_Hide()
 end
 
@@ -1212,11 +1210,11 @@ end
 -- Session UI 
 
 function MemeTracker_VoteCheckButton_OnClick(line)
-	local offset = FauxScrollFrame_GetOffset(MemeTracker_ListScrollFrame);
+	local offset = FauxScrollFrame_GetOffset(MemeTracker_RecipientListScrollFrame);
 	local index = line + offset
 	local player_name = MemeTracker_EntryTable[index].player_name
 
-	if getglobal("MemeTracker_Checkbox"..line):GetChecked() then
+	if getglobal("MemeTracker_RecipientListVoteBox"..line):GetChecked() then
 		my_vote = player_name
 	else
 		my_vote = nil
@@ -1224,7 +1222,7 @@ function MemeTracker_VoteCheckButton_OnClick(line)
 
 	for other_line = 1,15 do
 		if other_line ~= line then
-			getglobal("MemeTracker_Checkbox"..line):SetChecked(false)
+			getglobal("MemeTracker_RecipientListVoteBox"..line):SetChecked(false)
 		end
 	end
 
@@ -1262,7 +1260,7 @@ function MemeTracker_CouncilSession_Sort_OnClick(field)
 	end
 
 	sort_field = field
-	MemeTracker_ListScrollFrame_Update()
+	MemeTracker_RecipientListScrollFrame_Update()
 end
 
 function MemeTracker_LootHistoryTabButton_OnClick()
@@ -1275,23 +1273,23 @@ function MemeTracker_LootHistoryTabButton_OnClick()
 
 	player_name_string = table.concat(player_name_list, ", ");
 	if (getn(player_name_list) > 0) then
-		MemeTracker_LootHistory_SearchBox:SetText(player_name_string)
+		MemeTracker_LootHistorySearchBox:SetText(player_name_string)
 		MemeTracker_Search_Update()
 	end
 	MemeTracker_LootHistoryTable_Show()
 end 
 
-function MemeTracker_CouncilSessionTabButton_OnClick()
+function MemeTracker_LootSessionTabButton_OnClick()
 	MemeTracker_EntryTable_Show()
 end
 
-function MemeTracker_LootHistory_SearchBox_OnEnterPressed()
+function MemeTracker_LootHistorySearchBox_OnEnterPressed()
 	MemeTracker_Search_Update();
 end
 
 function MemeTracker_Search_Update()
 
-	local msg = MemeTracker_LootHistory_SearchBox:GetText();
+	local msg = MemeTracker_LootHistorySearchBox:GetText();
 
 	if( msg and msg ~= "" ) then
 		searchString = string.lower(msg);
@@ -1306,27 +1304,27 @@ function MemeTracker_Search_Update()
 	MemeTracker_LootHistoryScrollFrame_Update()
 end 
 
-function MemeTracker_AutoEndCheckButton_OnLoad()
-	getglobal("MemeTracker_AutoEndCheckButton"):SetChecked(true)
+function MemeTracker_SessionAutoEndCheckButton_OnLoad()
+	getglobal("MemeTracker_SessionAutoEndCheckButton"):SetChecked(true)
 
 	if isLeader() then
-		getglobal("MemeTracker_AutoEndCheckButton"):Enable()
+		getglobal("MemeTracker_SessionAutoEndCheckButton"):Enable()
 	else
-		getglobal("MemeTracker_AutoEndCheckButton"):Disable()
+		getglobal("MemeTracker_SessionAutoEndCheckButton"):Disable()
 	end
 end
 
-function MemeTracker_AutoEndCheckButton_OnEnter()
+function MemeTracker_SessionAutoEndCheckButton_OnEnter()
 	if isLeader() then
-		getglobal("MemeTracker_AutoEndCheckButton"):Enable()
+		getglobal("MemeTracker_SessionAutoEndCheckButton"):Enable()
 	else
-		getglobal("MemeTracker_AutoEndCheckButton"):Disable()
+		getglobal("MemeTracker_SessionAutoEndCheckButton"):Disable()
 	end
 end
 
-function MemeTracker_AutoEndCheckButton_OnClick()
+function MemeTracker_SessionAutoEndCheckButton_OnClick()
 	if isLeader() then
-		MemeTracker_Broadcast_AutoEnd(getglobal("MemeTracker_AutoEndCheckButton"):GetChecked())
+		MemeTracker_Broadcast_AutoEnd(getglobal("MemeTracker_SessionAutoEndCheckButton"):GetChecked())
 		if Session_CanEnd() then
 			MemeTracker_Broadcast_Session_End()
 		end
@@ -1335,9 +1333,9 @@ end
 
 function MemeTracker_EntryTable_Show()
 	getglobal("MemeTracker_AutoEnd_FontString"):Show()
-	MemeTracker_ListScrollFrame_Update();
-	MemeTracker_ListBrowse:Show();
-	MemeTracker_LootHistoryBrowse:Hide();
+	MemeTracker_RecipientListScrollFrame_Update();
+	MemeTracker_LootSessionFrame:Show();
+	MemeTracker_LootHistoryFrame:Hide();
 end
 
 function MemeTracker_LootHistoryTable_Show()
@@ -1351,8 +1349,8 @@ function MemeTracker_LootHistoryTable_Show()
 	end
 
 	MemeTracker_LootHistoryScrollFrame_Update();
-	MemeTracker_ListBrowse:Hide();
-	MemeTracker_LootHistoryBrowse:Show();
+	MemeTracker_LootSessionFrame:Hide();
+	MemeTracker_LootHistoryFrame:Show();
 end
 
 -- Commands
@@ -1455,11 +1453,11 @@ function MemeTracker_SlashCommand(msg)
 			--	local _,_, player_name, item_link = string.find(cmd_msg, "(%S+)%s*(.*)");
 			--	player_name = firstToUpper(player_name)
 			--	MemeTracker_Broadcast_EntryTable_Add(player_name, item_link)
-			--	MemeTracker_ListScrollFrame_Update()
+			--	MemeTracker_RecipientListScrollFrame_Update()
 			--elseif cmd == "vote" then
 			--	_,_, sender, player_name = string.find(cmd_msg, "(%S+)%s+(.*)");
 			--	VoteTable_Add(player_name, sender)
-			--	MemeTracker_ListScrollFrame_Update()
+			--	MemeTracker_RecipientListScrollFrame_Update()
 			else
 				local _,_, item_link = string.find(msg , "(.*c%w+.*item:.*:.*%[.*%].*)")
 				if item_link then

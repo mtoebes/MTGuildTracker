@@ -184,8 +184,24 @@ local function Parse_String_List(string_list)
 end
 
 local function parseItemLink(item_link)
-	local _,_,item_quality, item_id, item_name= string.find(item_link , ".*c(%w+).*item:(.*):.*%[(.*)%]")
-	return item_link, item_quality, item_id, item_name
+
+	local _,_,item_link, rarityhexlink, item_id, item_name= string.find(item_link , "(|c(%w+).*item:(%d+):.*%[(.*)%]|h|r)")
+
+	if rarityhexlink == MemeTracker_color_common then 
+		item_quality = "common"
+	elseif rarityhexlink == MemeTracker_color_uncommon then
+		item_quality = "uncommon"
+	elseif rarityhexlink == MemeTracker_color_rare then
+		item_quality = "common"
+	elseif rarityhexlink == MemeTracker_color_epic then 
+		item_quality = "common"
+	elseif rarityhexlink == MemeTracker_color_legendary then 
+		item_quality = "legendary"
+	else 
+		item_quality = "junk"
+	end		
+
+	return item_link, item_quality, item_id, item_name, rarityhexlink
 end
 
 local function List_Contains(list, target_value)
@@ -344,15 +360,22 @@ end
 
 local function RecipientTable_Add(player_name, item_link)
 	local index = RecipientTable_GetPlayerIndex(player_name)
-	player_name = firstToUpper(player_name)
+	local player_name = firstToUpper(player_name)
+
+	local player_class = getPlayerClass(player_name)
+
+
 
 	if (index == nil) then
+		debug("RecipientTable_Add index nil")
 		index = getn(MemeTracker_RecipientTable) + 1
 		MemeTracker_RecipientTable[index] = {}
 		MemeTracker_RecipientTable[index].voters = {}
 	end
+	
+	debug("RecipientTable_Add index", index)
 
-	local item_link, item_quality, item_id, item_name = parseItemLink(item_link)
+	local _, _, item_id, item_name = parseItemLink(item_link)
 	MemeTracker_RecipientTable[index].player_class = getPlayerClass(player_name)
 	MemeTracker_RecipientTable[index].player_name = player_name
 	MemeTracker_RecipientTable[index].item_id = item_id
@@ -362,7 +385,7 @@ local function RecipientTable_Add(player_name, item_link)
 	local attendance = MemeTracker_Attendance[player_name]
 
 	if attendance then
-		to_date = 	 MemeTracker_Attendance[player_name].to_date
+		to_date = MemeTracker_Attendance[player_name].to_date
 		last_5 = MemeTracker_Attendance[player_name].last_5
 	else 
 		to_date = 0
@@ -371,6 +394,7 @@ local function RecipientTable_Add(player_name, item_link)
 
 	MemeTracker_RecipientTable[index].attendance_to_date = to_date.."%"
 	MemeTracker_RecipientTable[index].attendance_last_5 = last_5.."%"
+	MemeTracker_RecipientListScrollFrame_Update()
 end
 
 function MemeTracker_RecipientListScrollFrame_Update()
@@ -483,27 +507,13 @@ local function LootHistoryTable_Build()
 
 	for index in MemeTrackerDB do
 		MemeTracker_LootHistoryTable[index] = {}
+		local item_link = MemeTrackerDB[index].item_link
 		local item_name =  MemeTrackerDB[index].item_name
 		local item_quality = MemeTrackerDB[index].item_quality
 		local item_id = MemeTrackerDB[index].item_id
 
-		if item_quality == "common" then
-			browse_rarityhexlink = MemeTracker_color_common
-		elseif item_quality == "uncommon" then
-			browse_rarityhexlink = MemeTracker_color_uncommon
-		elseif item_quality == "rare" then
-			browse_rarityhexlink = MemeTracker_color_rare
-		elseif item_quality == "epic" then
-			browse_rarityhexlink = MemeTracker_color_epic
-		elseif item_quality == "legendary" then
-			browse_rarityhexlink = MemeTracker_color_legendary
-		end
-		--building the itemlink
-		item_link = "|c" .. browse_rarityhexlink .. "|Hitem:" .. item_id .. ":0:0:0|h[" .. item_name .. "]|h|r"
-
 		MemeTracker_LootHistoryTable[index].time_stamp    = MemeTrackerDB[index].time_stamp
 		MemeTracker_LootHistoryTable[index].date         = MemeTrackerDB[index].date
-		MemeTracker_LootHistoryTable[index].raid_id      = MemeTrackerDB[index].raid_id
 		MemeTracker_LootHistoryTable[index].raid_name    = MemeTrackerDB[index].raid_name
 		MemeTracker_LootHistoryTable[index].item_name    = item_name
 		MemeTracker_LootHistoryTable[index].item_id      = item_id
@@ -512,6 +522,53 @@ local function LootHistoryTable_Build()
 		MemeTracker_LootHistoryTable[index].player_name  = MemeTrackerDB[index].player_name
 		MemeTracker_LootHistoryTable[index].player_class = MemeTrackerDB[index].player_class
 	end
+
+	MemeTracker_LootHistoryScrollFrame_Update();
+end
+
+local function LootHistoryTable_AddEntry(item_link, player_name)
+	debug("LootHistoryTable_BuildEntry item_link", item_link)
+	debug("LootHistoryTable_BuildEntry player_name", player_name)
+
+	local time_stamp = date("%y-%m-%d %H:%M:%S")
+	local date = date("%y-%m-%d")
+
+	local item_link, item_quality, item_id, item_name = parseItemLink(item_link)
+
+	if item_link == nil then
+		debug("cant parse this link")
+		return
+	end
+
+	local localized_class, _, _ = getPlayerClass(player_name);
+	local zone_name = GetRealZoneText();
+
+	entry = {}
+	entry["player_name"] = player_name
+	entry["date"] = date
+	entry["item_quality"] = item_quality
+	entry["item_link"] = item_link
+	entry["raid_name"] = zone_name
+	entry["item_name"] = item_name
+	entry["time_stamp"] = time_stamp
+	entry["player_class"] = localized_class
+	entry["item_id"] = item_id
+
+	table.insert(MemeTrackerDB, entry)
+
+	debug("player_name", player_name)
+	debug("date", date)
+	debug("item_quality", item_quality)
+	debug("item_link", item_link)
+	debug("raid_name", zone_name)
+	debug("item_name", item_name)
+	debug("time_stamp", time_stamp)
+	debug("player_class", localized_class)
+	debug("item_id", item_id)
+
+	MemeTracker_LastUpdate["time_stamp"] = time_stamp
+
+	LootHistoryTable_Build()
 end
 
 local function LootHistory_Filter()
@@ -607,6 +664,14 @@ end
 
 function MemeTracker_Broadcast_RecipientTable_Add(player_name, item_link)
 	if MemeTracker_OverviewTable.in_session == true then
+		local player_name = firstToUpper(player_name)
+		local player_class = getPlayerClass(player_name)
+
+		if player_class == "???" then
+			echo("Error adding player " .. player_name .. ". Player must be in the raid.")
+			return
+		end
+
 		addonEcho_leader("TX_ENTRY_ADD#".. string.format("%s/%s", player_name, item_link) .."#");
 	else
 		echo_leader("No session in progress")
@@ -615,8 +680,10 @@ end
 
 function MemeTracker_Handle_RecipientTable_Add(message, sender)
 	local _, _, player_name, item_link = string.find(message, "([^/]*)/(.*)")	
+	debug("MemeTracker_Handle_RecipientTable_Add player_name", player_name)
+	debug("MemeTracker_Handle_RecipientTable_Add item_link", item_link)
+
 	RecipientTable_Add(player_name, item_link)
-	MemeTracker_RecipientListScrollFrame_Update()
 end
 
 -- Vote Broadcast
@@ -668,7 +735,7 @@ function MemeTracker_Handle_Session_Start(message, sender)
 		item_link = item_message
 	end
 
-	local item_link, item_quality, item_id, item_name = parseItemLink(item_link)
+	local item_link, _, item_id, item_name = parseItemLink(item_message)
 
 	MemeTracker_OverviewTable = {}
 	MemeTracker_OverviewTable.in_session = true	
@@ -734,6 +801,7 @@ function MemeTracker_Handle_Session_End(message, sender, cancel)
 		else 
 		 	end_type = 'ended'
 		 	end_announcement = "Session ended : ".. MemeTracker_OverviewTable.item_link.." - Congratulations "..sortedKeys[1].."!"
+		 	LootHistoryTable_AddEntry(MemeTracker_OverviewTable.item_link,sortedKeys[1])
 		 end
 
 		echo("Session " .. end_type .. " : ".. MemeTracker_OverviewTable.item_link.." - ("..MemeTracker_OverviewTable.votes.."/"
@@ -776,12 +844,10 @@ function MemeTracker_SendSync_String(table_name, entry)
 	sync_string = "";
 
 	if entry and table_name == "loothistory" then
-		local lootHistory_entry = MemeTracker_LootHistoryTable[index]
-		sync_string = string.format("%s/%s/%s/%s/%s/%s/%s/%s/%s/%s", 
+		sync_string = string.format("%s/%s/%s/%s/%s/%s/%s/%s/%s", 
 			table_name,
 			entry.date,
 			entry.time_stamp,
-			entry.raid_id,
 			entry.raid_name,
 			entry.item_name,
 			entry.item_id,
@@ -808,12 +874,11 @@ function MemeTracker_ReadSync_Entry(table_name, fields_string)
 
 	entry = {}
 	if table_name == "loothistory" then
-		local _, _, date, time_stamp, raid_id, raid_name, item_name, item_id, item_quality,  player_name, player_class =
-		string.find(fields_string, "(.*)/(.*)/(.*)/(.*)/(.*)/(.*)/(.*)/(.*)/(.*)");
+		local _, _, date, time_stamp, raid_name, item_name, item_id, item_quality,  player_name, player_class =
+		string.find(fields_string, "(.*)/(.*)/(.*)/(.*)/(.*)/(.*)/(.*)/(.*)");
 
 		entry["date"] = date
 		entry["time_stamp"] = time_stamp
-		entry["raid_id"] = raid_id
 		entry["raid_name"] = raid_name
 		entry["item_name"] = item_name
 		entry["item_id"] = item_id
@@ -906,7 +971,6 @@ function MemeTracker_Save_Sync()
 	MemeTracker_LastUpdate_Temp = {}
 
 	MemeTracker_RecipientListScrollFrame_Update();
-	MemeTracker_LootHistoryScrollFrame_Update();
 end
 
 -- Version Broadcast
@@ -1348,6 +1412,8 @@ function MemeTracker_OnChatMsgAddon(event, prefix, msg, channel, sender)
 			debug(cmd, message)
 			if cmd == "TX_ENTRY_ADD" then
 				MemeTracker_Handle_RecipientTable_Add(message, sender)	
+			elseif cmd == "TX_ENTRY_REMOVE" then
+				MemeTracker_Handle_RecipientTable_Remove(message, sender)	
 			elseif cmd == "TX_VOTE_ADD" then
 				MemeTracker_Handle_VoteTable_Add(message, sender)
 			elseif cmd == "TX_SESSION_START" then
@@ -1405,13 +1471,13 @@ function MemeTracker_SlashCommand(msg)
 		end
 
 		if isLeader() then
-			if (cmd == "start") then 
+			if (cmd == "start") or (cmd == "queue") then 
 				_,_, item_link = string.find(cmd_msg, "(.*)");
 				MemeTracker_Session_Queue(item_link)
 			elseif (cmd == "list") then
 				debug("list")
 				MemeTracker_Session_List()
-			elseif (cmd == "remove") then
+			elseif (cmd == "dequeue") then
 				MemeTracker_Session_Dequeue(cmd_msg)
 				-- 	local _,_,item_quality, item_id, item_name= string.find(item_link , ".*c(%w+).*item:(.*):.*%[(.*)%]")
 			elseif (cmd == "end") then
@@ -1421,18 +1487,16 @@ function MemeTracker_SlashCommand(msg)
 			elseif (cmd == "help") then
 				echo("MemeTracker v"..MemeTracker_Version.." Commands")
 				echo("Open MemeTracker:   /mt")
-				echo("Start session:   /mt start [item link] OR /mt [item link]")
+				echo("Start/Queue session:   /mt start [item link] OR /mt [item link] OR /mt queue [item link]")
 				echo("End session:  /mt end")
 				echo("List queued sessions:  /mt list")
-				echo("Remove queued session:  /mt remove [index]")
-
+				echo("Remove queued session:  /mt dequeue <index>")
+				echo("Manually add a raider to the current session:  /mt add <player_name> <index>")
 				echo("Cancel session:   /mt cancel")
 				echo("Print help:   /mt help")
-			--elseif cmd == "add" then
-			--	local _,_, player_name, item_link = string.find(cmd_msg, "(%S+)%s*(.*)");
-			--	player_name = firstToUpper(player_name)
-			--	MemeTracker_Broadcast_RecipientTable_Add(player_name, item_link)
-			--	MemeTracker_RecipientListScrollFrame_Update()
+			 elseif cmd == "add" then
+				local _,_, player_name, item_link = string.find(cmd_msg, "(%S+)%s*(.*)");
+				MemeTracker_Broadcast_RecipientTable_Add(player_name, item_link)
 			--elseif cmd == "vote" then
 			--	_,_, sender, player_name = string.find(cmd_msg, "(%S+)%s+(.*)");
 			--	VoteTable_Add(player_name, sender)

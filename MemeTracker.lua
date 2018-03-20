@@ -647,19 +647,17 @@ end
 function MemeTracker_Handle_Session_Start(message, sender)
 	local _, _, item_link, votes_needed = string.find(message, "([^/]+%]|h|r)%s*(.*)")	
 
-	if item_link == nil then
-		_, _, item_link, votes_needed = string.find(message, "(.*)%s+(%d+)")	
-		if item_link == nil then
-			item_link = message
-		end
+	local _, _, item_message, votes_needed = string.find(message, "(.*)%s+(%d+)")	
+	if item_message == nil then
+		item_message = message
+		votes_needed = DEFAULT_VOTES_NEEDED
+	else
+		votes_needed = tonumber(votes_needed)
 	end
 
-	debug("item_link", item_link)
-	debug("votes_needed", votes_needed)
-	if not votes_needed or votes_needed == "" then
-		votes_needed = DEFAULT_VOTES_NEEDED
-	else 
-		votes_needed = tonumber(votes_needed)
+	local _, _, item_link, notes = string.find(item_message, "([^/]+%]|h|r)%s*(.*)")
+	if item_link == nil then
+		item_link = item_message
 	end
 
 	local item_link, item_quality, item_id, item_name = parseItemLink(item_link)
@@ -667,7 +665,7 @@ function MemeTracker_Handle_Session_Start(message, sender)
 	MemeTracker_OverviewTable = {}
 	MemeTracker_OverviewTable.in_session = true	
 	MemeTracker_OverviewTable.item_id = item_id
-	MemeTracker_OverviewTable.item_link = item_link
+	MemeTracker_OverviewTable.item_link = item_message
 	MemeTracker_OverviewTable.item_name = item_name
 	MemeTracker_OverviewTable.votes_needed = votes_needed
 	MemeTracker_OverviewTable.votes = 0
@@ -675,11 +673,11 @@ function MemeTracker_Handle_Session_Start(message, sender)
 
 	Session_Clear()
 
-	echo("Session started : ".. item_link)
+	echo("Session started : ".. item_message)
 
 	sample_itemlink = "|c" .. MemeTracker_color_common .. "|Hitem:" .. 8952 .. ":0:0:0|h[" .. "Your Current Item" .. "]|h|r"
 
-	leaderRaidEcho("Session started : ".. item_link)
+	leaderRaidEcho("Session started : ".. item_message)
 	leaderRaidEcho("To be considered for the item type in raid chat \"mt "..sample_itemlink.."\"")
 end
 

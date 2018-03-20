@@ -3,7 +3,7 @@ local WARN_CHANNEL				= "RAID_WARNING"
 local OFFICER_CHANNEL			= "OFFICER"
 
 MemeTracker_Title = "MemeTracker"
-MemeTracker_Version = "2.1.0"
+MemeTracker_Version = "3.0.0"
 
 MemeTracker_RecipientTable = {}
 MemeTracker_LootHistoryTable = {}
@@ -133,7 +133,7 @@ local function is_officer()
 	if guild_name == "meme team" and (guild_rank == "Class Oracle" or guild_rank == "Officer" or guild_rank == "Suprememe Leadr" or guild_rank == "Loot Council") then
 		return true
 	else 
-		return true
+		return false
 	end
 end
 
@@ -519,8 +519,8 @@ local function LootHistoryTable_Build()
 		MemeTracker_LootHistoryTable[index].item_id      = item_id
 		MemeTracker_LootHistoryTable[index].item_quality = item_quality
 		MemeTracker_LootHistoryTable[index].item_link    = item_link
-		MemeTracker_LootHistoryTable[index].player_name  = MemeTrackerDB[index].player_name
-		MemeTracker_LootHistoryTable[index].player_class = MemeTrackerDB[index].player_class
+		MemeTracker_LootHistoryTable[index].player_name  = firstToUpper(MemeTrackerDB[index].player_name)
+		MemeTracker_LootHistoryTable[index].player_class = firstToUpper(MemeTrackerDB[index].player_class)
 	end
 
 	MemeTracker_LootHistoryScrollFrame_Update();

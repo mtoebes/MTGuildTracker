@@ -645,9 +645,17 @@ function MemeTracker_Broadcast_Session_Start(item_link)
 end
 
 function MemeTracker_Handle_Session_Start(message, sender)
-
 	local _, _, item_link, votes_needed = string.find(message, "([^/]+%]|h|r)%s*(.*)")	
 
+	if item_link == nil then
+		_, _, item_link, votes_needed = string.find(message, "(.*)%s+(%d+)")	
+		if item_link == nil then
+			item_link = message
+		end
+	end
+
+	debug("item_link", item_link)
+	debug("votes_needed", votes_needed)
 	if not votes_needed or votes_needed == "" then
 		votes_needed = DEFAULT_VOTES_NEEDED
 	else 

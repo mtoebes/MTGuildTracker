@@ -130,7 +130,9 @@ end
 
 local function is_officer()
 	guild_name, guild_rank, _ = GetGuildInfo("player")
-	if guild_name == "meme team" and (guild_rank == "Class Oracle" or guild_rank == "Officer" or guild_rank == "Suprememe Leadr" or guild_rank == "Loot Council") then
+	if isLeader then
+		return true
+	elseif guild_name == "meme team" and (guild_rank == "Class Oracle" or guild_rank == "Officer" or guild_rank == "Suprememe Leadr" or guild_rank == "Loot Council") then
 		return true
 	else
 		return false
@@ -818,7 +820,6 @@ function MemeTracker_Broadcast_Session_Finish(mode)
 		else
 		 	end_type = 'ended'
 		 	end_announcement = "Session ended : ".. MemeTracker_OverviewTable.item_link.." - Congratulations "..sortedKeys[1].."!"
-		 	LootHistoryTable_AddEntry(MemeTracker_OverviewTable.item_link,sortedKeys[1])
 		 end
 
 		MemeTracker_Broadcast_Message_Echo("Session " .. end_type .. " : ".. MemeTracker_OverviewTable.item_link.." - ("..MemeTracker_OverviewTable.votes.."/"
@@ -832,11 +833,7 @@ function MemeTracker_Broadcast_Session_Finish(mode)
 
 		addonEcho("TX_SESSION_FINISH#"..mode.."#");
 
-		local sync_string = MemeTracker_SendSync_String("loothistory", v)
-		MemeTracker_Broadcast_DownloadSync_Add("loothistory", sync_string)
-
-
-		if mode = "end" then
+		if mode == "end" then
 			local entry = LootHistoryTable_AddEntry(MemeTracker_OverviewTable.item_link,sortedKeys[1])
 			MemeTracker_Broadcast_DownloadSync_Start();
 			local sync_string = MemeTracker_SendSync_String("loothistory", entry)
@@ -1045,7 +1042,7 @@ end
 
 function MemeTracker_Handle_Version_Request(message, sender)
 	debug("MemeTracker_Handle_Version_Request")
-	echo("Sync Initiated")
+	echo("Syncing Loot History")
 	MemeTracker_Broadcast_Version_Response()
 end
 
@@ -1090,6 +1087,7 @@ function MemeTracker_Version_End()
 		MemeTracker_Broadcast_DownloadSync_Start();
 		MemeTracker_Send_DownloadSync();
 		MemeTracker_Broadcast_DownloadSync_End(true);
+		echo("Sync Completed")
 	end
 end
 
@@ -1170,6 +1168,7 @@ function MemeTracker_Handle_UploadSync_End(message, sender)
 		MemeTracker_Broadcast_DownloadSync_Start();
 		MemeTracker_Send_DownloadSync();
 		MemeTracker_Broadcast_DownloadSync_End(true);
+		echo("Sync Completed")
 	end
 end
 
@@ -1220,7 +1219,6 @@ function MemeTracker_Broadcast_DownloadSync_End(clear_table)
 	if isLeader() and download_sync_in_progress then
 		debug("MemeTracker_Broadcast_DownloadSync_End");
 		download_sync_in_progress = false;
-		echo("Sync Completed")
 		getglobal("MemeTracker_LootHistorySyncButton"):Enable()
 
 		if clear_table then
@@ -1236,7 +1234,6 @@ function MemeTracker_Handle_DownloadSync_End(message, sender)
 	if not isLeader() and download_sync_in_progress then
 		debug("MemeTracker_Handle_DownloadSync_End clear_table", clear_table);
 		download_sync_in_progress = false;
-		echo("Sync Completed")
 		MemeTracker_Save_Sync(clear_table == "1");
 	end
 end
@@ -1465,61 +1462,59 @@ end
 
 function MemeTracker_OnChatMsgAddon(event, prefix, msg, channel, sender)
 	if (prefix == MT_MESSAGE_PREFIX) then
-		if is_officer() then
 			--	Split incoming message in Command, Payload (message) and Recipient
-			local _, _, cmd, message, recipient = string.find(msg, "([^#]*)#([^#]*)#([^#]*)")
+		local _, _, cmd, message, recipient = string.find(msg, "([^#]*)#([^#]*)#([^#]*)")
 
-			if not cmd then
-				return	-- cmd is mandatory, remaining parameters are optionel.
+		if not cmd then
+			return	-- cmd is mandatory, remaining parameters are optionel.
+		end
+
+		if not message then
+			message = ""
+		end
+
+		debug(cmd, message)
+		if cmd == "TX_ENTRY_ADD" then
+			MemeTracker_Handle_RecipientTable_Add(message, sender)
+		elseif cmd == "TX_ENTRY_REMOVE" then
+			MemeTracker_Handle_RecipientTable_Remove(message, sender)
+		elseif cmd == "TX_SESSION_START" then
+			MemeTracker_Handle_Session_Start(message, sender)
+		elseif cmd == "TX_SESSION_AUTOCLOSE" then
+			MemeTracker_Handle_AutoClose(message, sender)
+		elseif cmd == "TX_SESSION_FINISH" then
+			MemeTracker_Handle_Session_Finish(message, sender)
+		elseif cmd == "TX_UPLOADSYNC_REQUEST" then
+			MemeTracker_Handle_UploadSync_Request(message, sender)
+		elseif cmd == "TX_VERSION_REQUEST" then
+			MemeTracker_Handle_Version_Request(message, sender)
+		end
+
+		if isLeader() or is_officer() then
+			if cmd == "TX_VOTE_ADD" then
+				MemeTracker_Handle_VoteTable_Add(message, sender)
+			elseif cmd == "TX_MESSAGE_ECHO" then
+				MemeTracker_Handle_Message_Echo(message, sender)
 			end
+		end
 
-			if not message then
-				message = ""
+		if isLeader() then
+			if cmd == "TX_VERSION_RESPONSE" then
+				MemeTracker_Handle_Version_Response(message, sender)
+			elseif cmd == "TX_UPLOADSYNC_START" then
+				MemeTracker_Handle_UploadSync_Start(message, sender)
+			elseif cmd == "TX_UPLOADSYNC_ADD" then
+				MemeTracker_Handle_UploadSync_Add(message, sender)
+			elseif cmd == "TX_UPLOADSYNC_END" then
+				MemeTracker_Handle_UploadSync_End(message, sender)
 			end
-
-			debug(cmd, message)
-			if cmd == "TX_ENTRY_ADD" then
-				MemeTracker_Handle_RecipientTable_Add(message, sender)
-			elseif cmd == "TX_ENTRY_REMOVE" then
-				MemeTracker_Handle_RecipientTable_Remove(message, sender)
-			elseif cmd == "TX_SESSION_START" then
-				MemeTracker_Handle_Session_Start(message, sender)
-			elseif cmd == "TX_SESSION_AUTOCLOSE" then
-				MemeTracker_Handle_AutoClose(message, sender)
-			elseif cmd == "TX_SESSION_FINISH" then
-				MemeTracker_Handle_Session_Finish(message, sender)
-			elseif cmd == "TX_UPLOADSYNC_REQUEST" then
-				MemeTracker_Handle_UploadSync_Request(message, sender)
-			elseif cmd == "TX_VERSION_REQUEST" then
-				MemeTracker_Handle_Version_Request(message, sender)
-			end
-
-			if isLeader() or is_officer() then
-				if cmd == "TX_VOTE_ADD" then
-					MemeTracker_Handle_VoteTable_Add(message, sender)
-				elseif cmd == "TX_MESSAGE_ECHO" then
-					MemeTracker_Handle_Message_Echo(message, sender)
-				end
-			end
-
-			if isLeader() then
-				if cmd == "TX_VERSION_RESPONSE" then
-					MemeTracker_Handle_Version_Response(message, sender)
-				elseif cmd == "TX_UPLOADSYNC_START" then
-					MemeTracker_Handle_UploadSync_Start(message, sender)
-				elseif cmd == "TX_UPLOADSYNC_ADD" then
-					MemeTracker_Handle_UploadSync_Add(message, sender)
-				elseif cmd == "TX_UPLOADSYNC_END" then
-					MemeTracker_Handle_UploadSync_End(message, sender)
-				end
-			else
-				if cmd == "TX_DOWNLOADSYNC_START" then
-					MemeTracker_Handle_DownloadSync_Start(message, sender)
-				elseif cmd == "TX_DOWNLOADSYNC_ADD" then
-					MemeTracker_Handle_DownloadSync_Add(message, sender)
-				elseif cmd == "TX_DOWNLOADSYNC_END" then
-					MemeTracker_Handle_DownloadSync_End(message, sender)
-				end
+		else
+			if cmd == "TX_DOWNLOADSYNC_START" then
+				MemeTracker_Handle_DownloadSync_Start(message, sender)
+			elseif cmd == "TX_DOWNLOADSYNC_ADD" then
+				MemeTracker_Handle_DownloadSync_Add(message, sender)
+			elseif cmd == "TX_DOWNLOADSYNC_END" then
+				MemeTracker_Handle_DownloadSync_End(message, sender)
 			end
 		end
 	end

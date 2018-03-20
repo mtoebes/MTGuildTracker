@@ -595,6 +595,16 @@ function MemeTracker_Session_Dequeue(index)
 	-- body
 end
 
+function MemeTracker_Broadcast_Message_Echo(message)
+	if message then
+		addonEcho_leader("TX_MESSAGE_ECHO#".. message .."#");
+	end
+end
+
+function MemeTracker_Handle_Message_Echo(message, sender)
+	echo(message)
+end
+
 -- Recipient Broadcast
 
 function MemeTracker_Broadcast_RecipientTable_Add(player_name, item_link)
@@ -923,6 +933,7 @@ end
 
 function MemeTracker_Handle_Version_Request(message, sender)
 	debug("MemeTracker_Handle_Version_Request")
+	echo("Sync Initiated")
 	MemeTracker_Broadcast_Version_Response()
 end
 
@@ -978,7 +989,6 @@ function MemeTracker_Broadcast_UploadSync_Request(player_name)
 		MemeTracker_LootHistoryTable_Temp = {}
 		MemeTracker_Attendance_Temp = {}
 		MemeTracker_LastUpdate_Temp = {}
-		getglobal("MemeTracker_LootHistorySyncButton"):Disable()
 		addonEcho("TX_UPLOADSYNC_REQUEST#"..player_name.."#");
 	end
 end
@@ -1051,7 +1061,6 @@ function MemeTracker_Broadcast_DownloadSync_Start()
 	if isLeader() and not download_sync_in_progress then
 		debug("MemeTracker_Broadcast_DownloadSync_Start");
 		download_sync_in_progress = true;
-		getglobal("MemeTracker_LootHistorySyncButton"):Disable()
 		addonEcho("TX_DOWNLOADSYNC_START#".."#");
 	end
 end
@@ -1093,6 +1102,7 @@ function MemeTracker_Broadcast_DownloadSync_End()
 	if isLeader() and download_sync_in_progress then
 		debug("MemeTracker_Broadcast_DownloadSync_End");
 		download_sync_in_progress = false;
+		echo("Sync Completed")
 		getglobal("MemeTracker_LootHistorySyncButton"):Enable()
 		addonEcho("TX_DOWNLOADSYNC_END#".."#");
 	end
@@ -1102,7 +1112,7 @@ function MemeTracker_Handle_DownloadSync_End(message, sender)
 	if not isLeader() and download_sync_in_progress then
 		debug("MemeTracker_Handle_DownloadSync_End");
 		download_sync_in_progress = false;
-		getglobal("MemeTracker_LootHistorySyncButton"):Enable()
+		echo("Sync Completed")
 		MemeTracker_Save_Sync();
 	end
 end
@@ -1370,6 +1380,8 @@ function MemeTracker_OnChatMsgAddon(event, prefix, msg, channel, sender)
 				MemeTracker_Handle_Version_Request(message, sender)
 			elseif cmd == "TX_VERSION_RESPONSE" then
 				MemeTracker_Handle_Version_Response(message, sender)
+			elseif cmd == "TX_MESSAGE_ECHO" then
+				MemeTracker_Handle_Message_Echo(message, sender)
 			else
 				echo("Unknown command, raw msg="..msg)
 			end

@@ -944,20 +944,25 @@ function MemeTracker_Send_DownloadSync()
 	MemeTracker_Broadcast_DownloadSync_Add("time_stamp", sync_string)
 end 
 
-function MemeTracker_Save_Sync()
+function MemeTracker_Save_Sync(clear_table)
 	debug("MemeTracker_LootHistoryTable", getn(MemeTracker_LootHistoryTable))
 	debug("MemeTracker_LootHistoryTable_Temp", getn(MemeTracker_LootHistoryTable_Temp))
 
-	MemeTrackerDB = {}
+	-- Loot History Table
+	if clear_table and getn(MemeTracker_LootHistoryTable_Temp) > 0 then
+		MemeTrackerDB = {}
+	end
 
 	for k,v in pairs(MemeTracker_LootHistoryTable_Temp) do
 		table.insert(MemeTrackerDB, v)
 	end
 
 	MemeTracker_LootHistoryTable_Temp = {}
-	LootHistoryTable_Build()
 
-	MemeTracker_Attendance = {}
+	-- Attendance Table
+	if clear_table and getn(MemeTracker_Attendance_Temp) > 0 then
+		MemeTracker_Attendance = {}
+	end
 
 	for k,v in pairs(MemeTracker_Attendance_Temp) do
 		MemeTracker_Attendance[k] = v
@@ -965,11 +970,16 @@ function MemeTracker_Save_Sync()
 
 	MemeTracker_Attendance_Temp = {}
 
-	MemeTracker_LastUpdate = {}
-	MemeTracker_LastUpdate["time_stamp"] = MemeTracker_LastUpdate_Temp["time_stamp"]
-	
+	-- Last Updated 
+	if MemeTracker_LastUpdate_Temp then 
+		MemeTracker_LastUpdate = {}
+		MemeTracker_LastUpdate["time_stamp"] = MemeTracker_LastUpdate_Temp["time_stamp"]
+	end
+
 	MemeTracker_LastUpdate_Temp = {}
 
+	-- Refresh View 
+	LootHistoryTable_Build()
 	MemeTracker_RecipientListScrollFrame_Update();
 end
 
@@ -1037,7 +1047,7 @@ function MemeTracker_Version_End()
 		debug("MemeTracker_Version_End", "I am master");
 		MemeTracker_Broadcast_DownloadSync_Start();
 		MemeTracker_Send_DownloadSync();
-		MemeTracker_Broadcast_DownloadSync_End();
+		MemeTracker_Broadcast_DownloadSync_End(true);
 	end
 end
 
@@ -1060,7 +1070,7 @@ function MemeTracker_Handle_UploadSync_Request(message, sender)
 		debug("MemeTracker_Handle_UploadSync_Request");
 		MemeTracker_Broadcast_UploadSync_Start();
 		MemeTracker_Send_UploadSync();
-		MemeTracker_Broadcast_UploadSync_End();
+		MemeTracker_Broadcast_UploadSync_End(true);
 	end
 end
 
@@ -1096,22 +1106,28 @@ function MemeTracker_Handle_UploadSync_Add(message, sender)
 	end
 end
 
-function MemeTracker_Broadcast_UploadSync_End()
+function MemeTracker_Broadcast_UploadSync_End(clear_table)
 	debug("MemeTracker_Broadcast_UploadSync_End");
-	addonEcho("TX_UPLOADSYNC_END#".."#");
+
+	if clear_table then 
+		addonEcho("TX_UPLOADSYNC_END#".."1".."#");
+	else 
+		addonEcho("TX_UPLOADSYNC_END#".."0".."#");
+	end
 end
 
 function MemeTracker_Handle_UploadSync_End(message, sender)
+	local clear_table = message
 	if isLeader() and upload_sync_in_progress then
 		upload_sync_in_progress = false
 
-		debug("MemeTracker_Handle_UploadSync_End", "done")
+		debug("MemeTracker_Handle_UploadSync_End clear_table", clear_table)
 
-		MemeTracker_Save_Sync()
+		MemeTracker_Save_Sync(clear_table == "1")
 
 		MemeTracker_Broadcast_DownloadSync_Start();
 		MemeTracker_Send_DownloadSync();
-		MemeTracker_Broadcast_DownloadSync_End();
+		MemeTracker_Broadcast_DownloadSync_End(true);
 	end
 end
 
@@ -1158,22 +1174,28 @@ function MemeTracker_Handle_DownloadSync_Add(message, sender)
 	end
 end
 
-function MemeTracker_Broadcast_DownloadSync_End()
+function MemeTracker_Broadcast_DownloadSync_End(clear_table)
 	if isLeader() and download_sync_in_progress then
 		debug("MemeTracker_Broadcast_DownloadSync_End");
 		download_sync_in_progress = false;
 		echo("Sync Completed")
 		getglobal("MemeTracker_LootHistorySyncButton"):Enable()
-		addonEcho("TX_DOWNLOADSYNC_END#".."#");
+
+		if clear_table then 
+			addonEcho("TX_DOWNLOADSYNC_END#".."1".."#");
+		else 
+			addonEcho("TX_DOWNLOADSYNC_END#".."0".."#");
+		end
 	end
 end
 
 function MemeTracker_Handle_DownloadSync_End(message, sender)
+	local clear_table = message
 	if not isLeader() and download_sync_in_progress then
-		debug("MemeTracker_Handle_DownloadSync_End");
+		debug("MemeTracker_Handle_DownloadSync_End clear_table", clear_table);
 		download_sync_in_progress = false;
 		echo("Sync Completed")
-		MemeTracker_Save_Sync();
+		MemeTracker_Save_Sync(clear_table == "1");
 	end
 end
 

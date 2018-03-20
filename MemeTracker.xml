@@ -316,24 +316,12 @@
 						</Anchor>
 					</Anchors>
 				</FontString>
-				<FontString name="$parentTextBossName" inherits="GameFontNormalSmall" justifyH="LEFT">
-					<Size>
-						<AbsDimension x="150" y="10" />
-					</Size>
-					<Anchors>
-						<Anchor point="LEFT" relativeTo="$parentTextRaidName" relativePoint="RIGHT">
-							<Offset>
-								<AbsDimension x="0" y="0" />
-							</Offset>
-						</Anchor>
-					</Anchors>
-				</FontString>
 				<FontString name="$parentTextDate" inherits="GameFontNormalSmall" justifyH="LEFT">
 					<Size>
 						<AbsDimension x="100" y="10" />
 					</Size>
 					<Anchors>
-						<Anchor point="LEFT" relativeTo="$parentTextBossName" relativePoint="RIGHT">
+						<Anchor point="LEFT" relativeTo="$parentTextRaidName" relativePoint="RIGHT">
 							<Offset>
 								<AbsDimension x="0" y="0" />
 							</Offset>
@@ -373,7 +361,7 @@
 			<Anchors>
 				<Anchor point="LEFT">
 					<Offset>
-						<AbsDimension x="0" y="0" />
+						<AbsDimension x="-4" y="0" />
 					</Offset>
 				</Anchor>
 				<Anchor point="RIGHT">
@@ -853,7 +841,7 @@
 						<Frames>
 							<Button name="MemeTracker_RecipientListSortPlayerClass" inherits="MemeTracker_SortButtonTemplate" text="Class">
 								<Size>
-									<AbsDimension x="75" y="16" />
+									<AbsDimension x="50" y="16" />
 								</Size>
 								<Anchors>
 									<Anchor point="BOTTOMLEFT" relativeTo="MemeTracker_RecipientListItem1TextPlayerClass" relativePoint="TOPLEFT">
@@ -868,7 +856,7 @@
 							</Button>
 							<Button name="MemeTracker_RecipientListSortPlayerName" inherits="MemeTracker_SortButtonTemplate" text="Player">
 								<Size>
-									<AbsDimension x="75" y="16" />
+									<AbsDimension x="55" y="16" />
 								</Size>
 								<Anchors>
 									<Anchor point="BOTTOMLEFT" relativeTo="MemeTracker_RecipientListItem1TextPlayerName" relativePoint="TOPLEFT">
@@ -884,7 +872,7 @@
 
 							<Button name="MemeTracker_RecipientListSortPlayerAttendanceToDate" inherits="MemeTracker_SortButtonTemplate" text="All Raids">
 								<Size>
-									<AbsDimension x="60" y="16" />
+									<AbsDimension x="68" y="16" />
 								</Size>
 								<Anchors>
 									<Anchor point="BOTTOMLEFT" relativeTo="MemeTracker_RecipientListItem1TextPlayerAttendanceToDate" relativePoint="TOPLEFT">
@@ -900,7 +888,7 @@
 
 							<Button name="MemeTracker_RecipientListSortPlayerAttendanceLast5" inherits="MemeTracker_SortButtonTemplate" text="Last 5">
 								<Size>
-									<AbsDimension x="50" y="16" />
+									<AbsDimension x="53" y="16" />
 								</Size>
 								<Anchors>
 									<Anchor point="BOTTOMLEFT" relativeTo="MemeTracker_RecipientListItem1TextPlayerAttendanceLast5" relativePoint="TOPLEFT">
@@ -916,7 +904,7 @@
 
 							<Button name="MemeTracker_RecipientListSortItemName" inherits="MemeTracker_SortButtonTemplate" text="ItemName">
 								<Size>
-									<AbsDimension x="200" y="16" />
+									<AbsDimension x="80" y="16" />
 								</Size>
 								<Anchors>
 									<Anchor point="BOTTOMLEFT" relativeTo="MemeTracker_RecipientListItem1TextItemName" relativePoint="TOPLEFT">
@@ -931,7 +919,7 @@
 							</Button>
 							<Button name="MemeTracker_RecipientListSortVotes" inherits="MemeTracker_SortButtonTemplate" text="Votes">
 								<Size>
-									<AbsDimension x="50" y="16" />
+									<AbsDimension x="55" y="16" />
 								</Size>
 								<Anchors>
 									<Anchor point="BOTTOMLEFT" relativeTo="MemeTracker_RecipientListItem1TextVotes" relativePoint="TOPLEFT">
@@ -946,7 +934,7 @@
 							</Button>
 							<Button name="MemeTracker_RecipientListSortVoters" inherits="MemeTracker_SortButtonTemplate" text="Voters">
 								<Size>
-									<AbsDimension x="300" y="16" />
+									<AbsDimension x="60" y="16" />
 								</Size>
 								<Anchors>
 									<Anchor point="BOTTOMLEFT" relativeTo="MemeTracker_RecipientListItem1TextVoters" relativePoint="TOPLEFT">
@@ -1265,7 +1253,7 @@
 						<Frames>
 							<Button name="MemeTracker_LootHistoryListSortPlayerClass" inherits="MemeTracker_SortButtonTemplate" text="Class">
 								<Size>
-									<AbsDimension x="75" y="16" />
+									<AbsDimension x="50" y="16" />
 								</Size>
 								<Anchors>
 									<Anchor point="BOTTOMLEFT" relativeTo="MemeTracker_LootHistoryListItem1TextPlayerClass" relativePoint="TOPLEFT">
@@ -1280,7 +1268,7 @@
 							</Button>
 							<Button name="MemeTracker_LootHistoryListSortPlayerName" inherits="MemeTracker_SortButtonTemplate" text="Player">
 								<Size>
-									<AbsDimension x="75" y="16" />
+									<AbsDimension x="55" y="16" />
 								</Size>
 								<Anchors>
 									<Anchor point="BOTTOMLEFT" relativeTo="MemeTracker_LootHistoryListItem1TextPlayerName" relativePoint="TOPLEFT">
@@ -1295,7 +1283,7 @@
 							</Button>
 							<Button name="MemeTracker_LootHistoryListSortItemName" inherits="MemeTracker_SortButtonTemplate" text="ItemName">
 								<Size>
-									<AbsDimension x="200" y="16" />
+									<AbsDimension x="80" y="16" />
 								</Size>
 								<Anchors>
 									<Anchor point="BOTTOMLEFT" relativeTo="MemeTracker_LootHistoryListItem1TextItemName" relativePoint="TOPLEFT">
@@ -1310,7 +1298,7 @@
 							</Button>
 							<Button name="MemeTracker_LootHistoryListSortRaidName" inherits="MemeTracker_SortButtonTemplate" text="RaidName">
 								<Size>
-									<AbsDimension x="100" y="16" />
+									<AbsDimension x="75" y="16" />
 								</Size>
 								<Anchors>
 									<Anchor point="BOTTOMLEFT" relativeTo="MemeTracker_LootHistoryListItem1TextRaidName" relativePoint="TOPLEFT">
@@ -1323,24 +1311,10 @@
 									<OnClick>MemeTracker_LootHistory_Sort_OnClick("raid_name");</OnClick>
 								</Scripts>
 							</Button>
-							<Button name="MemeTracker_LootHistoryListSortBossName" inherits="MemeTracker_SortButtonTemplate" text="BossName">
-								<Size>
-									<AbsDimension x="150" y="16" />
-								</Size>
-								<Anchors>
-									<Anchor point="BOTTOMLEFT" relativeTo="MemeTracker_LootHistoryListItem1TextBossName" relativePoint="TOPLEFT">
-										<Offset>
-											<AbsDimension x="-5" y="2" />
-										</Offset>
-									</Anchor>
-								</Anchors>
-								<Scripts>
-									<OnClick>MemeTracker_LootHistory_Sort_OnClick("boss_name");</OnClick>
-								</Scripts>
-							</Button>
+							
 							<Button name="MemeTracker_LootHistoryListSortDate" inherits="MemeTracker_SortButtonTemplate" text="Date">
 								<Size>
-									<AbsDimension x="100" y="16" />
+									<AbsDimension x="45" y="16" />
 								</Size>
 								<Anchors>
 									<Anchor point="BOTTOMLEFT" relativeTo="MemeTracker_LootHistoryListItem1TextDate" relativePoint="TOPLEFT">

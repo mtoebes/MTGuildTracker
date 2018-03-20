@@ -550,7 +550,6 @@ function MemeTracker_LootHistoryScrollFrame_Update()
 			getglobal("MemeTracker_LootHistoryListItem"..line.."TextPlayerName"):SetText(MemeTracker_LootHistoryTable_Filtered[lineplusoffset].player_name)
 			getglobal("MemeTracker_LootHistoryListItem"..line.."TextItemName"):SetText(MemeTracker_LootHistoryTable_Filtered[lineplusoffset].item_link)
 			getglobal("MemeTracker_LootHistoryListItem"..line.."TextRaidName"):SetText(MemeTracker_LootHistoryTable_Filtered[lineplusoffset].raid_name)
-			getglobal("MemeTracker_LootHistoryListItem"..line.."TextBossName"):SetText(MemeTracker_LootHistoryTable_Filtered[lineplusoffset].boss_name)
 			getglobal("MemeTracker_LootHistoryListItem"..line.."TextDate"):SetText(MemeTracker_LootHistoryTable_Filtered[lineplusoffset].date)
 			getglobal("MemeTracker_LootHistoryListItem"..line):Show()
 		 else

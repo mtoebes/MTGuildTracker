@@ -569,6 +569,7 @@ local function LootHistoryTable_AddEntry(item_link, player_name)
 	MemeTracker_LastUpdate["time_stamp"] = time_stamp
 
 	LootHistoryTable_Build()
+	return entry
 end
 
 local function LootHistory_Filter()
@@ -759,23 +760,17 @@ end
 -- Session End Broadcast
 
 function MemeTracker_Broadcast_Session_End()
-	if MemeTracker_OverviewTable.in_session == true then
-		addonEcho("TX_SESSION_END#".."#");
-	else
-		echo("No Session in progress")
-	end
+	MemeTracker_Broadcast_Session_Finish("end");
 end
 
 function MemeTracker_Broadcast_Session_Cancel()
-	if MemeTracker_OverviewTable.in_session == true then
-		addonEcho("TX_SESSION_CANCEL#".."#");
-	else
-		echo("No Session in progress")
-	end
+	MemeTracker_Broadcast_Session_Finish("cancel");
 end
 
-function MemeTracker_Handle_Session_End(message, sender, cancel)
+function MemeTracker_Broadcast_Session_Finish(mode)
 	if MemeTracker_OverviewTable.in_session then
+		debug("MemeTracker_Broadcast_Session_Finish mode", mode)
+
 		MemeTracker_OverviewTable.in_session = false
 
 		local vote_total = {}
@@ -795,7 +790,11 @@ function MemeTracker_Handle_Session_End(message, sender, cancel)
 		local end_type; 
 		local end_announcement
 
-		if (cancel==1) or (getn(stringList) < 1)  then
+		if (end_type == 'end') and (getn(stringList) == 0) then
+			mode = "cancel"
+		end
+
+		if mode == "cancel" then
 			end_type = 'canceled'
 			end_announcement = "Session canceled : ".. MemeTracker_OverviewTable.item_link
 		else 
@@ -804,15 +803,40 @@ function MemeTracker_Handle_Session_End(message, sender, cancel)
 		 	LootHistoryTable_AddEntry(MemeTracker_OverviewTable.item_link,sortedKeys[1])
 		 end
 
-		echo("Session " .. end_type .. " : ".. MemeTracker_OverviewTable.item_link.." - ("..MemeTracker_OverviewTable.votes.."/"
+		MemeTracker_Broadcast_Message_Echo("Session " .. end_type .. " : ".. MemeTracker_OverviewTable.item_link.." - ("..MemeTracker_OverviewTable.votes.."/"
 		..MemeTracker_OverviewTable.votes_needed..") "..table.concat( MemeTracker_OverviewTable.voters, ", " ))
 		
 		if getn(stringList) > 0 then
-			echo(table.concat(stringList, ", "))
+			MemeTracker_Broadcast_Message_Echo(table.concat(stringList, ", "))
 		end
 
 		leaderRaidEcho(end_announcement)
 
+		addonEcho("TX_SESSION_FINISH#"..mode.."#");
+
+		local sync_string = MemeTracker_SendSync_String("loothistory", v)
+		MemeTracker_Broadcast_DownloadSync_Add("loothistory", sync_string)
+
+
+		if mode = "end" then
+			local entry = LootHistoryTable_AddEntry(MemeTracker_OverviewTable.item_link,sortedKeys[1])
+			MemeTracker_Broadcast_DownloadSync_Start();
+			local sync_string = MemeTracker_SendSync_String("loothistory", entry)
+			MemeTracker_Broadcast_DownloadSync_Add("loothistory", sync_string)
+			MemeTracker_Broadcast_DownloadSync_End(false);
+		end
+
+		MemeTracker_RecipientListScrollFrame_Update()
+	else
+		echo("No Session in progress")
+	end
+end
+
+function MemeTracker_Handle_Session_Finish(message)
+	local mode = message;
+	debug("MemeTracker_Handle_Session_Finish mode", mode)
+	if MemeTracker_OverviewTable.in_session then
+		MemeTracker_OverviewTable.in_session = false
 		MemeTracker_RecipientListScrollFrame_Update()
 	end
 end
@@ -1393,8 +1417,12 @@ function MemeTracker_RecipientTable_Show()
 	getglobal("MemeTracker_AutoEnd_FontString"):Show()
 	if isLeader() then
 		getglobal("MemeTracker_SessionAutoEndCheckButton"):Enable()
+		getglobal("MemeTracker_SessionEndButton"):Show()
+		getglobal("MemeTracker_SessionCancelButton"):Show()
 	else
 		getglobal("MemeTracker_SessionAutoEndCheckButton"):Disable()
+		getglobal("MemeTracker_SessionEndButton"):Hide()
+		getglobal("MemeTracker_SessionCancelButton"):Hide()
 	end
 
 	MemeTracker_RecipientListScrollFrame_Update();
@@ -1439,13 +1467,11 @@ function MemeTracker_OnChatMsgAddon(event, prefix, msg, channel, sender)
 			elseif cmd == "TX_VOTE_ADD" then
 				MemeTracker_Handle_VoteTable_Add(message, sender)
 			elseif cmd == "TX_SESSION_START" then
-					MemeTracker_Handle_Session_Start(message, sender)
+				MemeTracker_Handle_Session_Start(message, sender)
 			elseif cmd == "TX_SESSION_AUTOCLOSE" then
-					MemeTracker_Handle_AutoClose(message, sender)
-			elseif cmd == "TX_SESSION_END" then
-					MemeTracker_Handle_Session_End(message, sender, 0)
-			elseif cmd == "TX_SESSION_CANCEL" then
-				MemeTracker_Handle_Session_End(message, sender, 1)	
+				MemeTracker_Handle_AutoClose(message, sender)
+			elseif cmd == "TX_SESSION_FINISH" then
+				MemeTracker_Handle_Session_Finish(message, sender)
 			elseif cmd == "TX_UPLOADSYNC_REQUEST" then
 				MemeTracker_Handle_UploadSync_Request(message, sender)
 			elseif cmd == "TX_UPLOADSYNC_START" then

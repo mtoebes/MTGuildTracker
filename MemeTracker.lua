@@ -21,7 +21,7 @@ loot_sort_field = "time_stamp";
 
 version_request_in_progress = false
 
-debug_enabled = true
+debug_enabled = false
 
 local session_queue = {}
 local MT_MESSAGE_PREFIX		= "MemeTracker"
@@ -505,7 +505,6 @@ local function LootHistoryTable_Build()
 		MemeTracker_LootHistoryTable[index].date         = MemeTrackerDB[index].date
 		MemeTracker_LootHistoryTable[index].raid_id      = MemeTrackerDB[index].raid_id
 		MemeTracker_LootHistoryTable[index].raid_name    = MemeTrackerDB[index].raid_name
-		MemeTracker_LootHistoryTable[index].boss_name    = MemeTrackerDB[index].boss_name
 		MemeTracker_LootHistoryTable[index].item_name    = item_name
 		MemeTracker_LootHistoryTable[index].item_id      = item_id
 		MemeTracker_LootHistoryTable[index].item_quality = item_quality
@@ -778,13 +777,12 @@ function MemeTracker_SendSync_String(table_name, entry)
 
 	if entry and table_name == "loothistory" then
 		local lootHistory_entry = MemeTracker_LootHistoryTable[index]
-		sync_string = string.format("%s/%s/%s/%s/%s/%s/%s/%s/%s/%s/%s", 
+		sync_string = string.format("%s/%s/%s/%s/%s/%s/%s/%s/%s/%s", 
 			table_name,
 			entry.date,
 			entry.time_stamp,
 			entry.raid_id,
 			entry.raid_name,
-			entry.boss_name,
 			entry.item_name,
 			entry.item_id,
 			entry.item_quality,
@@ -810,14 +808,13 @@ function MemeTracker_ReadSync_Entry(table_name, fields_string)
 
 	entry = {}
 	if table_name == "loothistory" then
-		local _, _, date, time_stamp, raid_id, raid_name, boss_name, item_name, item_id, item_quality,  player_name, player_class =
-		string.find(fields_string, "(.*)/(.*)/(.*)/(.*)/(.*)/(.*)/(.*)/(.*)/(.*)/(.*)");
+		local _, _, date, time_stamp, raid_id, raid_name, item_name, item_id, item_quality,  player_name, player_class =
+		string.find(fields_string, "(.*)/(.*)/(.*)/(.*)/(.*)/(.*)/(.*)/(.*)/(.*)");
 
 		entry["date"] = date
 		entry["time_stamp"] = time_stamp
 		entry["raid_id"] = raid_id
 		entry["raid_name"] = raid_name
-		entry["boss_name"] = boss_name
 		entry["item_name"] = item_name
 		entry["item_id"] = item_id
 		entry["item_quality"] = item_quality

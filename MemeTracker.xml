@@ -513,8 +513,6 @@
 						<DisabledCheckedTexture file="Interface\Buttons\UI-CheckBox-Check-Disabled" />
 						<Scripts>
 							<OnClick>MemeTracker_SessionAutoEndCheckButton_OnClick();</OnClick>
-							<OnLoad>MemeTracker_SessionAutoEndCheckButton_OnLoad();</OnLoad>
-							<OnShow>MemeTracker_SessionAutoEndCheckButton_OnEnter();</OnShow>
 							<OnEnter>MemeTracker_SessionAutoEndCheckButton_OnEnter();</OnEnter>
 						</Scripts>
 					</CheckButton>

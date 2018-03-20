@@ -36,6 +36,34 @@ local DEFAULT_VOTES_NEEDED = 5
 
 local string_gmatch = lua51 and string.gmatch or string.gfind
 
+TimeSinceLastUpdate=0
+TimeSinceLastSessionStart = 0
+local version_request_time_limit = 2;
+function MemeTracker_OnUpdate(elapsed)
+	TimeSinceLastUpdate = TimeSinceLastUpdate + elapsed; 
+	TimeSinceLastSessionStart = TimeSinceLastSessionStart + elapsed
+
+	if version_request_in_progress then
+		--debug("TimeSinceLastUpdate", TimeSinceLastUpdate)
+  		if (TimeSinceLastUpdate > version_request_time_limit) then
+  			MemeTracker_Version_End();
+   			TimeSinceLastUpdate = 0;
+   		end
+	else
+  		TimeSinceLastUpdate = 0;
+	end
+
+	if not MemeTracker_OverviewTable.in_session and getn(session_queue) > 0 then
+		if TimeSinceLastSessionStart > 1 then
+				item_link = table.remove(session_queue, 1)
+				MemeTracker_Broadcast_Session_Start(item_link)
+				TimeSinceLastSessionStart = 0
+		end
+	else
+		TimeSinceLastSessionStart = 0
+	end
+end
+
 local function isLeader() 
  	return IsRaidLeader() 
 end 
@@ -72,6 +100,16 @@ local function getKeysSortedByValue(tbl, sortFunction)
   return keys
 end
 
+local function echo_leader(tag, msg)
+	if isLeader() then
+		if msg then
+			DEFAULT_CHAT_FRAME:AddMessage(string.format("|cffa335ee<MemeTracker> |r"..tag.." : "..msg));
+		else
+			DEFAULT_CHAT_FRAME:AddMessage(string.format("|cffa335ee<MemeTracker> |r"..tag));
+		end
+	end
+end
+
 local function echo(tag, msg)
 	if msg then
 		DEFAULT_CHAT_FRAME:AddMessage(string.format("|cffa335ee<MemeTracker> |r"..tag.." : "..msg));
@@ -103,6 +141,12 @@ local function addonEcho(msg)
 	SendAddonMessage(MT_MESSAGE_PREFIX, msg, "RAID")
 end
 
+local function addonEcho_leader(msg)
+	if isLeader() then
+		addonEcho(msg)
+	end
+end
+
 local function rwEcho(msg)
 	SendChatMessage(msg, WARN_CHANNEL);
 end
@@ -121,71 +165,51 @@ local function leaderRaidEcho(msg)
 	end
 end
 
--- TODO 
+-- String/List helpers 
 
 local function firstToUpper(name)
     return string.gsub(name, "^%l",string.upper)
 end
 
-local function RecipientTable_GetPlayerIndex(player_name)
-   local index = 1;
-   while MemeTracker_RecipientTable[index] do
-           if ( player_name == MemeTracker_RecipientTable[index].player_name ) then
-                   return index;
-           end
-           index = index + 1;
-   end
-   return nil;
+local function String_Starts_With(full_string, partical_string)
+   return string.sub(string.lower(full_string),1,string.len(partical_string))==string.lower(partical_string)
 end
 
-local function MemeTracker_ParseItemLink(item_link)
+local function Parse_String_List(string_list)
+	local list = {}
+	for name in string_gmatch(string_list, "[^,%s]+") do
+		table.insert(list, name)
+	end
+	return list
+end
+
+local function parseItemLink(item_link)
 	local _,_,item_quality, item_id, item_name= string.find(item_link , ".*c(%w+).*item:(.*):.*%[(.*)%]")
 	return item_link, item_quality, item_id, item_name
 end
 
-local function RecipientTable_Clear()
-	MemeTracker_RecipientTable = {}
+local function List_Contains(list, target_value)
+	for index, value in ipairs(list) do
+		local start, _ = string.find(target_value, value ) 
+		if String_Starts_With(target_value, value) then
+			return true
+		end
+	end
+	return false
 end
 
-local function VoteTable_Clear()
-	my_vote = nil
-	MemeTracker_VoteTable = {}
-end
+-- Session functions
 
 local function Session_Clear()
-	RecipientTable_Clear()
-	VoteTable_Clear()
-end
+	my_vote = nil
+	MemeTracker_RecipientTable = {}
+	MemeTracker_VoteTable = {}
 
-local function RecipientTable_Add(player_name, item_link)
-	local index = RecipientTable_GetPlayerIndex(player_name)
-	player_name = firstToUpper(player_name)
+	FauxScrollFrame_SetOffset(MemeTracker_RecipientListScrollFrame, 0);
+	getglobal("MemeTracker_RecipientListScrollFrameScrollBar"):SetValue(0);
 
-	if (index == nil) then
-		index = getn(MemeTracker_RecipientTable) + 1
-		MemeTracker_RecipientTable[index] = {}
-		MemeTracker_RecipientTable[index].voters = {}
-	end
 
-	local item_link, item_quality, item_id, item_name = MemeTracker_ParseItemLink(item_link)
-	MemeTracker_RecipientTable[index].player_class = getPlayerClass(player_name)
-	MemeTracker_RecipientTable[index].player_name = player_name
-	MemeTracker_RecipientTable[index].item_id = item_id
-	MemeTracker_RecipientTable[index].item_link = item_link
-	MemeTracker_RecipientTable[index].item_name = item_name
-
-	local attendance = MemeTracker_Attendance[player_name]
-
-	if attendance then
-		to_date = 	 MemeTracker_Attendance[player_name].to_date
-		last_5 = MemeTracker_Attendance[player_name].last_5
-	else 
-		to_date = 0
-		last_5 = 0
-	end
-
-	MemeTracker_RecipientTable[index].attendance_to_date = to_date.."%"
-	MemeTracker_RecipientTable[index].attendance_last_5 = last_5.."%"
+	MemeTracker_RecipientListScrollFrame_Update()
 end
 
 local function VoteTable_Tally()
@@ -207,13 +231,11 @@ local function VoteTable_Add(player_name, sender)
 	MemeTracker_VoteTable[sender] = player_name
 end
 
-local function MemeTracker_IsAutoClose()
-	return getglobal("MemeTracker_SessionAutoEndCheckButton"):GetChecked() == 1
-end
+-- Recipient Table
 
 local function Session_CanEnd()
-
-	if MemeTracker_OverviewTable.in_session == true and MemeTracker_IsAutoClose() == true then
+	local is_auto_close = (getglobal("MemeTracker_SessionAutoEndCheckButton"):GetChecked() == 1)
+	if MemeTracker_OverviewTable.in_session == true and is_auto_close then
 		vote_total = {}
 		votes = 0
 
@@ -254,6 +276,30 @@ local function Session_CanEnd()
 	end
 end
 
+local function RecipientTable_Sort_Function(sort_direction, sort_field, a, b)
+	if sort_field then
+		if sort_direction == "ascending" then
+			if ( a[sort_field] == b[sort_field]) then
+				return a.player_name < b.player_name
+			else
+				return a[sort_field] < b[sort_field]
+			end
+		else
+			if ( a[sort_field] == b[sort_field]) then
+				return a.player_name > b.player_name
+			else
+				return a[sort_field] > b[sort_field]
+			end
+		end
+	else 
+		return a.player_name < b.player_name
+	end
+end 
+
+local function RecipientTable_Sort()
+	table.sort(MemeTracker_RecipientTable, function(a,b) return RecipientTable_Sort_Function(sort_direction, sort_field, a, b) end)
+end
+
 local function RecipientTable_UpdateVotes()
 
 	local tally_table = VoteTable_Tally()
@@ -285,80 +331,46 @@ local function RecipientTable_UpdateVotes()
 	end
 end
 
-TimeSinceLastUpdate=0
-TimeSinceLastSessionStart = 0
-local version_request_time_limit = 2;
-function MemeTracker_OnUpdate(elapsed)
-	TimeSinceLastUpdate = TimeSinceLastUpdate + elapsed; 
-	TimeSinceLastSessionStart = TimeSinceLastSessionStart + elapsed
-
-	if version_request_in_progress then
-		--debug("TimeSinceLastUpdate", TimeSinceLastUpdate)
-  		if (TimeSinceLastUpdate > version_request_time_limit) then
-  			MemeTracker_Version_End();
-   			TimeSinceLastUpdate = 0;
-   		end
-	else
-  		TimeSinceLastUpdate = 0;
-	end
-
-	if not MemeTracker_OverviewTable.in_session and getn(session_queue) > 0 then
-		if TimeSinceLastSessionStart > 1 then
-				item_link = table.remove(session_queue, 1)
-				MemeTracker_Broadcast_Session_Start(item_link)
-				TimeSinceLastSessionStart = 0
+local function RecipientTable_GetPlayerIndex(player_name)
+	local index = 1;
+	while MemeTracker_RecipientTable[index] do
+		if player_name == MemeTracker_RecipientTable[index].player_name then
+			return index;
 		end
-	else
-		TimeSinceLastSessionStart = 0
+		index = index + 1;
 	end
+	return nil;
 end
 
-local function String_Starts_With(full_string, partical_string)
-   return string.sub(string.lower(full_string),1,string.len(partical_string))==string.lower(partical_string)
-end
+local function RecipientTable_Add(player_name, item_link)
+	local index = RecipientTable_GetPlayerIndex(player_name)
+	player_name = firstToUpper(player_name)
 
-local function Parse_String_List(string_list)
-	local list = {}
-	for name in string_gmatch(string_list, "[^,%s]+") do
-		table.insert(list, name)
+	if (index == nil) then
+		index = getn(MemeTracker_RecipientTable) + 1
+		MemeTracker_RecipientTable[index] = {}
+		MemeTracker_RecipientTable[index].voters = {}
 	end
-	return list
-end
 
-local function List_Contains(list, target_value)
-	for index, value in ipairs(list) do
-		local start, _ = string.find(target_value, value ) 
-		if String_Starts_With(target_value, value) then
-			return true
-		end
-	end
-	return false
-end
+	local item_link, item_quality, item_id, item_name = parseItemLink(item_link)
+	MemeTracker_RecipientTable[index].player_class = getPlayerClass(player_name)
+	MemeTracker_RecipientTable[index].player_name = player_name
+	MemeTracker_RecipientTable[index].item_id = item_id
+	MemeTracker_RecipientTable[index].item_link = item_link
+	MemeTracker_RecipientTable[index].item_name = item_name
 
--- Session Table 
+	local attendance = MemeTracker_Attendance[player_name]
 
-local function MemeTracker_RecipientTable_Sort_Function(sort_direction, sort_field, a, b)
-	if sort_field then
-		if sort_direction == "ascending" then
-			if ( a[sort_field] == b[sort_field]) then
-				return a.player_name < b.player_name
-			else
-				return a[sort_field] < b[sort_field]
-			end
-		else
-			if ( a[sort_field] == b[sort_field]) then
-				return a.player_name > b.player_name
-			else
-				return a[sort_field] > b[sort_field]
-			end
-		end
+	if attendance then
+		to_date = 	 MemeTracker_Attendance[player_name].to_date
+		last_5 = MemeTracker_Attendance[player_name].last_5
 	else 
-		return a.player_name < b.player_name
+		to_date = 0
+		last_5 = 0
 	end
-end 
 
-local function RecipientTable_Sort()
-	table.sort(MemeTracker_RecipientTable, function(a,b) return MemeTracker_RecipientTable_Sort_Function(sort_direction, sort_field, a, b) end)
+	MemeTracker_RecipientTable[index].attendance_to_date = to_date.."%"
+	MemeTracker_RecipientTable[index].attendance_last_5 = last_5.."%"
 end
 
 function MemeTracker_RecipientListScrollFrame_Update()
@@ -429,7 +441,7 @@ end
 
 -- Attendance Table 
 
-function MemeTracker_AttendanceTable_Build()
+function AttendanceTable_Build()
 	if not MemeTracker_Attendance then
 		MemeTracker_Attendance = {}
 	end
@@ -437,7 +449,7 @@ end
 
 -- Loot History 
 
-local function MemeTracker_LootHistory_Sort_Function(loot_sort_direction, loot_sort_field, a, b)
+local function LootHistory_Sort_Function(loot_sort_direction, loot_sort_field, a, b)
 
 	if loot_sort_field then
 		if loot_sort_direction == "ascending" then
@@ -458,65 +470,52 @@ local function MemeTracker_LootHistory_Sort_Function(loot_sort_direction, loot_s
 	end
 end 
 
-local function MemeTracker_LootHistory_Sort()
-	table.sort(MemeTracker_LootHistoryTable_Filtered, function(a,b) return MemeTracker_LootHistory_Sort_Function(loot_sort_direction, loot_sort_field, a, b) end)
+local function LootHistory_Sort()
+	table.sort(MemeTracker_LootHistoryTable_Filtered, function(a,b) return LootHistory_Sort_Function(loot_sort_direction, loot_sort_field, a, b) end)
 end
 
-function MemeTracker_LootHistoryTable_ListContains(target_value)
-	for index, value in ipairs(MemeTracker_LootHistoryTable) do
-		if (value.raid_id == target_value.raid_id 
-			and value.item_id == target_value.item_id
-			and value.boss_name == target_value.boss_name
-			and value.player_name == target_value.player_name) then
-			return true
-		end
-	end
-	return false
-end
-
-function MemeTracker_LootHistoryTable_Build()
+local function LootHistoryTable_Build()
 	MemeTracker_LootHistoryTable = {}
 
 	if not MemeTrackerDB then
 		MemeTrackerDB = {}
-	end 
+	end
+
 	for index in MemeTrackerDB do
-			MemeTracker_LootHistoryTable[index] = {}
-			local item_name =  MemeTrackerDB[index].item_name
-			local item_quality = MemeTrackerDB[index].item_quality
-			local item_id = MemeTrackerDB[index].item_id
+		MemeTracker_LootHistoryTable[index] = {}
+		local item_name =  MemeTrackerDB[index].item_name
+		local item_quality = MemeTrackerDB[index].item_quality
+		local item_id = MemeTrackerDB[index].item_id
 
-			if item_quality == "common" then
-				browse_rarityhexlink = MemeTracker_color_common
-			elseif item_quality == "uncommon" then
-				browse_rarityhexlink = MemeTracker_color_uncommon
-			elseif item_quality == "rare" then
-				browse_rarityhexlink = MemeTracker_color_rare
-			elseif item_quality == "epic" then
-				browse_rarityhexlink = MemeTracker_color_epic
-			elseif item_quality == "legendary" then
-				browse_rarityhexlink = MemeTracker_color_legendary
-			end
-			--building the itemlink
-			item_link = "|c" .. browse_rarityhexlink .. "|Hitem:" .. item_id .. ":0:0:0|h[" .. item_name .. "]|h|r"
-
-			MemeTracker_LootHistoryTable[index].time_stamp    = MemeTrackerDB[index].time_stamp
-			MemeTracker_LootHistoryTable[index].date         = MemeTrackerDB[index].date
-			MemeTracker_LootHistoryTable[index].raid_id      = MemeTrackerDB[index].raid_id
-			MemeTracker_LootHistoryTable[index].raid_name    = MemeTrackerDB[index].raid_name
-			MemeTracker_LootHistoryTable[index].boss_name    = MemeTrackerDB[index].boss_name
-			MemeTracker_LootHistoryTable[index].item_name    = item_name
-			MemeTracker_LootHistoryTable[index].item_id      = item_id
-			MemeTracker_LootHistoryTable[index].item_quality = item_quality
-			MemeTracker_LootHistoryTable[index].item_link    = item_link
-			MemeTracker_LootHistoryTable[index].player_name  = MemeTrackerDB[index].player_name
-			MemeTracker_LootHistoryTable[index].player_class = MemeTrackerDB[index].player_class
+		if item_quality == "common" then
+			browse_rarityhexlink = MemeTracker_color_common
+		elseif item_quality == "uncommon" then
+			browse_rarityhexlink = MemeTracker_color_uncommon
+		elseif item_quality == "rare" then
+			browse_rarityhexlink = MemeTracker_color_rare
+		elseif item_quality == "epic" then
+			browse_rarityhexlink = MemeTracker_color_epic
+		elseif item_quality == "legendary" then
+			browse_rarityhexlink = MemeTracker_color_legendary
 		end
+		--building the itemlink
+		item_link = "|c" .. browse_rarityhexlink .. "|Hitem:" .. item_id .. ":0:0:0|h[" .. item_name .. "]|h|r"
 
-		MemeTracker_LootHistoryScrollFrame_Update()
+		MemeTracker_LootHistoryTable[index].time_stamp    = MemeTrackerDB[index].time_stamp
+		MemeTracker_LootHistoryTable[index].date         = MemeTrackerDB[index].date
+		MemeTracker_LootHistoryTable[index].raid_id      = MemeTrackerDB[index].raid_id
+		MemeTracker_LootHistoryTable[index].raid_name    = MemeTrackerDB[index].raid_name
+		MemeTracker_LootHistoryTable[index].boss_name    = MemeTrackerDB[index].boss_name
+		MemeTracker_LootHistoryTable[index].item_name    = item_name
+		MemeTracker_LootHistoryTable[index].item_id      = item_id
+		MemeTracker_LootHistoryTable[index].item_quality = item_quality
+		MemeTracker_LootHistoryTable[index].item_link    = item_link
+		MemeTracker_LootHistoryTable[index].player_name  = MemeTrackerDB[index].player_name
+		MemeTracker_LootHistoryTable[index].player_class = MemeTrackerDB[index].player_class
+	end
 end
 
-function MemeTracker_LootHistory_Filter()
+local function LootHistory_Filter()
 	MemeTracker_LootHistoryTable_Filtered = {}
 	for k,v in pairs(MemeTracker_LootHistoryTable) do
 		if searchString and searchString ~= "" then
@@ -536,8 +535,8 @@ function MemeTracker_LootHistoryScrollFrame_Update()
 		MemeTracker_LootHistoryTable = {};
 	end
 
-	MemeTracker_LootHistory_Filter()
-	MemeTracker_LootHistory_Sort()
+	LootHistory_Filter()
+	LootHistory_Sort()
 
 	local maxlines = getn(MemeTracker_LootHistoryTable_Filtered)
 	local offset = FauxScrollFrame_GetOffset(MemeTracker_LootHistoryScrollFrame);
@@ -575,7 +574,6 @@ function MemeTracker_Session_Queue(item_link)
 		session_queue = {}
 	end
 
-
 	if item_link == nil or item_link=="" then
 		echo("Cannot start a session without loot")
 	elseif not (MemeTracker_OverviewTable.in_session==true) and getn(session_queue) == 0 then
@@ -597,13 +595,13 @@ function MemeTracker_Session_Dequeue(index)
 	-- body
 end
 
--- recipient Broadcast
+-- Recipient Broadcast
 
 function MemeTracker_Broadcast_RecipientTable_Add(player_name, item_link)
 	if MemeTracker_OverviewTable.in_session == true then
-			addonEcho("TX_ENTRY_ADD#".. string.format("%s/%s", player_name, item_link) .."#");
+		addonEcho_leader("TX_ENTRY_ADD#".. string.format("%s/%s", player_name, item_link) .."#");
 	else
-		echo("No session in progress")
+		echo_leader("No session in progress")
 	end	
 end
 
@@ -638,11 +636,11 @@ end
 
 function MemeTracker_Broadcast_Session_Start(item_link)
 	if MemeTracker_OverviewTable.in_session == true then
-		echo("A session for "..MemeTracker_OverviewTable.item_link.." is in progress")
+		echo_leader("A session for "..MemeTracker_OverviewTable.item_link.." is in progress")
 	elseif item_link == nil or item_link=="" then
-		echo("Cannot start a session without loot")
+		echo_leader("Cannot start a session without loot")
 	else
-		addonEcho("TX_SESSION_START#"..item_link.."#");
+		addonEcho_leader("TX_SESSION_START#"..item_link.."#");
 	end
 end
 
@@ -656,7 +654,7 @@ function MemeTracker_Handle_Session_Start(message, sender)
 		votes_needed = tonumber(votes_needed)
 	end
 
-	local item_link, item_quality, item_id, item_name = MemeTracker_ParseItemLink(item_link)
+	local item_link, item_quality, item_id, item_name = parseItemLink(item_link)
 
 	MemeTracker_OverviewTable = {}
 	MemeTracker_OverviewTable.in_session = true	
@@ -667,10 +665,9 @@ function MemeTracker_Handle_Session_Start(message, sender)
 	MemeTracker_OverviewTable.votes = 0
 	MemeTracker_OverviewTable.voters = ""
 
-	echo("Session started : ".. item_link)
-
 	Session_Clear()
-	MemeTracker_RecipientListScrollFrame_Update()
+
+	echo("Session started : ".. item_link)
 
 	sample_itemlink = "|c" .. MemeTracker_color_common .. "|Hitem:" .. 8952 .. ":0:0:0|h[" .. "Your Current Item" .. "]|h|r"
 
@@ -697,38 +694,45 @@ function MemeTracker_Broadcast_Session_Cancel()
 end
 
 function MemeTracker_Handle_Session_End(message, sender, cancel)
-	MemeTracker_OverviewTable.in_session = false	
+	if MemeTracker_OverviewTable.in_session then
+		MemeTracker_OverviewTable.in_session = false
 
-	local vote_total = {}
-	local votes = 0
+		local vote_total = {}
+		local votes = 0
 
-	for index, recipient in MemeTracker_RecipientTable do
-		if recipient.votes and (recipient.votes > 0) then
-			votes = votes +  recipient.votes
-			vote_total[recipient.player_name] = recipient.votes
+		for index, recipient in MemeTracker_RecipientTable do
+			if recipient.votes and (recipient.votes > 0) then
+				votes = votes +  recipient.votes
+				vote_total[recipient.player_name] = recipient.votes
+			end
 		end
-	end
 
-	local sortedKeys = getKeysSortedByValue(vote_total, function(a, b) return a > b end)
-	stringList = {}
-	for i,n in ipairs(sortedKeys) do table.insert(stringList, "#"..i.." ("..vote_total[n]..")"..": "..n) end
+		local sortedKeys = getKeysSortedByValue(vote_total, function(a, b) return a > b end)
+		local stringList = {}
+		for i,n in ipairs(sortedKeys) do table.insert(stringList, "#"..i.." ("..vote_total[n]..")"..": "..n) end
 
-	if (cancel==1) or (getn(stringList) < 1)  then
-		echo("Session canceled : ".. MemeTracker_OverviewTable.item_link.." - ("..MemeTracker_OverviewTable.votes.."/"
+		local end_type; 
+		local end_announcement
+
+		if (cancel==1) or (getn(stringList) < 1)  then
+			end_type = 'canceled'
+			end_announcement = "Session canceled : ".. MemeTracker_OverviewTable.item_link
+		else 
+		 	end_type = 'ended'
+		 	end_announcement = "Session ended : ".. MemeTracker_OverviewTable.item_link.." - Congratulations "..sortedKeys[1].."!"
+		 end
+
+		echo("Session " .. end_type .. " : ".. MemeTracker_OverviewTable.item_link.." - ("..MemeTracker_OverviewTable.votes.."/"
 		..MemeTracker_OverviewTable.votes_needed..") "..table.concat( MemeTracker_OverviewTable.voters, ", " ))
-
+		
 		if getn(stringList) > 0 then
 			echo(table.concat(stringList, ", "))
 		end
-		leaderRaidEcho("Session canceled : ".. MemeTracker_OverviewTable.item_link)
-	else
-		echo("Session ended : ".. MemeTracker_OverviewTable.item_link.." - ("..MemeTracker_OverviewTable.votes.."/"
-		..MemeTracker_OverviewTable.votes_needed..") "..table.concat( MemeTracker_OverviewTable.voters, ", " ))
-		echo(table.concat(stringList, ", "))
 
-		leaderRaidEcho("Session ended : ".. MemeTracker_OverviewTable.item_link.." - Congratulations "..sortedKeys[1].."!")
+		leaderRaidEcho(end_announcement)
+
+		MemeTracker_RecipientListScrollFrame_Update()
 	end
-	MemeTracker_RecipientListScrollFrame_Update()
 end
 
 -- AutoEnd UI Broadcast
@@ -874,7 +878,7 @@ function MemeTracker_Save_Sync()
 	end
 
 	MemeTracker_LootHistoryTable_Temp = {}
-	MemeTracker_LootHistoryTable_Build()
+	LootHistoryTable_Build()
 
 	MemeTracker_Attendance = {}
 
@@ -883,7 +887,6 @@ function MemeTracker_Save_Sync()
 	end
 
 	MemeTracker_Attendance_Temp = {}
-	MemeTracker_AttendanceTable_Build();
 
 	MemeTracker_LastUpdate = {}
 	MemeTracker_LastUpdate["time_stamp"] = MemeTracker_LastUpdate_Temp["time_stamp"]
@@ -894,19 +897,16 @@ function MemeTracker_Save_Sync()
 	MemeTracker_LootHistoryScrollFrame_Update();
 end
 
+-- Version Broadcast
+
 function MemeTracker_Version_Start()
 	if isLeader() and not version_request_in_progress then
 		response_versions = {}
-		if MemeTracker_LastUpdate ~= nil and  MemeTracker_LastUpdate["time_stamp"] ~= nil then
-			response_versions[UnitName("player")] = MemeTracker_LastUpdate["time_stamp"]
-		end
 		getglobal("MemeTracker_LootHistorySyncButton"):Disable()
 		version_request_in_progress = true
 		MemeTracker_Broadcast_Version_Request()
 	end
 end
-
--- Version Broadcast
 
 function MemeTracker_Broadcast_Version_Request()
 	if isLeader() then
@@ -917,20 +917,15 @@ end
 
 function MemeTracker_Handle_Version_Request(message, sender)
 	debug("MemeTracker_Handle_Version_Request")
-	if not isLeader() then
-		debug("MemeTracker_Handle_Version_Request")
-		MemeTracker_Broadcast_Version_Response()
-	end
+	MemeTracker_Broadcast_Version_Response()
 end
 
 function MemeTracker_Broadcast_Version_Response()
-	if not isLeader() then
+	debug("MemeTracker_Broadcast_Version_Response")
+	if MemeTracker_LastUpdate ~= nil and MemeTracker_LastUpdate["time_stamp"] ~= nil then
 		debug("MemeTracker_Broadcast_Version_Response")
-		if MemeTracker_LastUpdate ~= nil and MemeTracker_LastUpdate["time_stamp"] ~= nil then
-			debug("MemeTracker_Broadcast_Version_Response")
-			addonEcho("TX_VERSION_RESPONSE#"..MemeTracker_LastUpdate["time_stamp"].."#");
-		end
-	end
+		addonEcho("TX_VERSION_RESPONSE#"..MemeTracker_LastUpdate["time_stamp"].."#");
+	end	
 end
 
 function MemeTracker_Handle_Version_Response(message, sender)
@@ -967,7 +962,6 @@ function MemeTracker_Version_End()
 		MemeTracker_Send_DownloadSync();
 		MemeTracker_Broadcast_DownloadSync_End();
 	end
-	--body
 end
 
 -- Upload Sync
@@ -975,11 +969,9 @@ end
 function MemeTracker_Broadcast_UploadSync_Request(player_name)
 	if isLeader() and not upload_sync_in_progress then
 		debug("MemeTracker_Broadcast_UploadSync_Request")
-		uploaders = 0
 		MemeTracker_LootHistoryTable_Temp = {}
 		MemeTracker_Attendance_Temp = {}
 		MemeTracker_LastUpdate_Temp = {}
-		upload_sync_in_progress = true;
 		getglobal("MemeTracker_LootHistorySyncButton"):Disable()
 		addonEcho("TX_UPLOADSYNC_REQUEST#"..player_name.."#");
 	end
@@ -1002,9 +994,9 @@ function MemeTracker_Broadcast_UploadSync_Start()
 end
 
 function MemeTracker_Handle_UploadSync_Start(message, sender)
-	if isLeader() and upload_sync_in_progress then
+	if isLeader() and not upload_sync_in_progress then
+		upload_sync_in_progress = true
 		debug("MemeTracker_Handle_UploadSync_Start");
-		uploaders = uploaders + 1
 	end
 end
 
@@ -1035,19 +1027,15 @@ end
 
 function MemeTracker_Handle_UploadSync_End(message, sender)
 	if isLeader() and upload_sync_in_progress then
-		debug("MemeTracker_Handle_UploadSync_End");
-		uploaders = uploaders - 1
-		if (uploaders <= 0) then
-			upload_sync_in_progress = false
+		upload_sync_in_progress = false
 
-			debug("MemeTracker_Handle_UploadSync_End", "done")
+		debug("MemeTracker_Handle_UploadSync_End", "done")
 
-			MemeTracker_Save_Sync()
+		MemeTracker_Save_Sync()
 
-			MemeTracker_Broadcast_DownloadSync_Start();
-			MemeTracker_Send_DownloadSync();
-			MemeTracker_Broadcast_DownloadSync_End();
-		end
+		MemeTracker_Broadcast_DownloadSync_Start();
+		MemeTracker_Send_DownloadSync();
+		MemeTracker_Broadcast_DownloadSync_End();
 	end
 end
 
@@ -1066,7 +1054,6 @@ function MemeTracker_Handle_DownloadSync_Start(message, sender)
 	if not isLeader() and not download_sync_in_progress then
 		debug("MemeTracker_Handle_DownloadSync_Start");
 		download_sync_in_progress = true;
-		getglobal("MemeTracker_LootHistorySyncButton"):Disable()
 		MemeTracker_LootHistoryTable_Temp = {}
 		MemeTracker_Attendance_Temp = {}
 		MemeTracker_LastUpdate_Temp = {}
@@ -1252,8 +1239,6 @@ function MemeTracker_CouncilSession_Sort_OnClick(field)
 end
 
 function MemeTracker_LootHistoryTabButton_OnClick()
-	local tally_table = VoteTable_Tally()
-
 	local player_name_list = {}
 	for index, entry in MemeTracker_RecipientTable do
 		table.insert(player_name_list, entry.player_name)
@@ -1262,7 +1247,7 @@ function MemeTracker_LootHistoryTabButton_OnClick()
 	player_name_string = table.concat(player_name_list, ", ");
 	if (getn(player_name_list) > 0) then
 		MemeTracker_LootHistorySearchBox:SetText(player_name_string)
-		MemeTracker_Search_Update()
+		MemeTracker_LootHistory_SearchUpdate()
 	end
 	MemeTracker_LootHistoryTable_Show()
 end 
@@ -1272,10 +1257,10 @@ function MemeTracker_LootSessionTabButton_OnClick()
 end
 
 function MemeTracker_LootHistorySearchBox_OnEnterPressed()
-	MemeTracker_Search_Update();
+	MemeTracker_LootHistory_SearchUpdate();
 end
 
-function MemeTracker_Search_Update()
+function MemeTracker_LootHistory_SearchUpdate()
 
 	local msg = MemeTracker_LootHistorySearchBox:GetText();
 
@@ -1286,26 +1271,13 @@ function MemeTracker_Search_Update()
 	end
 
 	FauxScrollFrame_SetOffset(MemeTracker_LootHistoryScrollFrame, 0);
-
 	getglobal("MemeTracker_LootHistoryScrollFrameScrollBar"):SetValue(0);
 
 	MemeTracker_LootHistoryScrollFrame_Update()
 end 
 
-function MemeTracker_SessionAutoEndCheckButton_OnLoad()
-	getglobal("MemeTracker_SessionAutoEndCheckButton"):SetChecked(true)
-
-	if isLeader() then
-		getglobal("MemeTracker_SessionAutoEndCheckButton"):Enable()
-	else
-		getglobal("MemeTracker_SessionAutoEndCheckButton"):Disable()
-	end
-end
-
 function MemeTracker_SessionAutoEndCheckButton_OnEnter()
-	if isLeader() then
-		getglobal("MemeTracker_SessionAutoEndCheckButton"):Enable()
-	else
+	if not isLeader() then
 		getglobal("MemeTracker_SessionAutoEndCheckButton"):Disable()
 	end
 end
@@ -1321,6 +1293,12 @@ end
 
 function MemeTracker_RecipientTable_Show()
 	getglobal("MemeTracker_AutoEnd_FontString"):Show()
+	if isLeader() then
+		getglobal("MemeTracker_SessionAutoEndCheckButton"):Enable()
+	else
+		getglobal("MemeTracker_SessionAutoEndCheckButton"):Disable()
+	end
+
 	MemeTracker_RecipientListScrollFrame_Update();
 	MemeTracker_LootSessionFrame:Show();
 	MemeTracker_LootHistoryFrame:Hide();
@@ -1330,9 +1308,7 @@ function MemeTracker_LootHistoryTable_Show()
 	getglobal("MemeTracker_AutoEnd_FontString"):Hide()
 	if isLeader() then
 		getglobal("MemeTracker_LootHistorySyncButton"):Show()
-		getglobal("MemeTracker_LootHistorySyncButton"):Enable()
 	else
-		getglobal("MemeTracker_LootHistorySyncButton"):Disable()
 		getglobal("MemeTracker_LootHistorySyncButton"):Hide()
 	end
 
@@ -1401,6 +1377,7 @@ function MemeTracker_SlashCommand(msg)
 			MemeTracker_BrowseFrame:Hide()
 			MemeTracker_BrowseFrame:Hide()
 		else
+			MemeTracker_RecipientTable_Show()
 			ShowUIPanel(MemeTracker_BrowseFrame, 1)
 		end
 	else
@@ -1477,7 +1454,7 @@ local function getCommand(message)
 end 
 
 function MemeTracker_OnRaidChat(event, message, sender)
-	--if isLeader() then
+	if isLeader() then
 		if not message then
 			return
 		end	
@@ -1493,7 +1470,7 @@ function MemeTracker_OnRaidChat(event, message, sender)
 		if item_link then
 			MemeTracker_Broadcast_RecipientTable_Add(sender, item_link)
 		end
-	--end
+	end
 end
 
 function MemeTracker_OnEvent(event, arg1, arg2, arg3, arg4, arg5)
@@ -1523,8 +1500,8 @@ function MemeTracker_OnLoad()
 end
 
 function MemeTracker_Initialize()
-	MemeTracker_LootHistoryTable_Build();
-	MemeTracker_AttendanceTable_Build();
+	LootHistoryTable_Build();
+	AttendanceTable_Build();
 end
 
 SlashCmdList["MemeTracker"] = MemeTracker_SlashCommand;

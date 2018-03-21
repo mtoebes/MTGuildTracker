@@ -192,25 +192,57 @@ local function Parse_String_List(string_list)
 	return list
 end
 
-local function parseItemLink(item_link)
-
-	local _,_,item_link, rarityhexlink, item_id, item_name= string.find(item_link , "(|c(%w+).*item:(%d+):.*%[(.*)%]|h|r)")
-
-	if rarityhexlink == MemeTracker_color_common then
+local function getItemLinkQuality(item_color) 
+	if item_color == MemeTracker_color_common then
 		item_quality = "common"
-	elseif rarityhexlink == MemeTracker_color_uncommon then
+	elseif item_color == MemeTracker_color_uncommon then
 		item_quality = "uncommon"
-	elseif rarityhexlink == MemeTracker_color_rare then
+	elseif item_color == MemeTracker_color_rare then
 		item_quality = "common"
-	elseif rarityhexlink == MemeTracker_color_epic then
+	elseif item_color == MemeTracker_color_epic then
 		item_quality = "common"
-	elseif rarityhexlink == MemeTracker_color_legendary then
+	elseif item_color == MemeTracker_color_legendary then
 		item_quality = "legendary"
 	else
-		item_quality = "junk"
+		item_quality = "common"
+	end
+	return item_quality
+end
+
+local function getItemLinkColor(item_quality)
+	if item_quality == "common" then
+		item_color = MemeTracker_color_common
+	elseif item_quality == "uncommon" then
+		item_color = MemeTracker_color_uncommon
+	elseif item_quality == "rare" then
+		item_color = MemeTracker_color_rare
+	elseif item_quality == "epic" then
+		item_color = MemeTracker_color_epic
+	elseif item_quality == "legendary" then
+		item_color = MemeTracker_color_legendary
+	else 
+		item_color = MemeTracker_color_common
+	end
+	return item_color
+end
+
+local function parseItemLink(item_link)
+
+	local _,_,item_link, item_color, item_id, item_name = string.find(item_link , "(|c(%w+).*item:(%d+):.*%[(.*)%]|h|r)")
+
+	local item_quality = getItemLinkQuality(item_color)
+
+	return item_link, item_quality, item_id, item_name, item_color
+end
+
+local function buildItemLink(item_id, item_name, item_color, item_quality)
+	if item_color == nil then
+		item_color = getItemLinkColor(item_quality)
 	end
 
-	return item_link, item_quality, item_id, item_name, rarityhexlink
+	local item_link = "|c" .. item_color .. "|Hitem:" .. item_id .. ":0:0:0|h[" .. item_name .. "]|h|r"
+
+	return item_link
 end
 
 local function List_Contains(list, target_value)
@@ -537,7 +569,13 @@ local function LootHistoryTable_Build()
 		local item_link = MemeTrackerDB[index].item_link
 		local item_name =  MemeTrackerDB[index].item_name
 		local item_quality = MemeTrackerDB[index].item_quality
+		local item_color = MemeTrackerDB[index].item_color
 		local item_id = MemeTrackerDB[index].item_id
+
+
+		if item_link == nil then
+			item_link = buildItemLink(item_id,  item_name, item_color, item_quality)
+		end
 
 		MemeTracker_LootHistoryTable[index].time_stamp    = MemeTrackerDB[index].time_stamp
 		MemeTracker_LootHistoryTable[index].date         = MemeTrackerDB[index].date
@@ -573,12 +611,12 @@ local function LootHistoryTable_AddEntry(item_link, player_name)
 	entry = {}
 	entry["player_name"] = player_name
 	entry["date"] = date
-	entry["item_quality"] = item_quality
-	entry["item_link"] = item_link
 	entry["raid_name"] = zone_name
-	entry["item_name"] = item_name
 	entry["time_stamp"] = time_stamp
 	entry["player_class"] = localized_class
+	entry["item_quality"] = item_quality
+	entry["item_link"] = item_link
+	entry["item_name"] = item_name
 	entry["item_id"] = item_id
 
 	table.insert(MemeTrackerDB, entry)
@@ -780,7 +818,7 @@ function MemeTracker_Handle_Session_Start(message, sender)
 
 	echo("Session started : ".. item_message)
 
-	sample_itemlink = "|c" .. MemeTracker_color_common .. "|Hitem:" .. 8952 .. ":0:0:0|h[" .. "Your Current Item" .. "]|h|r"
+	local sample_itemlink = buildItemLink(8952, "Your Current Item", MemeTracker_color_common, nil) 
 
 	leaderRaidEcho("Session started : ".. item_message)
 	leaderRaidEcho("To be considered for the item type in raid chat \"mt "..sample_itemlink.."\"")

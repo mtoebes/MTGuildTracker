@@ -64,8 +64,24 @@ function MemeTracker_OnUpdate(elapsed)
 	end
 end
 
-local function isLeader()
- 	return IsRaidLeader()
+function isLeader()
+	local lootmethod, masterlooterPartyID, _ = GetLootMethod()
+	if lootmethod == "master" then
+		return masterlooterPartyID == 0
+	else 
+		return IsRaidLeader()
+	end 
+end
+
+local function isOfficer()
+	local guild_name, guild_rank, _ = GetGuildInfo("player")
+	if isLeader() then
+		return true
+	elseif guild_name == "meme team" and (guild_rank == "Class Oracle" or guild_rank == "Officer" or guild_rank == "Suprememe Leadr" or guild_rank == "Loot Council") then
+		return true
+	else
+		return false
+	end
 end
 
 local function getKeysSortedByKey(tbl)
@@ -121,23 +137,14 @@ end
 local function debug(tag, msg)
 	if debug_enabled then
 		if msg then
-			DEFAULT_CHAT_FRAME:AddMessage(string.format("|cffa335ee<MemeTracker> |r"..tag.." : "..msg));
+			DEFAULT_CHAT_FRAME:AddMessage(string.format("|cffEE3580<MemeTracker Debug> |r"..tag.." : "..msg));
 		else
-			DEFAULT_CHAT_FRAME:AddMessage(string.format("|cffa335ee<MemeTracker> |r"..tag));
+			DEFAULT_CHAT_FRAME:AddMessage(string.format("|cffEE3580<MemeTracker Debug> |r"..tag));
 		end
 	end
 end
 
-local function is_officer()
-	guild_name, guild_rank, _ = GetGuildInfo("player")
-	if isLeader then
-		return true
-	elseif guild_name == "meme team" and (guild_rank == "Class Oracle" or guild_rank == "Officer" or guild_rank == "Suprememe Leadr" or guild_rank == "Loot Council") then
-		return true
-	else
-		return false
-	end
-end
+
 
 local function addonEcho(msg)
 	SendAddonMessage(MT_MESSAGE_PREFIX, msg, "RAID")
@@ -410,7 +417,7 @@ function MemeTracker_RecipientListScrollFrame_Update()
 
 	getglobal("MemeTracker_OverviewButtonTextItemName"):SetText(MemeTracker_OverviewTable.item_link)
 
-	if is_officer() or isLeader() then
+	if isOfficer() or isLeader() then
 		getglobal("MemeTracker_OverviewButtonTextVotes"):Show()
 		getglobal("MemeTracker_OverviewButtonTextVoters"):Show()
 
@@ -449,7 +456,7 @@ function MemeTracker_RecipientListScrollFrame_Update()
 			getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerAttendanceToDate"):SetText(recipient.attendance_to_date)
 			getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerAttendanceLast5"):SetText(recipient.attendance_last_5)
 
-			if is_officer() or isLeader() then
+			if isOfficer() or isLeader() then
 				getglobal("MemeTracker_RecipientListVoteBox"..line):Show()
 				getglobal("MemeTracker_RecipientListItem"..line.."TextVotes"):Show()
 				getglobal("MemeTracker_RecipientListItem"..line.."TextVoters"):Show()
@@ -672,12 +679,14 @@ function MemeTracker_Session_Dequeue(index)
 end
 
 function MemeTracker_Broadcast_Message_Echo(message)
+	debug("MemeTracker_Broadcast_Message_Echo message", message)
 	if message then
 		addonEcho_leader("TX_MESSAGE_ECHO#".. message .."#");
 	end
 end
 
 function MemeTracker_Handle_Message_Echo(message, sender)
+debug("MemeTracker_Handle_Message_Echo message", message)
 	echo(message)
 end
 
@@ -826,7 +835,9 @@ function MemeTracker_Broadcast_Session_Finish(mode)
 		..MemeTracker_OverviewTable.votes_needed..") "..table.concat( MemeTracker_OverviewTable.voters, ", " ))
 
 		if getn(stringList) > 0 then
-			MemeTracker_Broadcast_Message_Echo(table.concat(stringList, ", "))
+			local summary_string = table.concat(stringList, ", ")
+			debug("MemeTracker_Broadcast_Session_Finish summary_string", summary_string)
+			MemeTracker_Broadcast_Message_Echo(summary_string)
 		end
 
 		leaderRaidEcho(end_announcement)
@@ -1087,7 +1098,7 @@ function MemeTracker_Version_End()
 		MemeTracker_Broadcast_DownloadSync_Start();
 		MemeTracker_Send_DownloadSync();
 		MemeTracker_Broadcast_DownloadSync_End(true);
-		echo("Sync Completed")
+		MemeTracker_Broadcast_Message_Echo("Sync Completed")
 	end
 end
 
@@ -1168,7 +1179,7 @@ function MemeTracker_Handle_UploadSync_End(message, sender)
 		MemeTracker_Broadcast_DownloadSync_Start();
 		MemeTracker_Send_DownloadSync();
 		MemeTracker_Broadcast_DownloadSync_End(true);
-		echo("Sync Completed")
+		MemeTracker_Broadcast_Message_Echo("Sync Completed")
 	end
 end
 
@@ -1463,17 +1474,18 @@ end
 function MemeTracker_OnChatMsgAddon(event, prefix, msg, channel, sender)
 	if (prefix == MT_MESSAGE_PREFIX) then
 			--	Split incoming message in Command, Payload (message) and Recipient
-		local _, _, cmd, message, recipient = string.find(msg, "([^#]*)#([^#]*)#([^#]*)")
+		debug("MemeTracker_OnChatMsgAddon msg", msg)
+		local _, _, cmd, message, recipient = string.find(msg, "([^#]*)#(.*)#([^#]*)")
 
 		if not cmd then
-			return	-- cmd is mandatory, remaining parameters are optionel.
+			return	-- cmd is mandatory, remaining parameters are optional.
 		end
 
 		if not message then
 			message = ""
 		end
 
-		debug(cmd, message)
+		debug("MemeTracker_OnChatMsgAddon" .. cmd, message)
 		if cmd == "TX_ENTRY_ADD" then
 			MemeTracker_Handle_RecipientTable_Add(message, sender)
 		elseif cmd == "TX_ENTRY_REMOVE" then
@@ -1490,7 +1502,7 @@ function MemeTracker_OnChatMsgAddon(event, prefix, msg, channel, sender)
 			MemeTracker_Handle_Version_Request(message, sender)
 		end
 
-		if isLeader() or is_officer() then
+		if isLeader() or isOfficer() then
 			if cmd == "TX_VOTE_ADD" then
 				MemeTracker_Handle_VoteTable_Add(message, sender)
 			elseif cmd == "TX_MESSAGE_ECHO" then

@@ -856,8 +856,9 @@ function MemeTracker_Broadcast_Session_Finish(mode)
 
 		local end_type;
 		local end_announcement
-
-		if (end_type == 'end') and (getn(stringList) == 0) then
+		echo("getn(sortedKeys)",getn(sortedKeys))
+		echo("getn(stringList)",getn(stringList))
+		if (mode == 'end') and (getn(stringList) == 0) then
 			mode = "cancel"
 		end
 

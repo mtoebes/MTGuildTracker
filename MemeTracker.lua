@@ -64,7 +64,7 @@ function MemeTracker_OnUpdate(elapsed)
 	end
 end
 
-function isLeader()
+local function isLeader()
 	local lootmethod, masterlooterPartyID, _ = GetLootMethod()
 	if lootmethod == "master" then
 		return masterlooterPartyID == 0
@@ -84,14 +84,7 @@ local function isOfficer()
 	end
 end
 
-local function getKeysSortedByKey(tbl)
-	a = {}
-    for n in pairs(tbl) do table.insert(a, n) end
-    table.sort(a)
-    return a
-end
-
-function getPlayerClass(player_name)
+local function getPlayerClass(player_name)
 
 	for raid_index = 1,40 do
 		local name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML = GetRaidRosterInfo(raid_index)
@@ -103,18 +96,7 @@ function getPlayerClass(player_name)
 	return "???"
 end
 
-local function getKeysSortedByValue(tbl, sortFunction)
-  local keys = {}
-  for key in pairs(tbl) do
-    table.insert(keys, key)
-  end
-
-  table.sort(keys, function(a, b)
-    return sortFunction(tbl[a], tbl[b])
-  end)
-
-  return keys
-end
+-- echo 
 
 local function echo_leader(tag, msg)
 	if isLeader() then
@@ -143,8 +125,6 @@ local function debug(tag, msg)
 		end
 	end
 end
-
-
 
 local function addonEcho(msg)
 	SendAddonMessage(MT_MESSAGE_PREFIX, msg, "RAID")
@@ -175,6 +155,26 @@ local function leaderRaidEcho(msg)
 end
 
 -- String/List helpers
+
+local function getKeysSortedByKey(tbl)
+	a = {}
+    for n in pairs(tbl) do table.insert(a, n) end
+    table.sort(a)
+    return a
+end
+
+local function getKeysSortedByValue(tbl, sortFunction)
+  local keys = {}
+  for key in pairs(tbl) do
+    table.insert(keys, key)
+  end
+
+  table.sort(keys, function(a, b)
+    return sortFunction(tbl[a], tbl[b])
+  end)
+
+  return keys
+end
 
 local function firstToUpper(name)
     return string.gsub(name, "^%l",string.upper)

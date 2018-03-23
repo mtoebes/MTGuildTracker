@@ -290,6 +290,55 @@ end
 
 -- Recipient Table
 
+
+function GetTargetDate(start_time, days_ago)
+	if start_time == nil then
+		start_time = time()
+	end
+
+	local last_time = 1483228800
+
+	if days_ago ~= 0 then
+		last_time = start_time - (days_ago * 86400)	
+	end
+
+	local last_date = date( "%y-%m-%d 00:00:00", last_time )
+	echo(days_ago, last_date)
+	return last_date
+end
+
+function GetPlayerLootCount_DaysAgo(player_name, start_date, days_ago)
+	local loot_count = 0
+	local target_date = GetTargetDate(start_date, days_ago)
+	for i,n in ipairs(MemeTracker_LootHistoryTable) do
+		if (n.player_name == player_name) and (n.date >= target_date) then
+			loot_count = loot_count + 1
+		end
+	end
+
+	return loot_count
+end
+
+local week_list = {
+	[1] = 1,
+	[2] = 2,
+	[3] = 4,
+	[4] = 6,
+	[5] = 0
+}
+
+function GetPlayerLootCount(player_name)
+	start_date = time()
+
+	loot_count_table = {}
+	for i,n in ipairs(week_list) do
+		echo(i,n)
+		loot_count_table[i] = GetPlayerLootCount_DaysAgo(player_name, start_date, 7*n)
+	end
+
+	return loot_count_table
+end
+
 local function Session_CanEnd()
 	local is_auto_close = (getglobal("MemeTracker_SessionAutoEndCheckButton"):GetChecked() == 1)
 	if MemeTracker_OverviewTable.in_session == true and is_auto_close then
@@ -405,8 +454,6 @@ local function RecipientTable_Add(player_name, item_link)
 
 	local player_class = getPlayerClass(player_name)
 
-
-
 	if (index == nil) then
 		debug("RecipientTable_Add index nil")
 		index = getn(MemeTracker_RecipientTable) + 1
@@ -423,7 +470,9 @@ local function RecipientTable_Add(player_name, item_link)
 	MemeTracker_RecipientTable[index].item_link = item_link
 	MemeTracker_RecipientTable[index].item_name = item_name
 
-	local attendance = MemeTracker_Attendance[player_name]
+	MemeTracker_RecipientTable[index].loot_count_table = GetPlayerLootCount(player_name)
+
+ 	local attendance = MemeTracker_Attendance[player_name]
 
 	if attendance then
 		to_date = MemeTracker_Attendance[player_name].to_date
@@ -487,6 +536,12 @@ function MemeTracker_RecipientListScrollFrame_Update()
 
 			getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerAttendanceToDate"):SetText(recipient.attendance_to_date)
 			getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerAttendanceLast5"):SetText(recipient.attendance_last_5)
+
+			getglobal("MemeTracker_RecipientListItem"..line.."TextLootCount1"):SetText(recipient.loot_count_1)
+
+			for i,n in ipairs(recipient.loot_count_table) do
+				getglobal("MemeTracker_RecipientListItem"..line.."TextLootCount"..i):SetText(n)
+			end
 
 			if isOfficer() or isLeader() then
 				getglobal("MemeTracker_RecipientListVoteBox"..line):Show()

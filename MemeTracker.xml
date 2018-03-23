@@ -226,9 +226,6 @@
 						</Anchor>
 					</Anchors>
 				</FontString>
-
-
-
 				<FontString name="$parentTextLootCount5" inherits="GameFontNormalSmall" justifyH="RIGHT">
 					<Size>
 						<AbsDimension x="15" y="10" />
@@ -560,7 +557,7 @@
 						<Anchors>
 							<Anchor point="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="130" y="-22" />
+									<AbsDimension x="10" y="-22" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -568,14 +565,29 @@
 							<OnClick>MemeTracker_SessionEndButton_OnClick();</OnClick>
 						</Scripts>
 					</Button>
+					<Button name="MemeTracker_SessionDEButton" inherits="UIPanelButtonTemplate" text="DE/Bank Item">
+						<Size>
+							<AbsDimension x="120" y="22" />
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="MemeTracker_SessionEndButton" relativePoint="TOPRIGHT">
+								<Offset>
+									<AbsDimension x="0" y="0" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>MemeTracker_SessionDEButton_OnClick();</OnClick>
+						</Scripts>
+					</Button>
 					<Button name="MemeTracker_SessionCancelButton" inherits="UIPanelButtonTemplate" text="Cancel Session">
 						<Size>
 							<AbsDimension x="120" y="22" />
 						</Size>
 						<Anchors>
-							<Anchor point="BOTTOMLEFT">
+							<Anchor point="TOPLEFT" relativeTo="MemeTracker_SessionDEButton" relativePoint="TOPRIGHT">
 								<Offset>
-									<AbsDimension x="10" y="-22" />
+									<AbsDimension x="0" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>

@@ -34,6 +34,7 @@ MemeTracker_color_legendary = "ffff8000"
 
 local DEFAULT_VOTES_NEEDED = 5
 
+local DE_BANK = "DE/Bank"
 local string_gmatch = lua51 and string.gmatch or string.gfind
 
 TimeSinceLastUpdate=0
@@ -85,6 +86,10 @@ local function isOfficer()
 end
 
 local function getPlayerClass(player_name)
+
+	if player_name == DE_BANK then
+		return ""
+	end
 
 	for raid_index = 1,40 do
 		local name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML = GetRaidRosterInfo(raid_index)
@@ -177,7 +182,11 @@ local function getKeysSortedByValue(tbl, sortFunction)
 end
 
 local function firstToUpper(name)
-    return string.gsub(name, "^%l",string.upper)
+	if name then
+		return string.gsub(name, "^%l",string.upper)
+	else 
+		return ""
+	end
 end
 
 local function String_Starts_With(full_string, partical_string)
@@ -303,7 +312,6 @@ function GetTargetDate(start_time, days_ago)
 	end
 
 	local last_date = date( "%y-%m-%d 00:00:00", last_time )
-	echo(days_ago, last_date)
 	return last_date
 end
 
@@ -332,7 +340,6 @@ function GetPlayerLootCount(player_name)
 
 	loot_count_table = {}
 	for i,n in ipairs(week_list) do
-		echo(i,n)
 		loot_count_table[i] = GetPlayerLootCount_DaysAgo(player_name, start_date, 7*n)
 	end
 
@@ -513,10 +520,20 @@ function MemeTracker_RecipientListScrollFrame_Update()
 
 	if (MemeTracker_OverviewTable.in_session == true) then
 		getglobal("MemeTracker_SessionEndButton"):Enable()
+		getglobal("MemeTracker_SessionDEButton"):Enable()
 		getglobal("MemeTracker_SessionCancelButton"):Enable()
+
+		getglobal("MemeTracker_OverviewButtonTextVotes"):SetTextColor(.83,.68,.04,1)
+		getglobal("MemeTracker_OverviewButtonTextVoters"):SetTextColor(.83,.68,.04,1)
+		getglobal("MemeTracker_OverviewButtonTextItemName"):SetTextColor(.83,.68,.04,1)
 	else
 		getglobal("MemeTracker_SessionEndButton"):Disable()
+		getglobal("MemeTracker_SessionDEButton"):Disable()
 		getglobal("MemeTracker_SessionCancelButton"):Disable()
+
+		getglobal("MemeTracker_OverviewButtonTextVotes"):SetTextColor(.5,.5,.5,1)
+		getglobal("MemeTracker_OverviewButtonTextVoters"):SetTextColor(.5,.5,.5,1)
+		getglobal("MemeTracker_OverviewButtonTextItemName"):SetTextColor(.5,.5,.5,1)
 	end
 
 	local max_lines = getn(MemeTracker_RecipientTable)
@@ -530,14 +547,36 @@ function MemeTracker_RecipientListScrollFrame_Update()
 		if index <= max_lines then
 			local recipient = MemeTracker_RecipientTable[index]
 
+			if MemeTracker_OverviewTable.in_session then
+				getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerClass"):SetTextColor(.83,.68,.04,1)
+				getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerName"):SetTextColor(.83,.68,.04,1)
+				getglobal("MemeTracker_RecipientListItem"..line.."TextItemName"):SetTextColor(.83,.68,.04,1)
+				getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerAttendanceToDate"):SetTextColor(.83,.68,.04,1)
+				getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerAttendanceLast5"):SetTextColor(.83,.68,.04,1)
+				getglobal("MemeTracker_RecipientListItem"..line.."TextVotes"):SetTextColor(.83,.68,.04,1)
+				getglobal("MemeTracker_RecipientListItem"..line.."TextVoters"):SetTextColor(.83,.68,.04,1)
+				for i,n in ipairs(recipient.loot_count_table) do
+					getglobal("MemeTracker_RecipientListItem"..line.."TextLootCount"..i):SetTextColor(.83,.68,.04,1)
+				end
+			else
+				getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerClass"):SetTextColor(.5,.5,.5,1)
+				getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerName"):SetTextColor(.5,.5,.5,1)
+				getglobal("MemeTracker_RecipientListItem"..line.."TextItemName"):SetTextColor(.5,.5,.5,1)
+				getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerAttendanceToDate"):SetTextColor(.5,.5,.5,1)
+				getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerAttendanceLast5"):SetTextColor(.5,.5,.5,1)
+				getglobal("MemeTracker_RecipientListItem"..line.."TextVotes"):SetTextColor(.5,.5,.5,1)
+				getglobal("MemeTracker_RecipientListItem"..line.."TextVoters"):SetTextColor(.5,.5,.5,1)
+				for i,n in ipairs(recipient.loot_count_table) do
+					getglobal("MemeTracker_RecipientListItem"..line.."TextLootCount"..i):SetTextColor(.5,.5,.5,1)
+				end
+			end
+
 			getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerClass"):SetText(recipient.player_class)
 			getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerName"):SetText(recipient.player_name)
 			getglobal("MemeTracker_RecipientListItem"..line.."TextItemName"):SetText(recipient.item_link)
 
 			getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerAttendanceToDate"):SetText(recipient.attendance_to_date)
 			getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerAttendanceLast5"):SetText(recipient.attendance_last_5)
-
-			getglobal("MemeTracker_RecipientListItem"..line.."TextLootCount1"):SetText(recipient.loot_count_1)
 
 			for i,n in ipairs(recipient.loot_count_table) do
 				getglobal("MemeTracker_RecipientListItem"..line.."TextLootCount"..i):SetText(n)
@@ -550,6 +589,7 @@ function MemeTracker_RecipientListScrollFrame_Update()
 
 				getglobal("MemeTracker_RecipientListItem"..line.."TextVotes"):SetText(recipient.votes)
 				getglobal("MemeTracker_RecipientListItem"..line.."TextVoters"):SetText(recipient.voters_text)
+
 			else
 				getglobal("MemeTracker_RecipientListVoteBox"..line):Hide()
 				getglobal("MemeTracker_RecipientListItem"..line.."TextVotes"):Hide()
@@ -791,8 +831,8 @@ function MemeTracker_Broadcast_RecipientTable_Add(player_name, item_link)
 		local player_class = getPlayerClass(player_name)
 
 		if player_class == "???" then
-			echo("Error adding player " .. player_name .. ". Player must be in the raid.")
-			return
+			--echo("Error adding player " .. player_name .. ". Player must be in the raid.")
+			--return
 		end
 
 		addonEcho_leader("TX_ENTRY_ADD#".. string.format("%s/%s", player_name, item_link) .."#");
@@ -881,6 +921,10 @@ end
 
 -- Session End Broadcast
 
+function MemeTracker_Broadcast_Session_DE()
+	MemeTracker_Broadcast_Session_Finish(DE_BANK);
+end
+
 function MemeTracker_Broadcast_Session_End()
 	MemeTracker_Broadcast_Session_Finish("end");
 end
@@ -911,8 +955,7 @@ function MemeTracker_Broadcast_Session_Finish(mode)
 
 		local end_type;
 		local end_announcement
-		echo("getn(sortedKeys)",getn(sortedKeys))
-		echo("getn(stringList)",getn(stringList))
+
 		if (mode == 'end') and (getn(stringList) == 0) then
 			mode = "cancel"
 		end
@@ -920,17 +963,19 @@ function MemeTracker_Broadcast_Session_Finish(mode)
 		if mode == "cancel" then
 			end_type = 'canceled'
 			end_announcement = "Session canceled : ".. MemeTracker_OverviewTable.item_link
+		elseif mode == DE_BANK then
+ 			end_type = 'ended'
+		 	end_announcement = "Session ended : ".. MemeTracker_OverviewTable.item_link.." - Item will be Disenchanted or sent to the Bank"
 		else
 		 	end_type = 'ended'
 		 	end_announcement = "Session ended : ".. MemeTracker_OverviewTable.item_link.." - Congratulations "..sortedKeys[1].."!"
-		 end
+		end
 
 		MemeTracker_Broadcast_Message_Echo("Session " .. end_type .. " : ".. MemeTracker_OverviewTable.item_link.." - ("..MemeTracker_OverviewTable.votes.."/"
 		..MemeTracker_OverviewTable.votes_needed..") "..table.concat( MemeTracker_OverviewTable.voters, ", " ))
 
 		if getn(stringList) > 0 then
 			local summary_string = table.concat(stringList, ", ")
-			debug("MemeTracker_Broadcast_Session_Finish summary_string", summary_string)
 			MemeTracker_Broadcast_Message_Echo(summary_string)
 		end
 
@@ -938,8 +983,15 @@ function MemeTracker_Broadcast_Session_Finish(mode)
 
 		addonEcho("TX_SESSION_FINISH#"..mode.."#");
 
-		if mode == "end" then
-			local entry = LootHistoryTable_AddEntry(MemeTracker_OverviewTable.item_link,sortedKeys[1])
+		if mode == "end" or mode == DE_BANK then
+			local player_name;
+			if mode == DE_BANK then
+				player_name = DE_BANK
+			else 
+				player_name = sortedKeys[1]
+			end
+
+			local entry = LootHistoryTable_AddEntry(MemeTracker_OverviewTable.item_link, player_name)
 			MemeTracker_Broadcast_DownloadSync_Start();
 			local sync_string = MemeTracker_SendSync_String("loothistory", entry)
 			MemeTracker_Broadcast_DownloadSync_Add("loothistory", sync_string)
@@ -1446,6 +1498,10 @@ function MemeTracker_VoteCheckButton_OnClick(line)
 	MemeTracker_Broadcast_VoteTable_Add(my_vote)
 end
 
+function MemeTracker_SessionDEButton_OnClick()
+	MemeTracker_Broadcast_Session_DE()
+end
+
 function MemeTracker_SessionEndButton_OnClick()
 	MemeTracker_Broadcast_Session_End()
 end
@@ -1538,10 +1594,12 @@ function MemeTracker_RecipientTable_Show()
 	if isLeader() then
 		getglobal("MemeTracker_SessionAutoEndCheckButton"):Enable()
 		getglobal("MemeTracker_SessionEndButton"):Show()
+		getglobal("MemeTracker_SessionDEButton"):Show()
 		getglobal("MemeTracker_SessionCancelButton"):Show()
 	else
 		getglobal("MemeTracker_SessionAutoEndCheckButton"):Disable()
 		getglobal("MemeTracker_SessionEndButton"):Hide()
+		getglobal("MemeTracker_SessionDEButton"):Hide()
 		getglobal("MemeTracker_SessionCancelButton"):Hide()
 	end
 

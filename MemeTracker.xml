@@ -66,7 +66,7 @@
 				</FontString>
 				<FontString name="$parentTextVotes" inherits="GameFontNormalSmall" justifyH="LEFT">
 					<Size>
-						<AbsDimension x="50" y="10" />
+						<AbsDimension x="20" y="10" />
 					</Size>
 					<Anchors>
 						<Anchor point="LEFT" relativeTo="$parentTextItemName" relativePoint="RIGHT">
@@ -204,7 +204,7 @@
 				</FontString>
 				<FontString name="$parentTextVotes" inherits="GameFontNormalSmall" justifyH="LEFT">
 					<Size>
-						<AbsDimension x="50" y="10" />
+						<AbsDimension x="20" y="10" />
 					</Size>
 					<Anchors>
 						<Anchor point="LEFT" relativeTo="$parentTextItemName" relativePoint="RIGHT">
@@ -226,62 +226,65 @@
 						</Anchor>
 					</Anchors>
 				</FontString>
-				<FontString name="$parentTextLootCount1" inherits="GameFontNormalSmall" justifyH="LEFT">
+
+
+
+				<FontString name="$parentTextLootCount5" inherits="GameFontNormalSmall" justifyH="RIGHT">
 					<Size>
-						<AbsDimension x="20" y="10" />
+						<AbsDimension x="15" y="10" />
 					</Size>
 					<Anchors>
-						<Anchor point="LEFT" relativeTo="$parentTextVoters" relativePoint="RIGHT">
+						<Anchor point="RIGHT" relativePoint="RIGHT">
 							<Offset>
-								<AbsDimension x="0" y="0" />
+								<AbsDimension x="-10" y="0" />
 							</Offset>
 						</Anchor>
 					</Anchors>
 				</FontString>
-				<FontString name="$parentTextLootCount2" inherits="GameFontNormalSmall" justifyH="LEFT">
+				<FontString name="$parentTextLootCount4" inherits="GameFontNormalSmall" justifyH="RIGHT">
 					<Size>
-						<AbsDimension x="20" y="10" />
+						<AbsDimension x="15" y="10" />
 					</Size>
 					<Anchors>
-						<Anchor point="LEFT" relativeTo="$parentTextLootCount1" relativePoint="RIGHT">
+						<Anchor point="RIGHT" relativeTo="$parentTextLootCount5" relativePoint="LEFT">
 							<Offset>
-								<AbsDimension x="0" y="0" />
+								<AbsDimension x="-10" y="0" />
 							</Offset>
 						</Anchor>
 					</Anchors>
 				</FontString>
-				<FontString name="$parentTextLootCount3" inherits="GameFontNormalSmall" justifyH="LEFT">
+								<FontString name="$parentTextLootCount3" inherits="GameFontNormalSmall" justifyH="RIGHT">
 					<Size>
-						<AbsDimension x="20" y="10" />
+						<AbsDimension x="15" y="10" />
 					</Size>
 					<Anchors>
-						<Anchor point="LEFT" relativeTo="$parentTextLootCount2" relativePoint="RIGHT">
+						<Anchor point="RIGHT" relativeTo="$parentTextLootCount4" relativePoint="LEFT">
 							<Offset>
-								<AbsDimension x="0" y="0" />
+								<AbsDimension x="-10" y="0" />
 							</Offset>
 						</Anchor>
 					</Anchors>
 				</FontString>
-				<FontString name="$parentTextLootCount4" inherits="GameFontNormalSmall" justifyH="LEFT">
+								<FontString name="$parentTextLootCount2" inherits="GameFontNormalSmall" justifyH="RIGHT">
 					<Size>
-						<AbsDimension x="20" y="10" />
+						<AbsDimension x="15" y="10" />
 					</Size>
 					<Anchors>
-						<Anchor point="LEFT" relativeTo="$parentTextLootCount3" relativePoint="RIGHT">
+						<Anchor point="RIGHT" relativeTo="$parentTextLootCount3" relativePoint="LEFT">
 							<Offset>
-								<AbsDimension x="0" y="0" />
+								<AbsDimension x="-10" y="0" />
 							</Offset>
 						</Anchor>
 					</Anchors>
 				</FontString>
-				<FontString name="$parentTextLootCount5" inherits="GameFontNormalSmall" justifyH="LEFT">
+								<FontString name="$parentTextLootCount1" inherits="GameFontNormalSmall" justifyH="RIGHT">
 					<Size>
-						<AbsDimension x="20" y="10" />
+						<AbsDimension x="10" y="10" />
 					</Size>
 					<Anchors>
-						<Anchor point="LEFT" relativeTo="$parentTextLootCount4" relativePoint="RIGHT">
+						<Anchor point="RIGHT" relativeTo="$parentTextLootCount2" relativePoint="LEFT">
 							<Offset>
-								<AbsDimension x="0" y="0" />
+								<AbsDimension x="-15" y="0" />
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -525,21 +528,7 @@
 					<Anchor point="TOPLEFT" />
 				</Anchors>
 				<Frames>
-					<Button name="MemeTracker_SessionEndButton" inherits="UIPanelButtonTemplate" text="End Session">
-						<Size>
-							<AbsDimension x="100" y="22" />
-						</Size>
-						<Anchors>
-							<Anchor point="TOPLEFT">
-								<Offset>
-									<AbsDimension x="130" y="-10" />
-								</Offset>
-							</Anchor>
-						</Anchors>
-						<Scripts>
-							<OnClick>MemeTracker_SessionEndButton_OnClick();</OnClick>
-						</Scripts>
-					</Button>
+
 					<CheckButton name="MemeTracker_SessionAutoEndCheckButton">
 						<HitRectInsets>
 							<AbsInset left="0" right="-100" top="0" bottom="0" />
@@ -564,18 +553,33 @@
 							<OnEnter>MemeTracker_SessionAutoEndCheckButton_OnEnter();</OnEnter>
 						</Scripts>
 					</CheckButton>
+					<Button name="MemeTracker_SessionEndButton" inherits="UIPanelButtonTemplate" text="End Session">
+						<Size>
+							<AbsDimension x="100" y="22" />
+						</Size>
+						<Anchors>
+							<Anchor point="BOTTOMLEFT">
+								<Offset>
+									<AbsDimension x="130" y="-22" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>MemeTracker_SessionEndButton_OnClick();</OnClick>
+						</Scripts>
+					</Button>
 					<Button name="MemeTracker_SessionCancelButton" inherits="UIPanelButtonTemplate" text="Cancel Session">
 						<Size>
 							<AbsDimension x="120" y="22" />
 						</Size>
 						<Anchors>
-							<Anchor point="TOPLEFT">
+							<Anchor point="BOTTOMLEFT">
 								<Offset>
-									<AbsDimension x="10" y="-10" />
+									<AbsDimension x="10" y="-22" />
 								</Offset>
 							</Anchor>
 						</Anchors>
-						<Scripts>
+						<Scripts>1
 							<OnClick>MemeTracker_SessionCancelButton_OnClick();</OnClick>
 						</Scripts>
 					</Button>
@@ -586,7 +590,7 @@
 						<Anchors>
 							<Anchor point="TOPRIGHT">
 								<Offset>
-									<AbsDimension x="-75" y="-10" />
+									<AbsDimension x="15" y="-10" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -992,106 +996,80 @@
 									<OnClick>MemeTracker_CouncilSession_Sort_OnClick("votes");</OnClick>
 								</Scripts>
 							</Button>
-							<Button name="MemeTracker_RecipientListSortVoters"  text="Voters">
-								<Size>
-									<AbsDimension x="60" y="16" />
-								</Size>
-								<Anchors>
-									<Anchor point="BOTTOMLEFT" relativeTo="MemeTracker_RecipientListItem1TextVoters" relativePoint="TOPLEFT">
-										<Offset>
-											<AbsDimension x="-5" y="2" />
-										</Offset>
-									</Anchor>
-								</Anchors>
-							</Button>
+							
 							<Button name="MemeTracker_RecipientListSortLootCount1" inherits="MemeTracker_SortButtonTemplate" text="1">
 								<Size>
-									<AbsDimension x="20" y="16" />
+									<AbsDimension x="25" y="16" />
 								</Size>
 								<Anchors>
-									<Anchor point="BOTTOMLEFT" relativeTo="MemeTracker_RecipientListItem1TextLootCount1" relativePoint="TOPLEFT">
+									<Anchor point="BOTTOMRIGHT" relativeTo="MemeTracker_RecipientListItem1TextLootCount1" relativePoint="TOPRIGHT">
 										<Offset>
-											<AbsDimension x="-5" y="2" />
+											<AbsDimension x="5" y="2" />
 										</Offset>
 									</Anchor>
 								</Anchors>
 								<Scripts>
-									<OnClick>MemeTracker_CouncilSession_Sort_OnClick("votes");</OnClick>
-								</Scripts>
-							</Button>
-							<Button name="MemeTracker_RecipientListSortLootCount1" inherits="MemeTracker_SortButtonTemplate" text="1">
-								<Size>
-									<AbsDimension x="20" y="16" />
-								</Size>
-								<Anchors>
-									<Anchor point="BOTTOMLEFT" relativeTo="MemeTracker_RecipientListItem1TextLootCount1" relativePoint="TOPLEFT">
-										<Offset>
-											<AbsDimension x="-5" y="2" />
-										</Offset>
-									</Anchor>
-								</Anchors>
-								<Scripts>
-									<OnClick>MemeTracker_CouncilSession_Sort_OnClick("votes");</OnClick>
+									<OnClick>MemeTracker_CouncilSession_Sort_OnClick("loot_count_table.1");</OnClick>
 								</Scripts>
 							</Button>
 							<Button name="MemeTracker_RecipientListSortLootCount2" inherits="MemeTracker_SortButtonTemplate" text="2">
 								<Size>
-									<AbsDimension x="20" y="16" />
+									<AbsDimension x="25" y="16" />
 								</Size>
 								<Anchors>
-									<Anchor point="BOTTOMLEFT" relativeTo="MemeTracker_RecipientListItem1TextLootCount2" relativePoint="TOPLEFT">
+									<Anchor point="BOTTOMRIGHT" relativeTo="MemeTracker_RecipientListItem1TextLootCount2" relativePoint="TOPRIGHT">
 										<Offset>
-											<AbsDimension x="-5" y="2" />
+											<AbsDimension x="5" y="2" />
 										</Offset>
 									</Anchor>
 								</Anchors>
 								<Scripts>
-									<OnClick>MemeTracker_CouncilSession_Sort_OnClick("votes");</OnClick>
+									<OnClick>MemeTracker_CouncilSession_Sort_OnClick("loot_count_table.2");</OnClick>
 								</Scripts>
 							</Button>
-							<Button name="MemeTracker_RecipientListSortLootCount3" inherits="MemeTracker_SortButtonTemplate" text="3">
+							<Button name="MemeTracker_RecipientListSortLootCount3" inherits="MemeTracker_SortButtonTemplate" text="4">
 								<Size>
-									<AbsDimension x="20" y="16" />
+									<AbsDimension x="25" y="16" />
 								</Size>
 								<Anchors>
-									<Anchor point="BOTTOMLEFT" relativeTo="MemeTracker_RecipientListItem1TextLootCount3" relativePoint="TOPLEFT">
+									<Anchor point="BOTTOMRIGHT" relativeTo="MemeTracker_RecipientListItem1TextLootCount3" relativePoint="TOPRIGHT">
 										<Offset>
-											<AbsDimension x="-5" y="2" />
+											<AbsDimension x="5" y="2" />
 										</Offset>
 									</Anchor>
 								</Anchors>
 								<Scripts>
-									<OnClick>MemeTracker_CouncilSession_Sort_OnClick("votes");</OnClick>
+									<OnClick>MemeTracker_CouncilSession_Sort_OnClick("loot_count_table.3");</OnClick>
 								</Scripts>
 							</Button>
-							<Button name="MemeTracker_RecipientListSortLootCount4" inherits="MemeTracker_SortButtonTemplate" text="8">
+							<Button name="MemeTracker_RecipientListSortLootCount4" inherits="MemeTracker_SortButtonTemplate" text="6">
 								<Size>
-									<AbsDimension x="20" y="16" />
+									<AbsDimension x="25" y="16" />
 								</Size>
 								<Anchors>
-									<Anchor point="BOTTOMLEFT" relativeTo="MemeTracker_RecipientListItem1TextLootCount4" relativePoint="TOPLEFT">
+									<Anchor point="BOTTOMRIGHT" relativeTo="MemeTracker_RecipientListItem1TextLootCount4" relativePoint="TOPRIGHT">
 										<Offset>
-											<AbsDimension x="-5" y="2" />
+											<AbsDimension x="5" y="2" />
 										</Offset>
 									</Anchor>
 								</Anchors>
 								<Scripts>
-									<OnClick>MemeTracker_CouncilSession_Sort_OnClick("votes");</OnClick>
+									<OnClick>MemeTracker_CouncilSession_Sort_OnClick("loot_count_table.4");</OnClick>
 								</Scripts>
 							</Button>
 							<Button name="MemeTracker_RecipientListSortLootCount5" inherits="MemeTracker_SortButtonTemplate" text="All">
 								<Size>
-									<AbsDimension x="20" y="16" />
+									<AbsDimension x="25" y="16" />
 								</Size>
 								<Anchors>
-									<Anchor point="BOTTOMLEFT" relativeTo="MemeTracker_RecipientListItem1TextLootCount5" relativePoint="TOPLEFT">
+									<Anchor point="BOTTOMRIGHT" relativeTo="MemeTracker_RecipientListItem1TextLootCount5" relativePoint="TOPRIGHT">
 										<Offset>
-											<AbsDimension x="-5" y="2" />
+											<AbsDimension x="5" y="2" />
 										</Offset>
 									</Anchor>
 								</Anchors>
 								<Scripts>
-									<OnClick>MemeTracker_CouncilSession_Sort_OnClick("votes");</OnClick>
+									<OnClick>MemeTracker_CouncilSession_Sort_OnClick("loot_count_table.5");</OnClick>
 								</Scripts>
 							</Button>
 						</Frames>

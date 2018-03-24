@@ -595,7 +595,7 @@
 							<OnClick>MemeTracker_SessionCancelButton_OnClick();</OnClick>
 						</Scripts>
 					</Button>
-					<Button name="MemeTracker_LootHistoryTabButton" inherits="UIPanelButtonTemplate" text="Player Loot History">
+					<Button name="MemeTracker_LootHistoryTabButton" inherits="UIPanelButtonTemplate" text="Loot History">
 						<Size>
 							<AbsDimension x="150" y="22" />
 						</Size>
@@ -946,7 +946,7 @@
 								</Scripts>
 							</Button>
 
-							<Button name="MemeTracker_RecipientListSortPlayerAttendanceToDate" inherits="MemeTracker_SortButtonTemplate" text="All Raids">
+							<Button name="MemeTracker_RecipientListSortPlayerAttendanceToDate" inherits="MemeTracker_SortButtonTemplate" text="All">
 								<Size>
 									<AbsDimension x="68" y="16" />
 								</Size>
@@ -1021,7 +1021,7 @@
 									</Anchor>
 								</Anchors>
 								<Scripts>
-									<OnClick>MemeTracker_CouncilSession_Sort_OnClick("loot_count_table.1");</OnClick>
+									<OnClick>MemeTracker_CouncilSession_Sort_OnClick("loot_count_table",1);</OnClick>
 								</Scripts>
 							</Button>
 							<Button name="MemeTracker_RecipientListSortLootCount2" inherits="MemeTracker_SortButtonTemplate" text="2">
@@ -1036,7 +1036,7 @@
 									</Anchor>
 								</Anchors>
 								<Scripts>
-									<OnClick>MemeTracker_CouncilSession_Sort_OnClick("loot_count_table.2");</OnClick>
+									<OnClick>MemeTracker_CouncilSession_Sort_OnClick("loot_count_table",2);</OnClick>
 								</Scripts>
 							</Button>
 							<Button name="MemeTracker_RecipientListSortLootCount3" inherits="MemeTracker_SortButtonTemplate" text="4">
@@ -1051,7 +1051,7 @@
 									</Anchor>
 								</Anchors>
 								<Scripts>
-									<OnClick>MemeTracker_CouncilSession_Sort_OnClick("loot_count_table.3");</OnClick>
+									<OnClick>MemeTracker_CouncilSession_Sort_OnClick("loot_count_table",3);</OnClick>
 								</Scripts>
 							</Button>
 							<Button name="MemeTracker_RecipientListSortLootCount4" inherits="MemeTracker_SortButtonTemplate" text="6">
@@ -1066,7 +1066,7 @@
 									</Anchor>
 								</Anchors>
 								<Scripts>
-									<OnClick>MemeTracker_CouncilSession_Sort_OnClick("loot_count_table.4");</OnClick>
+									<OnClick>MemeTracker_CouncilSession_Sort_OnClick("loot_count_table",4);</OnClick>
 								</Scripts>
 							</Button>
 							<Button name="MemeTracker_RecipientListSortLootCount5" inherits="MemeTracker_SortButtonTemplate" text="All">
@@ -1081,7 +1081,7 @@
 									</Anchor>
 								</Anchors>
 								<Scripts>
-									<OnClick>MemeTracker_CouncilSession_Sort_OnClick("loot_count_table.5");</OnClick>
+									<OnClick>MemeTracker_CouncilSession_Sort_OnClick("loot_count_table",5);</OnClick>
 								</Scripts>
 							</Button>
 						</Frames>
@@ -1114,13 +1114,13 @@
 						</Scripts>
 					</EditBox>
 					<Button name="MemeTracker_LootSessionTabButton" inherits="UIPanelButtonTemplate" text="Loot Session">
-						<Size>
-							<AbsDimension x="150" y="22" />
+							<Size>
+							<AbsDimension x="125" y="22" />
 						</Size>
 						<Anchors>
 							<Anchor point="TOPRIGHT">
 								<Offset>
-									<AbsDimension x="-75" y="-10" />
+									<AbsDimension x="15" y="-10" />
 								</Offset>
 							</Anchor>
 						</Anchors>
@@ -1130,12 +1130,12 @@
 					</Button>
 					<Button name="MemeTracker_LootHistorySyncButton" inherits="UIPanelButtonTemplate" text="Sync">
 						<Size>
-							<AbsDimension x="150" y="22" />
+							<AbsDimension x="125" y="22" />
 						</Size>
 						<Anchors>
-							<Anchor point="TOPRIGHT">
+							<Anchor point="TOPRIGHT" relati1veTo="MemeTracker_LootSessionTabButton" relativePoint="TOPLEFT">
 								<Offset>
-									<AbsDimension x="-75" y="-30" />
+									<AbsDimension x="0" y="0" />
 								</Offset>
 							</Anchor>
 						</Anchors>

@@ -14,7 +14,8 @@ MemeTracker_LootHistoryTable_Temp = {}
 my_vote = nil
 
 sort_direction = "descending"
-sort_field = "player_name"
+recipient_sort_field = "player_name"
+recipient_sort_index = 1
 
 loot_sort_direction = "descending"
 loot_sort_field = "time_stamp";
@@ -389,19 +390,53 @@ local function Session_CanEnd()
 	end
 end
 
-local function RecipientTable_Sort_Function(sort_direction, sort_field, a, b)
-	if sort_field then
+local function RecipientTable_Sort_Function_LootCount(sort_direction, start_index, a, b)
+	if  a.loot_count_table[recipient_sort_index] ~= b.loot_count_table[recipient_sort_index] then
 		if sort_direction == "ascending" then
-			if ( a[sort_field] == b[sort_field]) then
-				return a.player_name < b.player_name
+			return a.loot_count_table[recipient_sort_index] < b.loot_count_table[recipient_sort_index]
+		else
+			return a.loot_count_table[recipient_sort_index] > b.loot_count_table[recipient_sort_index]
+		end
+	else
+		for index = 1,5 do 
+			if  a.loot_count_table[index] ~= b.loot_count_table[index] then
+				if sort_direction == "ascending" then
+					return a.loot_count_table[index] < b.loot_count_table[index]
+				else
+					return a.loot_count_table[index] > b.loot_count_table[index]
+				end
+			end
+		end
+	end
+
+	if sort_direction == "ascending" then
+		return a.player_name < b.player_name 
+	else
+		return a.player_name > b.player_name 
+	end
+end
+
+local function RecipientTable_Sort_Function(sort_direction, recipient_sort_field, a, b)
+	if recipient_sort_field then
+		if sort_direction == "ascending" then
+			if recipient_sort_field == "loot_count_table" then
+				return RecipientTable_Sort_Function_LootCount(sort_direction, recipient_sort_index, a, b)
 			else
-				return a[sort_field] < b[sort_field]
+				if ( a[recipient_sort_field] == b[recipient_sort_field]) then
+					return a.player_name < b.player_name
+				else
+					return a[recipient_sort_field] < b[recipient_sort_field]
+				end
 			end
 		else
-			if ( a[sort_field] == b[sort_field]) then
-				return a.player_name > b.player_name
+			if recipient_sort_field == "loot_count_table" then
+				return RecipientTable_Sort_Function_LootCount(sort_direction, recipient_sort_index, a, b)
 			else
-				return a[sort_field] > b[sort_field]
+				if ( a[recipient_sort_field] == b[recipient_sort_field]) then
+					return a.player_name > b.player_name
+				else
+					return a[recipient_sort_field] > b[recipient_sort_field]
+				end
 			end
 		end
 	else
@@ -410,7 +445,7 @@ local function RecipientTable_Sort_Function(sort_direction, sort_field, a, b)
 end
 
 local function RecipientTable_Sort()
-	table.sort(MemeTracker_RecipientTable, function(a,b) return RecipientTable_Sort_Function(sort_direction, sort_field, a, b) end)
+	table.sort(MemeTracker_RecipientTable, function(a,b) return RecipientTable_Sort_Function(sort_direction, recipient_sort_field, a, b) end)
 end
 
 local function RecipientTable_UpdateVotes()
@@ -624,7 +659,6 @@ function AttendanceTable_Build()
 		MemeTracker_Attendance = {}
 	end
 end
-
 -- Loot History
 
 local function LootHistory_Sort_Function(loot_sort_direction, loot_sort_field, a, b)
@@ -1525,14 +1559,15 @@ function MemeTracker_LootHistory_Sort_OnClick(field)
 	MemeTracker_LootHistoryScrollFrame_Update()
 end
 
-function MemeTracker_CouncilSession_Sort_OnClick(field)
-	if sort_field == field and sort_direction == "descending" then
+function MemeTracker_CouncilSession_Sort_OnClick(field, index)
+	if recipient_sort_field == field and sort_direction == "descending" then
 		sort_direction = "ascending"
 	else
 		sort_direction = "descending"
 	end
 
-	sort_field = field
+	recipient_sort_field = field
+	recipient_sort_index = index
 	MemeTracker_RecipientListScrollFrame_Update()
 end
 

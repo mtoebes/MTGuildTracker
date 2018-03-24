@@ -1133,7 +1133,7 @@
 							<AbsDimension x="125" y="22" />
 						</Size>
 						<Anchors>
-							<Anchor point="TOPRIGHT" relati1veTo="MemeTracker_LootSessionTabButton" relativePoint="TOPLEFT">
+							<Anchor point="TOPRIGHT" relativeTo="MemeTracker_LootSessionTabButton" relativePoint="TOPLEFT">
 								<Offset>
 									<AbsDimension x="0" y="0" />
 								</Offset>

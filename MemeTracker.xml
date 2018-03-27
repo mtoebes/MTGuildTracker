@@ -142,9 +142,9 @@
 						</Anchor>
 					</Anchors>
 				</FontString>
-				<FontString name="$parentTextPlayerClass" inherits="GameFontNormalSmall" justifyH="LEFT">
+				<FontString name="$parentTextPlayerName" inherits="GameFontNormalSmall" justifyH="LEFT">
 					<Size>
-						<AbsDimension x="50" y="10" />
+						<AbsDimension x="75" y="10" />
 					</Size>
 					<Anchors>
 						<Anchor point="LEFT" relativeTo="$parentTextVotebox" relativePoint="RIGHT">
@@ -154,19 +154,7 @@
 						</Anchor>
 					</Anchors>
 				</FontString>
-				<FontString name="$parentTextPlayerName" inherits="GameFontNormalSmall" justifyH="LEFT">
-					<Size>
-						<AbsDimension x="75" y="10" />
-					</Size>
-					<Anchors>
-						<Anchor point="LEFT" relativeTo="$parentTextPlayerClass" relativePoint="RIGHT">
-							<Offset>
-								<AbsDimension x="0" y="0" />
-							</Offset>
-						</Anchor>
-					</Anchors>
-				</FontString>
-					<FontString name="$parentTextPlayerAttendanceToDate" inherits="GameFontNormalSmall" justifyH="CENTER">
+					<FontString name="$parentTextPlayerAttendanceLast4Weeks" inherits="GameFontNormalSmall" justifyH="CENTER">
 					<Size>
 						<AbsDimension x="60" y="10" />
 					</Size>
@@ -178,12 +166,12 @@
 						</Anchor>
 					</Anchors>
 				</FontString>
-				<FontString name="$parentTextPlayerAttendanceLast5" inherits="GameFontNormalSmall" justifyH="CENTER">
+				<FontString name="$parentTextPlayerAttendanceLast2Weeks" inherits="GameFontNormalSmall" justifyH="CENTER">
 					<Size>
 						<AbsDimension x="50" y="10" />
 					</Size>
 					<Anchors>
-						<Anchor point="LEFT" relativeTo="$parentTextPlayerAttendanceToDate" relativePoint="RIGHT">
+						<Anchor point="LEFT" relativeTo="$parentTextPlayerAttendanceLast4Weeks" relativePoint="RIGHT">
 							<Offset>
 								<AbsDimension x="0" y="0" />
 							</Offset>
@@ -195,7 +183,7 @@
 						<AbsDimension x="200" y="10" />
 					</Size>
 					<Anchors>
-						<Anchor point="LEFT" relativeTo="$parentTextPlayerAttendanceLast5" relativePoint="RIGHT">
+						<Anchor point="LEFT" relativeTo="$parentTextPlayerAttendanceLast2Weeks" relativePoint="RIGHT">
 							<Offset>
 								<AbsDimension x="5" y="0" />
 							</Offset>
@@ -281,7 +269,7 @@
 					<Anchors>
 						<Anchor point="RIGHT" relativeTo="$parentTextLootCount2" relativePoint="LEFT">
 							<Offset>
-								<AbsDimension x="-15" y="0" />
+								<AbsDimension x="-10" y="0" />
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -328,24 +316,12 @@
 		</HighlightTexture>
 		<Layers>
 			<Layer level="OVERLAY">
-				<FontString name="$parentTextPlayerClass" inherits="GameFontNormalSmall" justifyH="LEFT">
-					<Size>
-						<AbsDimension x="75" y="10" />
-					</Size>
-					<Anchors>
-						<Anchor point="LEFT">
-							<Offset>
-								<AbsDimension x="25" y="0" />
-							</Offset>
-						</Anchor>
-					</Anchors>
-				</FontString>
 				<FontString name="$parentTextPlayerName" inherits="GameFontNormalSmall" justifyH="LEFT">
 					<Size>
 						<AbsDimension x="75" y="10" />
 					</Size>
 					<Anchors>
-						<Anchor point="LEFT" relativeTo="$parentTextPlayerClass" relativePoint="RIGHT">
+						<Anchor point="LEFT">
 							<Offset>
 								<AbsDimension x="0" y="0" />
 							</Offset>
@@ -408,7 +384,7 @@
 			<Anchors>
 				<Anchor point="LEFT" relativeTo="$parentText" relativePoint="RIGHT">
 					<Offset>
-						<AbsDimension x="3" y="-2" />
+						<AbsDimension x="1" y="-2" />
 					</Offset>
 				</Anchor>
 			</Anchors>
@@ -915,21 +891,6 @@
 							<OnLoad>this:SetBackdropColor(0.9, 0.9, 0.9, 0.9)</OnLoad>
 						</Scripts>
 						<Frames>
-							<Button name="MemeTracker_RecipientListSortPlayerClass" inherits="MemeTracker_SortButtonTemplate" text="Class">
-								<Size>
-									<AbsDimension x="50" y="16" />
-								</Size>
-								<Anchors>
-									<Anchor point="BOTTOMLEFT" relativeTo="MemeTracker_RecipientListItem1TextPlayerClass" relativePoint="TOPLEFT">
-										<Offset>
-											<AbsDimension x="-5" y="2" />
-										</Offset>
-									</Anchor>
-								</Anchors>
-								<Scripts>
-									<OnClick>MemeTracker_CouncilSession_Sort_OnClick("player_class");</OnClick>
-								</Scripts>
-							</Button>
 							<Button name="MemeTracker_RecipientListSortPlayerName" inherits="MemeTracker_SortButtonTemplate" text="Player">
 								<Size>
 									<AbsDimension x="55" y="16" />
@@ -945,13 +906,12 @@
 									<OnClick>MemeTracker_CouncilSession_Sort_OnClick("player_name");</OnClick>
 								</Scripts>
 							</Button>
-
-							<Button name="MemeTracker_RecipientListSortPlayerAttendanceToDate" inherits="MemeTracker_SortButtonTemplate" text="All">
+							<Button name="MemeTracker_RecipientListSortPlayerAttendanceLast4Weeks" inherits="MemeTracker_SortButtonTemplate" text="4">
 								<Size>
 									<AbsDimension x="68" y="16" />
 								</Size>
 								<Anchors>
-									<Anchor point="BOTTOMLEFT" relativeTo="MemeTracker_RecipientListItem1TextPlayerAttendanceToDate" relativePoint="TOPLEFT">
+									<Anchor point="BOTTOMLEFT" relativeTo="MemeTracker_RecipientListItem1TextPlayerAttendanceLast4Weeks" relativePoint="TOPLEFT">
 										<Offset>
 											<AbsDimension x="-5" y="2" />
 										</Offset>
@@ -962,12 +922,12 @@
 								</Scripts>
 							</Button>
 
-							<Button name="MemeTracker_RecipientListSortPlayerAttendanceLast5" inherits="MemeTracker_SortButtonTemplate" text="Last 5">
+							<Button name="MemeTracker_RecipientListSortPlayerAttendanceLast2Weeks" inherits="MemeTracker_SortButtonTemplate" text="2">
 								<Size>
 									<AbsDimension x="53" y="16" />
 								</Size>
 								<Anchors>
-									<Anchor point="BOTTOMLEFT" relativeTo="MemeTracker_RecipientListItem1TextPlayerAttendanceLast5" relativePoint="TOPLEFT">
+									<Anchor point="BOTTOMLEFT" relativeTo="MemeTracker_RecipientListItem1TextPlayerAttendanceLast2Weeks" relativePoint="TOPLEFT">
 										<Offset>
 											<AbsDimension x="-5" y="2" />
 										</Offset>
@@ -1390,22 +1350,7 @@
 						<Scripts>
 							<OnLoad>this:SetBackdropColor(0.9, 0.9, 0.9, 0.9)</OnLoad>
 						</Scripts>
-						<Frames>
-							<Button name="MemeTracker_LootHistoryListSortPlayerClass" inherits="MemeTracker_SortButtonTemplate" text="Class">
-								<Size>
-									<AbsDimension x="50" y="16" />
-								</Size>
-								<Anchors>
-									<Anchor point="BOTTOMLEFT" relativeTo="MemeTracker_LootHistoryListItem1TextPlayerClass" relativePoint="TOPLEFT">
-										<Offset>
-											<AbsDimension x="-5" y="2" />
-										</Offset>
-									</Anchor>
-								</Anchors>
-								<Scripts>
-									<OnClick>MemeTracker_LootHistory_Sort_OnClick("player_class");</OnClick>
-								</Scripts>
-							</Button>
+						<Frames>					
 							<Button name="MemeTracker_LootHistoryListSortPlayerName" inherits="MemeTracker_SortButtonTemplate" text="Player">
 								<Size>
 									<AbsDimension x="55" y="16" />

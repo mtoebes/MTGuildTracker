@@ -535,15 +535,15 @@ local function RecipientTable_Add(player_name, item_link)
  	local attendance = MemeTracker_Attendance[player_name]
 
 	if attendance then
-		to_date = MemeTracker_Attendance[player_name].to_date
-		last_5 = MemeTracker_Attendance[player_name].last_5
+		last_4_weeks = MemeTracker_Attendance[player_name].last_4_weeks
+		last_2_weeks = MemeTracker_Attendance[player_name].last_2_weeks
 	else
-		to_date = 0
-		last_5 = 0
+		last_4_weeks = 0
+		last_2_weeks = 0
 	end
 
-	MemeTracker_RecipientTable[index].attendance_to_date = to_date.."%"
-	MemeTracker_RecipientTable[index].attendance_last_5 = last_5.."%"
+	MemeTracker_RecipientTable[index].attendance_last_4_weeks = last_4_weeks.."%"
+	MemeTracker_RecipientTable[index].attendance_last_2_weeks = last_2_weeks.."%"
 	MemeTracker_RecipientListScrollFrame_Update()
 end
 
@@ -602,22 +602,20 @@ function MemeTracker_RecipientListScrollFrame_Update()
 
 			if MemeTracker_OverviewTable.in_session then
 				rgb = class_colors[recipient.player_class]
-				getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerClass"):SetTextColor(rgb.r,rgb.g,rgb.b,1)
 				getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerName"):SetTextColor(rgb.r,rgb.g,rgb.b,1)
 				getglobal("MemeTracker_RecipientListItem"..line.."TextItemName"):SetTextColor(.83,.68,.04,1)
-				getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerAttendanceToDate"):SetTextColor(.83,.68,.04,1)
-				getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerAttendanceLast5"):SetTextColor(.83,.68,.04,1)
+				getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerAttendanceLast4Weeks"):SetTextColor(.83,.68,.04,1)
+				getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerAttendanceLast2Weeks"):SetTextColor(.83,.68,.04,1)
 				getglobal("MemeTracker_RecipientListItem"..line.."TextVotes"):SetTextColor(.83,.68,.04,1)
 				getglobal("MemeTracker_RecipientListItem"..line.."TextVoters"):SetTextColor(.83,.68,.04,1)
 				for i,n in ipairs(recipient.loot_count_table) do
 					getglobal("MemeTracker_RecipientListItem"..line.."TextLootCount"..i):SetTextColor(.83,.68,.04,1)
 				end
 			else
-				getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerClass"):SetTextColor(.5,.5,.5,1)
 				getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerName"):SetTextColor(.5,.5,.5,1)
 				getglobal("MemeTracker_RecipientListItem"..line.."TextItemName"):SetTextColor(.5,.5,.5,1)
-				getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerAttendanceToDate"):SetTextColor(.5,.5,.5,1)
-				getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerAttendanceLast5"):SetTextColor(.5,.5,.5,1)
+				getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerAttendanceLast4Weeks"):SetTextColor(.5,.5,.5,1)
+				getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerAttendanceLast2Weeks"):SetTextColor(.5,.5,.5,1)
 				getglobal("MemeTracker_RecipientListItem"..line.."TextVotes"):SetTextColor(.5,.5,.5,1)
 				getglobal("MemeTracker_RecipientListItem"..line.."TextVoters"):SetTextColor(.5,.5,.5,1)
 				for i,n in ipairs(recipient.loot_count_table) do
@@ -625,12 +623,11 @@ function MemeTracker_RecipientListScrollFrame_Update()
 				end
 			end
 
-			getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerClass"):SetText(recipient.player_class)
 			getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerName"):SetText(recipient.player_name)
 			getglobal("MemeTracker_RecipientListItem"..line.."TextItemName"):SetText(recipient.item_link)
 
-			getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerAttendanceToDate"):SetText(recipient.attendance_to_date)
-			getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerAttendanceLast5"):SetText(recipient.attendance_last_5)
+			getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerAttendanceLast4Weeks"):SetText(recipient.attendance_last_4_weeks)
+			getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerAttendanceLast2Weeks"):SetText(recipient.attendance_last_2_weeks)
 
 			for i,n in ipairs(recipient.loot_count_table) do
 				getglobal("MemeTracker_RecipientListItem"..line.."TextLootCount"..i):SetText(n)
@@ -826,8 +823,6 @@ function MemeTracker_LootHistoryScrollFrame_Update()
 		 	end
 
 		 	local rgb = class_colors[player_class]
-			getglobal("MemeTracker_LootHistoryListItem"..line.."TextPlayerClass"):SetTextColor(rgb.r,rgb.g,rgb.b,1)
-			getglobal("MemeTracker_LootHistoryListItem"..line.."TextPlayerClass"):SetText(player_class)
 			getglobal("MemeTracker_LootHistoryListItem"..line.."TextPlayerName"):SetTextColor(rgb.r,rgb.g,rgb.b,1)
 			getglobal("MemeTracker_LootHistoryListItem"..line.."TextPlayerName"):SetText(MemeTracker_LootHistoryTable_Filtered[lineplusoffset].player_name)
 			getglobal("MemeTracker_LootHistoryListItem"..line.."TextItemName"):SetText(MemeTracker_LootHistoryTable_Filtered[lineplusoffset].item_link)
@@ -1120,8 +1115,8 @@ function MemeTracker_SendSync_String(table_name, entry)
 			table_name,
 			entry.player_name,
 			entry.player_class,
-			entry.to_date,
-			entry.last_5)
+			entry.last_4_weeks,
+			entry.last_2_weeks)
 	elseif entry and table_name == "time_stamp" then
 		sync_string = string.format("%s/%s",
 			table_name,
@@ -1163,11 +1158,11 @@ function MemeTracker_ReadSync_Entry(table_name, fields_string)
 
 		entry["item_link"] = item_link
 	elseif table_name == "attendance" then
-		local _,_, player_name, player_class, to_date, last_5 = string.find(fields_string, "(.*)/(.*)/(.*)/(.*)");
+		local _,_, player_name, player_class, last_4_weeks, last_2_weeks = string.find(fields_string, "(.*)/(.*)/(.*)/(.*)");
 		entry["player_name"] = player_name
 		entry["player_class"] = player_class
-		entry["to_date"] = to_date
-		entry["last_5"] = last_5
+		entry["last_4_weeks"] = last_4_weeks
+		entry["last_2_weeks"] = last_2_weeks
 	elseif table_name == "time_stamp" then
 		time_stamp = fields_string
 		entry["time_stamp"] = time_stamp

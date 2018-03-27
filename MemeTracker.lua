@@ -13,11 +13,11 @@ MemeTracker_OverviewTable = {}
 MemeTracker_LootHistoryTable_Temp = {}
 my_vote = nil
 
-sort_direction = "descending"
+sort_direction = "ascending"
 recipient_sort_field = "player_name"
 recipient_sort_index = 1
 
-loot_sort_direction = "descending"
+loot_sort_direction = "ascending"
 loot_sort_field = "time_stamp";
 
 version_request_in_progress = false
@@ -32,6 +32,24 @@ MemeTracker_color_uncommon = "ff1eff00"
 MemeTracker_color_rare = "ff0070dd"
 MemeTracker_color_epic = "ffa335ee"
 MemeTracker_color_legendary = "ffff8000"
+
+
+local class_colors = {
+	["Hunter"] =  {["r"] = 0.67, ["g"] = 0.83, ["b"] = 0.45},
+	["Mage"] =    {["r"] = 0.41, ["g"] = 0.80, ["b"] = 0.94},
+	["Paladin"] = {["r"] = 0.96, ["g"] = 0.55, ["b"] = 0.73},
+	["Priest"] =  {["r"] = 1.00, ["g"] = 1.00, ["b"] = 1.00},
+	["Rogue"] =   {["r"] = 1.00, ["g"] = 0.96, ["b"] = 0.41},
+	["Shaman"] =  {["r"] = 0.00, ["g"] = 0.44, ["b"] = 0.80},
+	["Warlock"] = {["r"] = 0.58, ["g"] = 0.51, ["b"] = 0.79},
+	["Warrior"] = {["r"] = 0.78, ["g"] = 0.61, ["b"] = 0.43},
+	["Druid"] =	  {["r"] = 1.00, ["g"] = 0.49, ["b"] = 0.04},
+	["Unknown"] = {["r"] = 0.83, ["g"] = 0.68, ["b"] = 0.04},
+	["???"] =     {["r"] = 0.83, ["g"] = 0.68, ["b"] = 0.04},
+	[""] =        {["r"] = 0.83, ["g"] = 0.68, ["b"] = 0.04}
+}
+
+local class_default_color
 
 local DEFAULT_VOTES_NEEDED = 5
 
@@ -583,8 +601,9 @@ function MemeTracker_RecipientListScrollFrame_Update()
 			local recipient = MemeTracker_RecipientTable[index]
 
 			if MemeTracker_OverviewTable.in_session then
-				getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerClass"):SetTextColor(.83,.68,.04,1)
-				getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerName"):SetTextColor(.83,.68,.04,1)
+				rgb = class_colors[recipient.player_class]
+				getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerClass"):SetTextColor(rgb.r,rgb.g,rgb.b,1)
+				getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerName"):SetTextColor(rgb.r,rgb.g,rgb.b,1)
 				getglobal("MemeTracker_RecipientListItem"..line.."TextItemName"):SetTextColor(.83,.68,.04,1)
 				getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerAttendanceToDate"):SetTextColor(.83,.68,.04,1)
 				getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerAttendanceLast5"):SetTextColor(.83,.68,.04,1)
@@ -664,18 +683,21 @@ end
 local function LootHistory_Sort_Function(loot_sort_direction, loot_sort_field, a, b)
 
 	if loot_sort_field then
+
+		if ( a[loot_sort_field] == b[loot_sort_field]) then
+			if loot_sort_field ~= "time_stamp"  then
+				if loot_sort_field ~= "player_name" then
+					return LootHistory_Sort_Function(loot_sort_direction, "player_name", a, b)
+				else
+					return LootHistory_Sort_Function(loot_sort_direction, "time_stamp", a, b)          
+				end
+			end
+		end
+
 		if loot_sort_direction == "ascending" then
-			if ( a[loot_sort_field] == b[loot_sort_field]) then
-				return a.time_stamp < b.time_stamp
-			else
-				return a[loot_sort_field] < b[loot_sort_field]
-			end
+			return a[loot_sort_field] < b[loot_sort_field]
 		else
-			if ( a[loot_sort_field] == b[loot_sort_field]) then
-				return a.time_stamp > b.time_stamp
-			else
-				return a[loot_sort_field] > b[loot_sort_field]
-			end
+			return a[loot_sort_field] > b[loot_sort_field]
 		end
 	else
 		return a.time_stamp < b.time_stamp
@@ -797,7 +819,16 @@ function MemeTracker_LootHistoryScrollFrame_Update()
 	for line=1,15 do
 		 lineplusoffset = line + offset
 		 if lineplusoffset <= maxlines then
-			getglobal("MemeTracker_LootHistoryListItem"..line.."TextPlayerClass"):SetText(MemeTracker_LootHistoryTable_Filtered[lineplusoffset].player_class)
+		 	local player_class =  MemeTracker_LootHistoryTable_Filtered[lineplusoffset].player_class
+
+		 	if player_class == nil then
+		 		player_class = ""
+		 	end
+
+		 	local rgb = class_colors[player_class]
+			getglobal("MemeTracker_LootHistoryListItem"..line.."TextPlayerClass"):SetTextColor(rgb.r,rgb.g,rgb.b,1)
+			getglobal("MemeTracker_LootHistoryListItem"..line.."TextPlayerClass"):SetText(player_class)
+			getglobal("MemeTracker_LootHistoryListItem"..line.."TextPlayerName"):SetTextColor(rgb.r,rgb.g,rgb.b,1)
 			getglobal("MemeTracker_LootHistoryListItem"..line.."TextPlayerName"):SetText(MemeTracker_LootHistoryTable_Filtered[lineplusoffset].player_name)
 			getglobal("MemeTracker_LootHistoryListItem"..line.."TextItemName"):SetText(MemeTracker_LootHistoryTable_Filtered[lineplusoffset].item_link)
 			getglobal("MemeTracker_LootHistoryListItem"..line.."TextRaidName"):SetText(MemeTracker_LootHistoryTable_Filtered[lineplusoffset].raid_name)
@@ -1549,10 +1580,15 @@ function MemeTracker_LootHistorySyncButton_OnClick()
 end
 
 function MemeTracker_LootHistory_Sort_OnClick(field)
-	if loot_sort_field == field and loot_sort_direction == "descending" then
-		loot_sort_direction = "ascending"
-	else
+
+	if loot_sort_field == field and field == "player_name" then
+		field = "player_class"
+	end
+
+	if loot_sort_field == field and loot_sort_direction == "ascending" then
 		loot_sort_direction = "descending"
+	else
+		loot_sort_direction = "ascending"
 	end
 
 	loot_sort_field = field
@@ -1560,10 +1596,15 @@ function MemeTracker_LootHistory_Sort_OnClick(field)
 end
 
 function MemeTracker_CouncilSession_Sort_OnClick(field, index)
-	if recipient_sort_field == field and sort_direction == "descending" then
-		sort_direction = "ascending"
-	else
+
+	if recipient_sort_field == field and field == "player_name" then
+		field = "player_class"
+	end
+
+	if recipient_sort_field == field and sort_direction == "ascending" then
 		sort_direction = "descending"
+	else
+		sort_direction = "ascending"
 	end
 
 	recipient_sort_field = field

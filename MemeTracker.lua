@@ -121,7 +121,7 @@ local function getPlayerGuildRank(player_name)
 			guild_rank_index = rankIndex
 
 		elseif name == nil then
-			guild_rank_name = "Non-Guildie"
+			guild_rank_name = "Unknown"
 			guild_rank_index = 100
 		end
 

@@ -168,7 +168,7 @@
 				</FontString>
 				<FontString name="$parentTextItemName" inherits="GameFontNormalSmall" justifyH="LEFT">
 					<Size>
-						<AbsDimension x="200" y="10" />
+						<AbsDimension x="175" y="10" />
 					</Size>
 					<Anchors>
 						<Anchor point="LEFT" relativeTo="$parentTextPlayerGuildRank" relativePoint="RIGHT">
@@ -178,7 +178,7 @@
 						</Anchor>
 					</Anchors>
 				</FontString>
-				<FontString name="$parentTextVotes" inherits="GameFontNormalSmall" justifyH="LEFT">
+				<FontString name="$parentTextVotes" inherits="GameFontNormalSmall" justifyH="RIGHT">
 					<Size>
 						<AbsDimension x="20" y="10" />
 					</Size>
@@ -192,12 +192,12 @@
 				</FontString>
 				<FontString name="$parentTextVoters" inherits="GameFontNormalSmall" justifyH="LEFT">
 					<Size>
-						<AbsDimension x="100" y="10" />
+						<AbsDimension x="125" y="10" />
 					</Size>
 					<Anchors>
 						<Anchor point="LEFT" relativeTo="$parentTextVotes" relativePoint="RIGHT">
 							<Offset>
-								<AbsDimension x="0" y="0" />
+								<AbsDimension x="5" y="0" />
 							</Offset>
 						</Anchor>
 					</Anchors>

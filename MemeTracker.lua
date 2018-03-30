@@ -233,6 +233,12 @@ local function firstToUpper(name)
 	end
 end
 
+local function String_Contains(full_string, partical_string)
+ 	local _,_,res = string.find(string.lower(full_string) , ".*(" .. string.lower(partical_string) .. ").*")
+ 	debug("RES",res)
+ 	return res ~= nil
+end 
+
 local function String_Starts_With(full_string, partical_string)
    return string.sub(string.lower(full_string),1,string.len(partical_string))==string.lower(partical_string)
 end
@@ -298,11 +304,17 @@ local function buildItemLink(item_id, item_name, item_color, item_quality)
 	return item_link
 end
 
-local function List_Contains(list, target_value)
+local function List_Contains(list, target_value, starts_with)
 	for index, value in ipairs(list) do
 		local start, _ = string.find(target_value, value )
-		if String_Starts_With(target_value, value) then
-			return true
+		if starts_with then
+			if String_Starts_With(target_value, value) then
+				return true
+			end
+		else
+			if String_Contains(target_value, value) then
+				return true
+			end
 		end
 	end
 	return false
@@ -819,7 +831,7 @@ local function LootHistory_Filter()
 	for k,v in pairs(MemeTracker_LootHistoryTable) do
 		if searchString and searchString ~= "" then
 			local search_list = Parse_String_List(searchString)
-			if (List_Contains(search_list, v.player_name) == true) or (List_Contains(search_list, v.player_class) == true) then
+			if (List_Contains(search_list, v.player_name, true) == true) or (List_Contains(search_list, v.player_class, true) == true) or (List_Contains(search_list, v.item_name, false) == true)then
 				table.insert(MemeTracker_LootHistoryTable_Filtered, v)
 			end
 		else

@@ -1034,7 +1034,12 @@ function MemeTracker_Broadcast_Session_Cancel()
 	MemeTracker_Broadcast_Session_Finish("cancel");
 end
 
+function MemeTracker_Broadcast_Session_ForceCancel()
+	addonEcho("TX_SESSION_FINISH#".."force_cancel".."#");
+end
+
 function MemeTracker_Broadcast_Session_Finish(mode)
+
 	if MemeTracker_OverviewTable.in_session then
 		debug("MemeTracker_Broadcast_Session_Finish mode", mode)
 
@@ -1109,6 +1114,9 @@ function MemeTracker_Handle_Session_Finish(message)
 	local mode = message;
 	debug("MemeTracker_Handle_Session_Finish mode", mode)
 	if MemeTracker_OverviewTable.in_session then
+		if mode == "force_cancel" then
+			echo("Session canceled: Error with syncing")
+		end
 		MemeTracker_OverviewTable.in_session = false
 		MemeTracker_RecipientListScrollFrame_Update()
 	end
@@ -1829,6 +1837,8 @@ function MemeTracker_SlashCommand(msg)
 				MemeTracker_Broadcast_Session_End()
 			elseif (cmd == "cancel") then
 				MemeTracker_Broadcast_Session_Cancel()
+			elseif (cmd == "force_cancel") then
+				MemeTracker_Broadcast_Session_ForceCancel()
 			elseif (cmd == "help") then
 				echo("MemeTracker v"..MemeTracker_Version.." Commands")
 				echo("Open MemeTracker:   /mt")
@@ -1838,6 +1848,7 @@ function MemeTracker_SlashCommand(msg)
 				echo("Remove queued session:  /mt dequeue <index>")
 				echo("Manually add a raider to the current session:  /mt add <player_name> <index>")
 				echo("Cancel session:   /mt cancel")
+				echo("Force cancel a bad session: /mt force_cancel")
 				echo("Print help:   /mt help")
 			 elseif cmd == "add" then
 				local _,_, player_name, item_link = string.find(cmd_msg, "(%S+)%s*(.*)");
@@ -1856,9 +1867,16 @@ function MemeTracker_SlashCommand(msg)
 				end
 			end
 		else
-			if (cmd == "help") then
+			if isOfficer() and cmd == "force_cancel" then
+				MemeTracker_Broadcast_Session_ForceCancel()
+			elseif cmd == "help" then
 				echo("MemeTracker v"..MemeTracker_Version.." Commands")
 				echo("Open MemeTracker:   /mt")
+
+				if isOfficer() then
+					echo("Force cancel a bad session: /mt force_cancel")
+				end
+
 				echo("Print help:   /mt help")
 			else
 				echo("Unknown command "..cmd.. ". Type /mt help to see a list of commands")

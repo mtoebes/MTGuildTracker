@@ -3,7 +3,7 @@ local WARN_CHANNEL				= "RAID_WARNING"
 local OFFICER_CHANNEL			= "OFFICER"
 
 MemeTracker_Title = "MemeTracker"
-MemeTracker_Version = "3.0.0"
+MemeTracker_Version = "3.0.1"
 
 MemeTracker_RecipientTable = {}
 MemeTracker_LootHistoryTable = {}
@@ -120,7 +120,7 @@ local function getPlayerGuildRank(player_name)
 			guild_rank_name = rank
 			guild_rank_index = rankIndex
 
-		elseif rank == nil then
+		elseif name == nil then
 			guild_rank_name = "Non-Guildie"
 			guild_rank_index = 100
 		end
@@ -235,7 +235,6 @@ end
 
 local function String_Contains(full_string, partical_string)
  	local _,_,res = string.find(string.lower(full_string) , ".*(" .. string.lower(partical_string) .. ").*")
- 	debug("RES",res)
  	return res ~= nil
 end 
 
@@ -287,11 +286,15 @@ end
 
 local function parseItemLink(item_link)
 
-	local _,_,item_link, item_color, item_id, item_name = string.find(item_link , "(|c(%w+).*item:(%d+):.*%[(.*)%]|h|r)")
+	local _,_, find_item_link, item_color, item_id, item_name = string.find(item_link , "(|c(%w+).*item:(%d+):.*%[(.*)%]|h|r)")
 
 	local item_quality = getItemLinkQuality(item_color)
 
-	return item_link, item_quality, item_id, item_name, item_color
+	if find_item_link then
+		return find_item_link, item_quality, item_id, item_name, item_color
+	else
+		return nil, MemeTracker_color_common, nil, item_link
+	end
 end
 
 local function buildItemLink(item_id, item_name, item_color, item_quality)
@@ -573,15 +576,21 @@ local function RecipientTable_Add(player_name, item_link)
  	local attendance = MemeTracker_Attendance[player_name]
 
 	if attendance then
-		last_4_weeks = MemeTracker_Attendance[player_name].last_4_weeks
-		last_2_weeks = MemeTracker_Attendance[player_name].last_2_weeks
+		last_4_weeks = tonumber(MemeTracker_Attendance[player_name].last_4_weeks)
+		last_2_weeks = tonumber(MemeTracker_Attendance[player_name].last_2_weeks)
 	else
 		last_4_weeks = 0
 		last_2_weeks = 0
 	end
 
-	MemeTracker_RecipientTable[index].attendance_last_4_weeks = last_4_weeks.."%"
-	MemeTracker_RecipientTable[index].attendance_last_2_weeks = last_2_weeks.."%"
+	MemeTracker_RecipientTable[index].attendance_last_4_weeks = last_4_weeks
+	MemeTracker_RecipientTable[index].attendance_last_2_weeks = last_2_weeks
+
+	debug("RecipientTable_Add MemeTracker_RecipientTable[index].player_name", MemeTracker_RecipientTable[index].player_name)
+	debug("RecipientTable_Add MemeTracker_RecipientTable[index].item_name", MemeTracker_RecipientTable[index].item_name)
+	debug("RecipientTable_Add MemeTracker_RecipientTable[index].item_link", MemeTracker_RecipientTable[index].item_link)
+
+
 	MemeTracker_RecipientListScrollFrame_Update()
 end
 
@@ -667,8 +676,8 @@ function MemeTracker_RecipientListScrollFrame_Update()
 			getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerGuildRank"):SetText(recipient.player_guild_rank)
 			getglobal("MemeTracker_RecipientListItem"..line.."TextItemName"):SetText(recipient.item_link)
 
-			getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerAttendanceLast4Weeks"):SetText(recipient.attendance_last_4_weeks)
-			getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerAttendanceLast2Weeks"):SetText(recipient.attendance_last_2_weeks)
+			getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerAttendanceLast4Weeks"):SetText(recipient.attendance_last_4_weeks .. "%")
+			getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerAttendanceLast2Weeks"):SetText(recipient.attendance_last_2_weeks .. "%")
 
 			for i,n in ipairs(recipient.loot_count_table) do
 				getglobal("MemeTracker_RecipientListItem"..line.."TextLootCount"..i):SetText(n)
@@ -1097,11 +1106,13 @@ function MemeTracker_Broadcast_Session_Finish(mode)
 				player_name = sortedKeys[1]
 			end
 
-			local entry = LootHistoryTable_AddEntry(MemeTracker_OverviewTable.item_link, player_name)
-			MemeTracker_Broadcast_DownloadSync_Start();
-			local sync_string = MemeTracker_SendSync_String("loothistory", entry)
-			MemeTracker_Broadcast_DownloadSync_Add("loothistory", sync_string)
-			MemeTracker_Broadcast_DownloadSync_End(false);
+			if MemeTracker_OverviewTable.item_link then
+				local entry = LootHistoryTable_AddEntry(MemeTracker_OverviewTable.item_link, player_name)
+				MemeTracker_Broadcast_DownloadSync_Start();
+				local sync_string = MemeTracker_SendSync_String("loothistory", entry)
+				MemeTracker_Broadcast_DownloadSync_Add("loothistory", sync_string)
+				MemeTracker_Broadcast_DownloadSync_End(false);
+			end
 		end
 
 		MemeTracker_RecipientListScrollFrame_Update()

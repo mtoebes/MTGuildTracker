@@ -192,7 +192,7 @@
 				</FontString>
 				<FontString name="$parentTextVoters" inherits="GameFontNormalSmall" justifyH="LEFT">
 					<Size>
-						<AbsDimension x="150" y="10" />
+						<AbsDimension x="100" y="10" />
 					</Size>
 					<Anchors>
 						<Anchor point="LEFT" relativeTo="$parentTextVotes" relativePoint="RIGHT">

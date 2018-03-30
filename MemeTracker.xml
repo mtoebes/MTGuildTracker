@@ -154,12 +154,24 @@
 						</Anchor>
 					</Anchors>
 				</FontString>
+				<FontString name="$parentTextPlayerGuildRank" inherits="GameFontNormalSmall" justifyH="LEFT">
+					<Size>
+						<AbsDimension x="65" y="10" />
+					</Size>
+					<Anchors>
+						<Anchor point="LEFT" relativeTo="$parentTextPlayerName" relativePoint="RIGHT">
+							<Offset>
+								<AbsDimension x="5" y="0" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
 				<FontString name="$parentTextItemName" inherits="GameFontNormalSmall" justifyH="LEFT">
 					<Size>
 						<AbsDimension x="200" y="10" />
 					</Size>
 					<Anchors>
-						<Anchor point="LEFT" relativeTo="$parentTextPlayerName" relativePoint="RIGHT">
+						<Anchor point="LEFT" relativeTo="$parentTextPlayerGuildRank" relativePoint="RIGHT">
 							<Offset>
 								<AbsDimension x="5" y="0" />
 							</Offset>
@@ -332,7 +344,7 @@
 				</FontString>
 				<FontString name="$parentTextItemName" inherits="GameFontNormalSmall" justifyH="LEFT">
 					<Size>
-						<AbsDimension x="200" y="10" />
+						<AbsDimension x="150" y="10" />
 					</Size>
 					<Anchors>
 						<Anchor point="LEFT" relativeTo="$parentTextPlayerName" relativePoint="RIGHT">
@@ -344,7 +356,7 @@
 				</FontString>
 				<FontString name="$parentTextRaidName" inherits="GameFontNormalSmall" justifyH="LEFT">
 					<Size>
-						<AbsDimension x="100" y="10" />
+						<AbsDimension x="150" y="10" />
 					</Size>
 					<Anchors>
 						<Anchor point="LEFT" relativeTo="$parentTextItemName" relativePoint="RIGHT">
@@ -919,6 +931,21 @@
 									<OnClick>MemeTracker_CouncilSession_Sort_OnClick("player_name");</OnClick>
 								</Scripts>
 							</Button>
+							<Button name="MemeTracker_RecipientListSortPlayerGuildRank" inherits="MemeTracker_SortButtonTemplate" text="Rank" >
+								<Size>
+									<AbsDimension x="55" y="16" />
+								</Size>
+								<Anchors>
+									<Anchor point="BOTTOMLEFT" relativeTo="MemeTracker_RecipientListItem1TextPlayerGuildRank" relativePoint="TOPLEFT">
+										<Offset>
+											<AbsDimension x="-5" y="2" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnClick>MemeTracker_CouncilSession_Sort_OnClick("player_guild_rank_index");</OnClick>
+								</Scripts>
+							</Button>
 							<Button  inherits="MemeTracker_TitleButtonTemplate" text = "Raid Attendance For Last">
 								<Size>
 									<AbsDimension x="140" y="16" />
@@ -1074,7 +1101,7 @@
 								<Anchors>
 									<Anchor point="BOTTOMRIGHT" relativeTo="MemeTracker_RecipientListItem1TextLootCount5" relativePoint="TOPRIGHT">
 										<Offset>
-											<AbsDimension x="0" y="12" />
+											<AbsDimension x="-5" y="12" />
 										</Offset>
 									</Anchor>
 								</Anchors>

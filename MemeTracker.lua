@@ -48,13 +48,30 @@ local class_colors = {
 	["???"] =     {["r"] = 0.83, ["g"] = 0.68, ["b"] = 0.04},
 	[""] =        {["r"] = 0.83, ["g"] = 0.68, ["b"] = 0.04}
 }
-
 local class_default_color
 
 local DEFAULT_VOTES_NEEDED = 5
 
 local DE_BANK = "DE/Bank"
 local string_gmatch = lua51 and string.gmatch or string.gfind
+
+local function echo(tag, msg)
+	if msg then
+		DEFAULT_CHAT_FRAME:AddMessage(string.format("|cffa335ee<MemeTracker> |r"..tag.." : "..msg));
+	else
+		DEFAULT_CHAT_FRAME:AddMessage(string.format("|cffa335ee<MemeTracker> |r"..tag));
+	end
+end
+
+local function debug(tag, msg)
+	if debug_enabled then
+		if msg then
+			DEFAULT_CHAT_FRAME:AddMessage(string.format("|cffEE3580<MemeTracker Debug> |r"..tag.." : "..msg));
+		else
+			DEFAULT_CHAT_FRAME:AddMessage(string.format("|cffEE3580<MemeTracker Debug> |r"..tag));
+		end
+	end
+end
 
 TimeSinceLastUpdate=0
 TimeSinceLastSessionStart = 0
@@ -93,15 +110,28 @@ local function isLeader()
 	end 
 end
 
-local function isOfficer()
-	local guild_name, guild_rank, _ = GetGuildInfo("player")
-	if isLeader() then
-		return true
-	elseif guild_name == "meme team" and (guild_rank == "Class Oracle" or guild_rank == "Officer" or guild_rank == "Suprememe Leadr" or guild_rank == "Loot Council") then
-		return true
-	else
-		return false
+local function getPlayerGuildRank(player_name)
+	local guild_rank_name = nil
+	local guild_rank_index = -1
+	local index = 1
+	while guild_rank_name == nil do
+		name, rank, rankIndex, _ = GetGuildRosterInfo(index);
+		if name == player_name then
+			guild_rank_name = rank
+			guild_rank_index = rankIndex
+
+		elseif rank == nil then
+			guild_rank_name = "Non-Guildie"
+			guild_rank_index = 100
+		end
+
+		index = index + 1
 	end
+
+	local dict = {}
+	dict["name"] = guild_rank_name
+	dict["index"] = guild_rank_index
+	return dict
 end
 
 local function getPlayerClass(player_name)
@@ -120,6 +150,17 @@ local function getPlayerClass(player_name)
 	return "???"
 end
 
+local function isOfficer()
+	local guild_name, guild_rank, _ = GetGuildInfo("player")
+	if isLeader() then
+		return true
+	elseif guild_name == "meme team" and (guild_rank == "Class Oracle" or guild_rank == "Officer" or guild_rank == "Suprememe Leadr" or guild_rank == "Loot Council") then
+		return true
+	else
+		return false
+	end
+end
+
 -- echo 
 
 local function echo_leader(tag, msg)
@@ -132,23 +173,7 @@ local function echo_leader(tag, msg)
 	end
 end
 
-local function echo(tag, msg)
-	if msg then
-		DEFAULT_CHAT_FRAME:AddMessage(string.format("|cffa335ee<MemeTracker> |r"..tag.." : "..msg));
-	else
-		DEFAULT_CHAT_FRAME:AddMessage(string.format("|cffa335ee<MemeTracker> |r"..tag));
-	end
-end
 
-local function debug(tag, msg)
-	if debug_enabled then
-		if msg then
-			DEFAULT_CHAT_FRAME:AddMessage(string.format("|cffEE3580<MemeTracker Debug> |r"..tag.." : "..msg));
-		else
-			DEFAULT_CHAT_FRAME:AddMessage(string.format("|cffEE3580<MemeTracker Debug> |r"..tag));
-		end
-	end
-end
 
 local function addonEcho(msg)
 	SendAddonMessage(MT_MESSAGE_PREFIX, msg, "RAID")
@@ -512,8 +537,6 @@ local function RecipientTable_Add(player_name, item_link)
 	local index = RecipientTable_GetPlayerIndex(player_name)
 	local player_name = firstToUpper(player_name)
 
-	local player_class = getPlayerClass(player_name)
-
 	if (index == nil) then
 		debug("RecipientTable_Add index nil")
 		index = getn(MemeTracker_RecipientTable) + 1
@@ -523,8 +546,11 @@ local function RecipientTable_Add(player_name, item_link)
 
 	debug("RecipientTable_Add index", index)
 
+	local guild_rank = getPlayerGuildRank(player_name)
 	local _, _, item_id, item_name = parseItemLink(item_link)
 	MemeTracker_RecipientTable[index].player_class = getPlayerClass(player_name)
+	MemeTracker_RecipientTable[index].player_guild_rank = guild_rank.name
+	MemeTracker_RecipientTable[index].player_guild_rank_index = guild_rank.index
 	MemeTracker_RecipientTable[index].player_name = player_name
 	MemeTracker_RecipientTable[index].item_id = item_id
 	MemeTracker_RecipientTable[index].item_link = item_link
@@ -603,6 +629,7 @@ function MemeTracker_RecipientListScrollFrame_Update()
 			if MemeTracker_OverviewTable.in_session then
 				rgb = class_colors[recipient.player_class]
 				getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerName"):SetTextColor(rgb.r,rgb.g,rgb.b,1)
+					getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerGuildRank"):SetTextColor(.83,.68,.04,1)
 				getglobal("MemeTracker_RecipientListItem"..line.."TextItemName"):SetTextColor(.83,.68,.04,1)
 				getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerAttendanceLast4Weeks"):SetTextColor(.83,.68,.04,1)
 				getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerAttendanceLast2Weeks"):SetTextColor(.83,.68,.04,1)
@@ -613,6 +640,7 @@ function MemeTracker_RecipientListScrollFrame_Update()
 				end
 			else
 				getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerName"):SetTextColor(.5,.5,.5,1)
+				getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerGuildRank"):SetTextColor(.5,.5,.5,1)
 				getglobal("MemeTracker_RecipientListItem"..line.."TextItemName"):SetTextColor(.5,.5,.5,1)
 				getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerAttendanceLast4Weeks"):SetTextColor(.5,.5,.5,1)
 				getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerAttendanceLast2Weeks"):SetTextColor(.5,.5,.5,1)
@@ -624,6 +652,7 @@ function MemeTracker_RecipientListScrollFrame_Update()
 			end
 
 			getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerName"):SetText(recipient.player_name)
+			getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerGuildRank"):SetText(recipient.player_guild_rank)
 			getglobal("MemeTracker_RecipientListItem"..line.."TextItemName"):SetText(recipient.item_link)
 
 			getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerAttendanceLast4Weeks"):SetText(recipient.attendance_last_4_weeks)

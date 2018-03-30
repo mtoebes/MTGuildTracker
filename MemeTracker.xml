@@ -970,7 +970,7 @@
 									</Anchor>
 								</Anchors>
 								<Scripts>
-									<OnClick>MemeTracker_CouncilSession_Sort_OnClick("attendance_to_date");</OnClick>
+									<OnClick>MemeTracker_CouncilSession_Sort_OnClick("attendance_last_4_weeks");</OnClick>
 								</Scripts>
 							</Button>
 							<Button name="MemeTracker_RecipientListSortPlayerAttendanceLast2Weeks" inherits="MemeTracker_SortButtonTemplate" text="2 Weeks">
@@ -985,7 +985,7 @@
 									</Anchor>
 								</Anchors>
 								<Scripts>
-									<OnClick>MemeTracker_CouncilSession_Sort_OnClick("attendance_last_5");</OnClick>
+									<OnClick>MemeTracker_CouncilSession_Sort_OnClick("attendance_last_2_weeks");</OnClick>
 								</Scripts>
 							</Button>
 							<Button name="MemeTracker_RecipientListSortItemName" inherits="MemeTracker_SortButtonTemplate" text="ItemName">

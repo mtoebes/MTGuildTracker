@@ -475,6 +475,7 @@ local function RecipientTable_Sort_Function_LootCount(sort_direction, start_inde
 end
 
 local function RecipientTable_Sort_Function(sort_direction, recipient_sort_field, a, b)
+	echo("recipient_sort_field", recipient_sort_field)
 	if recipient_sort_field then
 		if sort_direction == "ascending" then
 			if recipient_sort_field == "loot_count_table" then
@@ -650,7 +651,7 @@ function MemeTracker_RecipientListScrollFrame_Update()
 			if MemeTracker_OverviewTable.in_session then
 				rgb = class_colors[recipient.player_class]
 				getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerName"):SetTextColor(rgb.r,rgb.g,rgb.b,1)
-					getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerGuildRank"):SetTextColor(.83,.68,.04,1)
+				getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerGuildRank"):SetTextColor(.83,.68,.04,1)
 				getglobal("MemeTracker_RecipientListItem"..line.."TextItemName"):SetTextColor(.83,.68,.04,1)
 				getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerAttendanceLast4Weeks"):SetTextColor(.83,.68,.04,1)
 				getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerAttendanceLast2Weeks"):SetTextColor(.83,.68,.04,1)

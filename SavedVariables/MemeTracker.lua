@@ -10669,8 +10669,8 @@ MemeTracker_Attendance = {
     ["Smokebud"] = {
         ["player_name"] = "Smokebud",
         ["player_class"] = "warrior",
-        ["to_date"] = "",
-        ["last_5"] = "",
+        ["to_date"] = "0",
+        ["last_5"] = "0",
         ["last_2_weeks"] = "13",
         ["last_4_weeks"] = "6",
     },

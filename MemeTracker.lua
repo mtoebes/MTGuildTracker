@@ -383,7 +383,7 @@ function GetPlayerLootCount_DaysAgo(player_name, start_date, days_ago)
 		end
 	end
 
-	return loot_count/
+	return loot_count
 end
 
 local week_list = {
@@ -445,7 +445,7 @@ local function Session_CanEnd()
 		end
 	else
 		return false
-	end5
+	end
 end
 
 local function RecipientTable_Sort_Function_LootCount(sort_direction, start_index, a, b)

@@ -383,7 +383,7 @@ function GetPlayerLootCount_DaysAgo(player_name, start_date, days_ago)
 		end
 	end
 
-	return loot_count
+	return loot_count/
 end
 
 local week_list = {
@@ -475,7 +475,6 @@ local function RecipientTable_Sort_Function_LootCount(sort_direction, start_inde
 end
 
 local function RecipientTable_Sort_Function(sort_direction, recipient_sort_field, a, b)
-	echo("recipient_sort_field", recipient_sort_field)
 	if recipient_sort_field then
 		if sort_direction == "ascending" then
 			if recipient_sort_field == "loot_count_table" then

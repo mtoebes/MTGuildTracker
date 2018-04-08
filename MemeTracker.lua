@@ -52,7 +52,7 @@ local class_default_color
 
 local DEFAULT_VOTES_NEEDED = 5
 
-local DE_BANK = "DE/Bank"
+local DE_BANK = "DE-Bank"
 local string_gmatch = lua51 and string.gmatch or string.gfind
 
 local function echo(tag, msg)
@@ -445,7 +445,7 @@ local function Session_CanEnd()
 		end
 	else
 		return false
-	end
+	end5
 end
 
 local function RecipientTable_Sort_Function_LootCount(sort_direction, start_index, a, b)
@@ -475,6 +475,7 @@ local function RecipientTable_Sort_Function_LootCount(sort_direction, start_inde
 end
 
 local function RecipientTable_Sort_Function(sort_direction, recipient_sort_field, a, b)
+	echo("recipient_sort_field", recipient_sort_field)
 	if recipient_sort_field then
 		if sort_direction == "ascending" then
 			if recipient_sort_field == "loot_count_table" then

@@ -1483,7 +1483,7 @@
          </Frame>
       </Frames>
    </Frame>
-   <Frame name="MemeTracker_LootHistoryEditorFrame" frameStrata="DIALOG" toplevel="true" parent="UIParent" movable="false" enableMouse="true" hidden="true" clampedToScreen="true">
+   <Frame name="MemeTracker_LootHistoryEditorFrame" frameStrata="DIALOG" toplevel="true" parent="UIParent" movable="true" enableMouse="true" hidden="true" clampedToScreen="true">
       <Size>
          <AbsDimension x="250" y="350" />
       </Size>
@@ -1579,7 +1579,7 @@
             </Scripts>
          </Button>
 
-         <EditBox name="MemeTracker_LootHistoryEditor_NameBox" autoFocus="false" inherits="InputBoxTemplate" historyLines="5">
+         <EditBox name="MemeTracker_LootHistoryEditor_NameBox" autoFocus="false" inherits="InputBoxTemplate">
             <Size>
                <AbsDimension x="100" y="15" />
             </Size>
@@ -1675,6 +1675,8 @@
          </Button>
       </Frames>
       <Scripts>
+                  <OnMouseDown>MemeTracker_Main_OnMouseDown(arg1);</OnMouseDown>
+         <OnMouseUp>MemeTracker_Main_OnMouseUp(arg1);</OnMouseUp>
          <OnShow>MemeTracker_LootHistoryEditorFrame_OnShow();</OnShow>
       </Scripts>
    </Frame>

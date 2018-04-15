@@ -67,6 +67,7 @@ local function echo(tag, msg)
 	end
 end
 
+
 local function debug(tag, msg)
 	if debug_enabled then
 		if msg then
@@ -260,9 +261,9 @@ local function getItemLinkQuality(item_color)
 	elseif item_color == MemeTracker_color_uncommon then
 		item_quality = "uncommon"
 	elseif item_color == MemeTracker_color_rare then
-		item_quality = "common"
+		item_quality = "rare"
 	elseif item_color == MemeTracker_color_epic then
-		item_quality = "common"
+		item_quality = "epic"
 	elseif item_color == MemeTracker_color_legendary then
 		item_quality = "legendary"
 	else
@@ -291,9 +292,12 @@ end
 local function parseItemLink(item_link)
 
 	local _,_, find_item_link, item_color, item_id, item_name = string.find(item_link , "(|c(%w+).*item:(%d+):.*%[(.*)%]|h|r)")
-
+	echo("find_item_link",find_item_link)
+	echo("item_color", item_color)
+	echo("item_id",item_id)
+	echo("item_name", item_name)
 	local item_quality = getItemLinkQuality(item_color)
-
+	echo("item_quality",item_quality)
 	if find_item_link then
 		return find_item_link, item_quality, item_id, item_name, item_color
 	else
@@ -590,11 +594,6 @@ local function RecipientTable_Add(player_name, item_link)
 	MemeTracker_RecipientTable[entry_key].attendance_last_4_weeks = last_4_weeks
 	MemeTracker_RecipientTable[entry_key].attendance_last_2_weeks = last_2_weeks
 
-	debug("RecipientTable_Add MemeTracker_RecipientTable[entry_key].player_name", MemeTracker_RecipientTable[entry_key].player_name)
-	debug("RecipientTable_Add MemeTracker_RecipientTable[entry_key].item_name", MemeTracker_RecipientTable[entry_key].item_name)
-	debug("RecipientTable_Add MemeTracker_RecipientTable[entry_key].item_link", MemeTracker_RecipientTable[entry_key].item_link)
-
-
 	MemeTracker_RecipientListScrollFrame_Update()
 end
 
@@ -795,7 +794,6 @@ local function LootHistoryTable_Build()
 end
 
 local function LootHistoryTable_UpdateEntry(entry)
-
 	entry_key = entry["entry_key"]
 
 	if MemeTrackerDB[entry_key] == nil then
@@ -803,17 +801,19 @@ local function LootHistoryTable_UpdateEntry(entry)
 	end
 
 	MemeTrackerDB[entry_key] = entry
+	local time_stamp = date("%y-%m-%d %H:%M:%S")
+	--echo("LootHistoryTable_UpdateEntry", time_stamp)
+	--MemeTracker_LastUpdate["time_stamp"] = time_stamp
+	--echo("LootHistoryTable_UpdateEntry", MemeTracker_LastUpdate["time_stamp"])
+
 end
 
 local function LootHistoryTable_BuildEntry(item_link, player_name)
-	debug("LootHistoryTable_BuildEntry item_link", item_link)
-	debug("LootHistoryTable_BuildEntry player_name", player_name)
-
 	local time_stamp = date("%y-%m-%d %H:%M:%S")
 	local date = date("%y-%m-%d")
-
 	local item_link, item_quality, item_id, item_name = parseItemLink(item_link)
 
+	echo(item_quality)
 	if item_link == nil then
 		debug("cant parse this link")
 		return
@@ -833,15 +833,18 @@ local function LootHistoryTable_BuildEntry(item_link, player_name)
 	entry["item_name"] = item_name
 	entry["item_id"] = item_id
 
-	debug("time()",time())
 	entry["entry_key"] = string.format("%s_%s",time(), item_id)
 
-	MemeTracker_LastUpdate["time_stamp"] = time_stamp
 	return entry
 end
 
 local function LootHistoryTable_AddEntry(item_link, player_name)
 	entry = LootHistoryTable_BuildEntry(item_link, player_name)
+
+	local time_stamp = date("%y-%m-%d %H:%M:%S")
+	--echo("LootHistoryTable_AddEntry", time_stamp)
+	--MemeTracker_LastUpdate["time_stamp"] = time_stamp
+	--echo(time_stamp)
 	LootHistoryTable_UpdateEntry(entry)
 	LootHistoryTable_Build()
 	return entry
@@ -934,14 +937,12 @@ function MemeTracker_Session_Dequeue(entry_key)
 end
 
 function MemeTracker_Broadcast_Message_Echo(message)
-	debug("MemeTracker_Broadcast_Message_Echo message", message)
 	if message then
 		addonEcho_leader("TX_MESSAGE_ECHO#".. message .."#");
 	end
 end
 
 function MemeTracker_Handle_Message_Echo(message, sender)
-debug("MemeTracker_Handle_Message_Echo message", message)
 	echo(message)
 end
 
@@ -965,8 +966,6 @@ end
 
 function MemeTracker_Handle_RecipientTable_Add(message, sender)
 	local _, _, player_name, item_link = string.find(message, "([^/]*)/(.*)")
-	debug("MemeTracker_Handle_RecipientTable_Add player_name", player_name)
-	debug("MemeTracker_Handle_RecipientTable_Add item_link", item_link)
 
 	RecipientTable_Add(player_name, item_link)
 end
@@ -1172,7 +1171,6 @@ function MemeTracker_SendSync_String(table_name, entry, key)
 	sync_string = "";
 
 	if entry and table_name == "loothistory" then
-		debug("entry.entry_key",entry.entry_key)
 		sync_string = string.format("%s/%s/%s/%s/%s/%s/%s/%s/%s/%s",
 			table_name,
 			entry.entry_key,
@@ -1255,7 +1253,7 @@ function MemeTracker_Send_UploadSync()
 		MemeTracker_Broadcast_UploadSync_Add("attendance", sync_string)
 	end
 
-	local sync_string = MemeTracker_SendSync_String("time_stamp", MemeTracker_LastUpdate)
+	--local sync_string = MemeTracker_SendSync_String("time_stamp", MemeTracker_LastUpdate)
 
 	MemeTracker_Broadcast_UploadSync_Add("time_stamp", sync_string)
 end
@@ -1270,14 +1268,12 @@ function MemeTracker_Send_DownloadSync()
 		MemeTracker_Broadcast_DownloadSync_Add("attendance", sync_string)
 	end
 
-	local sync_string = MemeTracker_SendSync_String("time_stamp", MemeTracker_LastUpdate)
+	--local sync_string = MemeTracker_SendSync_String("time_stamp", MemeTracker_LastUpdate)
 
 	MemeTracker_Broadcast_DownloadSync_Add("time_stamp", sync_string)
 end
 
 function MemeTracker_Save_Sync(clear_table)
-	debug("MemeTracker_LootHistoryTable", getn(MemeTracker_LootHistoryTable))
-	debug("MemeTracker_LootHistoryTable_Temp", getn(MemeTracker_LootHistoryTable_Temp))
 
 	-- Loot History Table
 	if clear_table and getn(MemeTracker_LootHistoryTable_Temp) > 0 then
@@ -1299,15 +1295,8 @@ function MemeTracker_Save_Sync(clear_table)
 		MemeTracker_Attendance[k] = v
 	end
 
-	MemeTracker_Attendance_Temp = {}
-
-	-- Last Updated
-	if MemeTracker_LastUpdate_Temp then
-		MemeTracker_LastUpdate = {}
-		MemeTracker_LastUpdate["time_stamp"] = MemeTracker_LastUpdate_Temp["time_stamp"]
-	end
-
-	MemeTracker_LastUpdate_Temp = {}
+	local time_stamp = date("%y-%m-%d %H:%M:%S")
+	MemeTracker_LastUpdate["time_stamp"] = time_stamp
 
 	-- Refresh View
 	LootHistoryTable_Build()
@@ -1339,7 +1328,6 @@ function MemeTracker_Handle_Version_Request(message, sender)
 end
 
 function MemeTracker_Broadcast_Version_Response()
-	debug("MemeTracker_Broadcast_Version_Response")
 	if MemeTracker_LastUpdate ~= nil and MemeTracker_LastUpdate["time_stamp"] ~= nil then
 		debug("MemeTracker_Broadcast_Version_Response")
 		addonEcho("TX_VERSION_RESPONSE#"..MemeTracker_LastUpdate["time_stamp"].."#");
@@ -1360,12 +1348,7 @@ function MemeTracker_Version_End()
 	max_sender = UnitName("player")
 	max_time_stamp = response_versions[UnitName("player")]
 	for sender,time_stamp in pairs(response_versions) do
-		debug("time_stamp", time_stamp)
-			debug("sender",sender)
 		if time_stamp ~= nill and (max_time_stamp == nil or time_stamp > max_time_stamp) then
-			debug("max_time_stamp", max_time_stamp)
-			debug("max_sender", max_sender)
-
 			max_time_stamp = time_stamp
 			max_sender = sender
 		end
@@ -1390,13 +1373,11 @@ function MemeTracker_Broadcast_UploadSync_Request(player_name)
 		debug("MemeTracker_Broadcast_UploadSync_Request")
 		MemeTracker_LootHistoryTable_Temp = {}
 		MemeTracker_Attendance_Temp = {}
-		MemeTracker_LastUpdate_Temp = {}
 		addonEcho("TX_UPLOADSYNC_REQUEST#"..player_name.."#");
 	end
 end
 
 function MemeTracker_Handle_UploadSync_Request(message, sender)
-	debug("MemeTracker_Handle_UploadSync_Request");
 	local player_name = message
 	if UnitName("player") == player_name then
 		debug("MemeTracker_Handle_UploadSync_Request");
@@ -1432,8 +1413,6 @@ function MemeTracker_Handle_UploadSync_Add(message, sender)
 			table.insert(MemeTracker_LootHistoryTable_Temp, entry)
 		elseif table_name == "attendance" then
 			MemeTracker_Attendance_Temp[entry["player_name"]] = entry
-		elseif table_name == "time_stamp" then
-			MemeTracker_LastUpdate_Temp["time_stamp"] = entry["time_stamp"]
 		end
 	end
 end
@@ -1467,7 +1446,7 @@ end
 -- Download Sync
 
 function MemeTracker_Broadcast_DownloadSync_Start()
-	if isLeader() and not download_sync_in_progress then
+	if not download_sync_in_progress then
 		debug("MemeTracker_Broadcast_DownloadSync_Start");
 		download_sync_in_progress = true;
 		addonEcho("TX_DOWNLOADSYNC_START#".."#");
@@ -1475,24 +1454,22 @@ function MemeTracker_Broadcast_DownloadSync_Start()
 end
 
 function MemeTracker_Handle_DownloadSync_Start(message, sender)
-	if not isLeader() and not download_sync_in_progress then
+	if not download_sync_in_progress then
 		debug("MemeTracker_Handle_DownloadSync_Start");
 		download_sync_in_progress = true;
 		MemeTracker_LootHistoryTable_Temp = {}
 		MemeTracker_Attendance_Temp = {}
-		MemeTracker_LastUpdate_Temp = {}
 	end
 end
 
 function MemeTracker_Broadcast_DownloadSync_Add(table_name, sync_string)
-	if isLeader() and download_sync_in_progress then
+	if download_sync_in_progress then
 		addonEcho("TX_DOWNLOADSYNC_ADD#".. sync_string .."#");
 	end
 end
 
 function MemeTracker_Handle_DownloadSync_Add(message, sender)
-	if not isLeader() and download_sync_in_progress then
-		debug("MemeTracker_Handle_DownloadSync_Add");
+	if download_sync_in_progress then
 		local _, _, table_name, fields_string = string.find(message, "([^/]*)/(.*)");
 
 		entry = MemeTracker_ReadSync_Entry(table_name, fields_string)
@@ -1501,14 +1478,12 @@ function MemeTracker_Handle_DownloadSync_Add(message, sender)
 			table.insert(MemeTracker_LootHistoryTable_Temp, entry)
 		elseif table_name == "attendance" then
 			MemeTracker_Attendance_Temp[entry["player_name"]] = entry
-		elseif table_name == "time_stamp" then
-			MemeTracker_LastUpdate_Temp["time_stamp"] = entry["time_stamp"]
 		end
 	end
 end
 
 function MemeTracker_Broadcast_DownloadSync_End(clear_table)
-	if isLeader() and download_sync_in_progress then
+	if download_sync_in_progress then
 		debug("MemeTracker_Broadcast_DownloadSync_End");
 		download_sync_in_progress = false;
 		getglobal("MemeTracker_LootHistorySyncButton"):Enable()
@@ -1523,7 +1498,7 @@ end
 
 function MemeTracker_Handle_DownloadSync_End(message, sender)
 	local clear_table = message
-	if not isLeader() and download_sync_in_progress then
+	if download_sync_in_progress then
 		debug("MemeTracker_Handle_DownloadSync_End clear_table", clear_table);
 		download_sync_in_progress = false;
 		MemeTracker_Save_Sync(clear_table == "1");
@@ -1565,9 +1540,19 @@ local lootHistoryUseCase = {
 }
 
 function MemeTracker_LootHistoryEditorSaveButton_OnClick()
-		getglobal("MemeTracker_LootHistoryEditorFrame"):Hide()
-end
+	getglobal("MemeTracker_LootHistoryEditorFrame"):Hide()
 
+	LootHistoryEditorEntry.player_name = MemeTracker_LootHistoryEditor_NameBox:GetText();
+
+	if LootHistoryEditorEntry["use_case"] == DE_BANK then
+		LootHistoryEditorEntry.player_class = ""
+	end
+
+	MemeTracker_Broadcast_DownloadSync_Start();
+	local sync_string = MemeTracker_SendSync_String("loothistory", LootHistoryEditorEntry)
+	MemeTracker_Broadcast_DownloadSync_Add("loothistory", sync_string)
+	MemeTracker_Broadcast_DownloadSync_End(false);
+end
 
 function LootTracker_OptionCheckButton_Check(id)
 
@@ -1576,12 +1561,17 @@ function LootTracker_OptionCheckButton_Check(id)
 	end
 
 	if id == 4 then
-		getglobal("MemeTracker_LootHistoryEditor_NameBox"):SetText(BANK_DE)
-		UIDropDownMenu_SetSelectedID(MemeTracker_LootHistoryEditor_ClassDropDown,1)
+		player_name= BANK_DE
+		use_index = 1
 	else
-		getglobal("MemeTracker_LootHistoryEditor_NameBox"):SetText(LootHistoryEditorEntry.player_name)
-		UIDropDownMenu_SetSelectedID(MemeTracker_LootHistoryEditor_ClassDropDown,LootHistoryEditorEntry.player_class_index)
+		player_name = LootHistoryEditorEntry.player_name
+		use_index = GetPlayerClassDropDownIndex(LootHistoryEditorEntry.player_class)
 	end
+
+	getglobal("MemeTracker_LootHistoryEditor_NameBox"):SetText(player_name)
+	UIDropDownMenu_SetSelectedID(MemeTracker_LootHistoryEditor_ClassDropDown,use_index)
+
+	LootHistoryEditorEntry["use_case"] = lootHistoryUseCase[id]
 end
 
 function MemeTracker_LootHistoryEditor_UseCaseButton_OnClick(id)
@@ -1591,7 +1581,7 @@ function MemeTracker_LootHistoryEditor_UseCaseButton_OnClick(id)
 		LootTracker_OptionCheckButton_Check(id)
 	else
 		LootTracker_OptionCheckButton_Check(1)
-	end 
+	end
 end
 
 function MemeTracker_LootHistoryEditor_ClassDropDown_OnClick()
@@ -1603,6 +1593,9 @@ function MemeTracker_LootHistoryEditor_ClassDropDown_OnClick()
 	else
 		searchSlot = nil;
 	end	
+
+	LootHistoryEditorEntry.player_class = playerClassSlotNames[id].slot
+	echo(LootHistoryEditorEntry.player_class)
 end
 
 function MemeTracker_LootHistoryEditor_ClassDropDown_Initialize()
@@ -1618,18 +1611,10 @@ end
 
 function MemeTracker_LootHistoryEditor_ClassDropDown_OnShow()
      UIDropDownMenu_Initialize(this, MemeTracker_LootHistoryEditor_ClassDropDown_Initialize);
-   -- UIDropDownMenu_SetSelectedID(this, 1);
      UIDropDownMenu_SetWidth(90);
 end
 
-function MemeTracker_LootHistoryEditor_Open(index)
-	ShowUIPanel(MemeTracker_LootHistoryEditorFrame, 1)
-
-	LootHistoryEditorEntry =  MemeTracker_LootHistoryTable_Filtered[index]
-
-	local player_class = LootHistoryEditorEntry.player_class
-	local player_name = LootHistoryEditorEntry.player_name
-
+function GetPlayerClassDropDownIndex(player_class)
 	local player_class_index = 1
 	for index, slot in ipairs(playerClassSlotNames) do
 		if slot.slot == player_class then
@@ -1637,6 +1622,10 @@ function MemeTracker_LootHistoryEditor_Open(index)
 		end
 	end
 
+	return player_class_index
+end
+
+function GetUseCaseDropDownIndex(player_name, use_case)
 	local use_case_index = 1
 
 	if player_name == DE_BANK or player_name == BANK_DE then
@@ -1649,8 +1638,20 @@ function MemeTracker_LootHistoryEditor_Open(index)
 		end
 	end
 
-	LootHistoryEditorEntry["player_class_index"] = player_class_index
-	LootHistoryEditorEntry["use_case_index"] = use_case_index
+	return use_case_index
+end
+
+function MemeTracker_LootHistoryEditor_Open(index)
+	ShowUIPanel(MemeTracker_LootHistoryEditorFrame, 1)
+
+	LootHistoryEditorEntry =  MemeTracker_LootHistoryTable_Filtered[index]
+
+	local player_class = LootHistoryEditorEntry.player_class
+	local player_name = LootHistoryEditorEntry.player_name
+
+	local player_class_index = GetPlayerClassDropDownIndex(player_class)
+
+	local use_case_index = GetUseCaseDropDownIndex(player_name, LootHistoryEditorEntry["use_case"])
 
 	LootTracker_OptionCheckButton_Check(use_case_index)
 	UIDropDownMenu_SetSelectedID(MemeTracker_LootHistoryEditor_ClassDropDown,LootHistoryEditorEntry.player_class_index)
@@ -1909,7 +1910,6 @@ end
 function MemeTracker_OnChatMsgAddon(event, prefix, msg, channel, sender)
 	if (prefix == MT_MESSAGE_PREFIX) then
 			--	Split incoming message in Command, Payload (message) and Recipient
-		debug("MemeTracker_OnChatMsgAddon msg", msg)
 		local _, _, cmd, message, recipient = string.find(msg, "([^#]*)#(.*)#([^#]*)")
 
 		if not cmd then
@@ -1920,7 +1920,6 @@ function MemeTracker_OnChatMsgAddon(event, prefix, msg, channel, sender)
 			message = ""
 		end
 
-		debug("MemeTracker_OnChatMsgAddon" .. cmd, message)
 		if cmd == "TX_ENTRY_ADD" then
 			MemeTracker_Handle_RecipientTable_Add(message, sender)
 		elseif cmd == "TX_ENTRY_REMOVE" then
@@ -1954,6 +1953,12 @@ function MemeTracker_OnChatMsgAddon(event, prefix, msg, channel, sender)
 				MemeTracker_Handle_UploadSync_Add(message, sender)
 			elseif cmd == "TX_UPLOADSYNC_END" then
 				MemeTracker_Handle_UploadSync_End(message, sender)
+			elseif cmd == "TX_DOWNLOADSYNC_START" then
+				MemeTracker_Handle_DownloadSync_Start(message, sender)
+			elseif cmd == "TX_DOWNLOADSYNC_ADD" then
+				MemeTracker_Handle_DownloadSync_Add(message, sender)
+			elseif cmd == "TX_DOWNLOADSYNC_END" then
+				MemeTracker_Handle_DownloadSync_End(message, sender)
 			end
 		else
 			if cmd == "TX_DOWNLOADSYNC_START" then
@@ -1991,7 +1996,6 @@ function MemeTracker_SlashCommand(msg)
 				_,_, item_link = string.find(cmd_msg, "(.*)");
 				MemeTracker_Session_Queue(item_link)
 			elseif (cmd == "list") then
-				debug("list")
 				MemeTracker_Session_List()
 			elseif (cmd == "dequeue") then
 				MemeTracker_Session_Dequeue(cmd_msg)

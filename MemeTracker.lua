@@ -292,12 +292,7 @@ end
 local function parseItemLink(item_link)
 
 	local _,_, find_item_link, item_color, item_id, item_name = string.find(item_link , "(|c(%w+).*item:(%d+):.*%[(.*)%]|h|r)")
-	echo("find_item_link",find_item_link)
-	echo("item_color", item_color)
-	echo("item_id",item_id)
-	echo("item_name", item_name)
 	local item_quality = getItemLinkQuality(item_color)
-	echo("item_quality",item_quality)
 	if find_item_link then
 		return find_item_link, item_quality, item_id, item_name, item_color
 	else

@@ -1543,14 +1543,50 @@
                <OnClick>MemeTracker_LootHistoryEditorFrame:Hide();</OnClick>
             </Scripts>
          </Button>
-         <EditBox name="MemeTracker_LootHistoryEditor_NameBox" autoFocus="false" inherits="InputBoxTemplate">
+
+         <Button name="MemeTracker_LootHistoryEditor_ItemNameButton">
+            <Size>
+               <AbsDimension x="120" y="22" />
+            </Size>
+            <Anchors>
+               <Anchor point="TOP">
+                  <Offset>
+                     <AbsDimension x="0" y="-20" />
+                  </Offset>
+               </Anchor>
+            </Anchors>
+            <Layers>
+               <Layer level="OVERLAY">
+                  <FontString name="MemeTracker_LootHistoryEditor_TextItemName" inherits="GameFontNormalSmall" justifyH="LEFT">
+                     <Size>
+                        <AbsDimension x="150" y="0" />
+                     </Size>
+                     <Anchors>90
+                        <Anchor point="LEFT">
+                           <Offset>
+                              <AbsDimension x="0" y="0" />
+                           </Offset>
+                        </Anchor>
+                     </Anchors>
+                  </FontString>
+               </Layer>
+            </Layers>
+            <Scripts>
+               <OnLoad>this:RegisterForClicks("LeftButtonUp", "RightButtonUp");</OnLoad>
+               <OnClick>MemeTracker_LootHistoryEditor_ItemNameButton_OnClick(arg1);</OnClick>
+               <OnEnter>MemeTracker_LootHistoryEditor_ItemNameButton_OnEnter();</OnEnter>
+               <OnLeave>MemeTracker_LootHistoryEditor_ItemNameButton_OnLeave();</OnLeave>
+            </Scripts>
+         </Button>
+
+         <EditBox name="MemeTracker_LootHistoryEditor_NameBox" autoFocus="false" inherits="InputBoxTemplate" historyLines="5">
             <Size>
                <AbsDimension x="100" y="15" />
             </Size>
             <Anchors>
                <Anchor point="TOPLEFT">
                   <Offset>
-                     <AbsDimension x="20" y="-30" />
+                     <AbsDimension x="20" y="-50" />
                   </Offset>
                </Anchor>
             </Anchors>
@@ -1560,9 +1596,9 @@
          </EditBox>
          <Frame name="MemeTracker_LootHistoryEditor_ClassDropDown" inherits="UIDropDownMenuTemplate" id="1" hidden="false">
             <Anchors>
-               <Anchor point="TOPLEFT" relativeTo="MemeTracker_LootHistoryEditor_NameBox" relativePoint="BOTTOMLEFT">
+               <Anchor point="TOPLEFT" >
                   <Offset>
-                     <AbsDimension x="0" y="0" />
+                     <AbsDimension x="0" y="-70" />
                   </Offset>
                </Anchor>
             </Anchors>
@@ -1606,6 +1642,19 @@
             </Anchors>
             <Scripts>
                <OnLoad>getglobal(this:GetName().."Text"):SetText("Resistance")</OnLoad>
+               <OnClick>MemeTracker_LootHistoryEditor_UseCaseButton_OnClick(this:GetID())</OnClick>
+            </Scripts>
+         </CheckButton>
+         <CheckButton id="4" name="MemeTracker_LootHistoryEditor_UseCase4" inherits="MemeTracker_CheckButton">
+            <Anchors>
+               <Anchor point="TOPLEFT" relativeTo="MemeTracker_LootHistoryEditor_UseCase3" relativePoint="BOTTOMLEFT">
+                  <Offset>
+                     <AbsDimension x="0" y="0" />
+                  </Offset>
+               </Anchor>
+            </Anchors>
+            <Scripts>
+               <OnLoad>getglobal(this:GetName().."Text"):SetText("Disenchanted/Bank")</OnLoad>
                <OnClick>MemeTracker_LootHistoryEditor_UseCaseButton_OnClick(this:GetID())</OnClick>
             </Scripts>
          </CheckButton>

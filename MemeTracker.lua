@@ -34,6 +34,8 @@ MemeTracker_color_epic = "ffa335ee"
 MemeTracker_color_legendary = "ffff8000"
 
 
+local LootHistoryEditorEntry = {}
+
 local class_colors = {
 	["Hunter"] =  {["r"] = 0.67, ["g"] = 0.83, ["b"] = 0.45},
 	["Mage"] =    {["r"] = 0.41, ["g"] = 0.80, ["b"] = 0.94},
@@ -51,6 +53,8 @@ local class_colors = {
 local class_default_color
 
 local DEFAULT_VOTES_NEEDED = 5
+
+local BANK_DE = "Bank-DE"
 
 local DE_BANK = "DE-Bank"
 local string_gmatch = lua51 and string.gmatch or string.gfind
@@ -1551,13 +1555,13 @@ local playerClassSlotNames = {
 	{slot = "Rogue", 				name = "rogue"},
 	{slot = "Warlock", 				name = "warlock"},
 	{slot = "Warrior", 				name = "warrior"},
-	{slot = DE_BANK, 				name = DE_BANK},
 }
 
 local lootHistoryUseCase = {
 	[1] = "MS",
 	[2] = "OS",
-	[3] = "RES"
+	[3] = "RES",
+	[4] = DE_BANK
 }
 
 function MemeTracker_LootHistoryEditorSaveButton_OnClick()
@@ -1566,8 +1570,17 @@ end
 
 
 function LootTracker_OptionCheckButton_Check(id)
+
 	for index = 1,getn(lootHistoryUseCase),1  do
 		getglobal("MemeTracker_LootHistoryEditor_UseCase"..index):SetChecked(id==index)
+	end
+
+	if id == 4 then
+		getglobal("MemeTracker_LootHistoryEditor_NameBox"):SetText(BANK_DE)
+		UIDropDownMenu_SetSelectedID(MemeTracker_LootHistoryEditor_ClassDropDown,1)
+	else
+		getglobal("MemeTracker_LootHistoryEditor_NameBox"):SetText(LootHistoryEditorEntry.player_name)
+		UIDropDownMenu_SetSelectedID(MemeTracker_LootHistoryEditor_ClassDropDown,LootHistoryEditorEntry.player_class_index)
 	end
 end
 
@@ -1612,25 +1625,38 @@ end
 function MemeTracker_LootHistoryEditor_Open(index)
 	ShowUIPanel(MemeTracker_LootHistoryEditorFrame, 1)
 
-	entry =  MemeTracker_LootHistoryTable_Filtered[index]
+	LootHistoryEditorEntry =  MemeTracker_LootHistoryTable_Filtered[index]
 
-	local player_class = entry.player_class
+	local player_class = LootHistoryEditorEntry.player_class
+	local player_name = LootHistoryEditorEntry.player_name
 
-	local player_class_index = 2
+	local player_class_index = 1
 	for index, slot in ipairs(playerClassSlotNames) do
 		if slot.slot == player_class then
 			player_class_index = index
 		end
 	end
 
-	LootTracker_OptionCheckButton_Check(1)
+	local use_case_index = 1
+
+	if player_name == DE_BANK or player_name == BANK_DE then
+		use_case_index = 4
+	end
+
 	for index, name in ipairs(lootHistoryUseCase) do
-		if entry["use_case"] == name then
-			LootTracker_OptionCheckButton_Check(index)
+		if LootHistoryEditorEntry["use_case"] == name then
+			use_case_index = index
 		end
 	end
 
-	UIDropDownMenu_SetSelectedID(MemeTracker_LootHistoryEditor_ClassDropDown,player_class_index)
+	LootHistoryEditorEntry["player_class_index"] = player_class_index
+	LootHistoryEditorEntry["use_case_index"] = use_case_index
+
+	LootTracker_OptionCheckButton_Check(use_case_index)
+	UIDropDownMenu_SetSelectedID(MemeTracker_LootHistoryEditor_ClassDropDown,LootHistoryEditorEntry.player_class_index)
+
+	getglobal("MemeTracker_LootHistoryEditor_TextItemName"):SetText(LootHistoryEditorEntry.item_link)
+	getglobal("MemeTracker_LootHistoryEditor_NameBox"):SetText(LootHistoryEditorEntry.player_name)
 end
 
 
@@ -1711,6 +1737,19 @@ function MemeTracker_LootHistoryButton_OnLeave()
 	MemeTracker_Tooltip_Hide()
 end
 
+function MemeTracker_LootHistoryEditor_ItemNameButton_OnClick(button)
+	local link = LootHistoryEditorEntry.item_link
+	MemeTracker_ChatLink(button, link)
+end 
+
+function MemeTracker_LootHistoryEditor_ItemNameButton_OnEnter()
+	local item_id = LootHistoryEditorEntry.item_id
+	MemeTracker_Tooltip_Show(item_id)
+end
+
+function MemeTracker_LootHistoryEditor_ItemNameButton_OnLeave()
+	MemeTracker_Tooltip_Hide()
+end
 -- Session UI
 
 function MemeTracker_VoteCheckButton_OnClick(line)

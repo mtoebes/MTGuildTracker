@@ -3,7 +3,7 @@ local WARN_CHANNEL				= "RAID_WARNING"
 local OFFICER_CHANNEL			= "OFFICER"
 
 MemeTracker_Title = "MemeTracker"
-MemeTracker_Version = "3.0.2"
+MemeTracker_Version = "3.0.1"
 
 MemeTracker_RecipientTable = {}
 MemeTracker_LootHistoryTable = {}
@@ -33,7 +33,6 @@ MemeTracker_color_rare = "ff0070dd"
 MemeTracker_color_epic = "ffa335ee"
 MemeTracker_color_legendary = "ffff8000"
 
-local defualt_rgb = {["r"] = 0.83, ["g"] = 0.68, ["b"] = 0.04}
 
 local LootHistoryEditorEntry = {}
 
@@ -374,15 +373,14 @@ function GetTargetDate(start_time, days_ago)
 		last_time = start_time - (days_ago * 86400)	
 	end
 
-	local last_date = date("%y-%m-%d", last_time )
+	local last_date = date( "%y-%m-%d 00:00:00", last_time )
 	return last_date
 end
 
 function GetPlayerLootCount_DaysAgo(player_name, start_date, days_ago)
 	local loot_count = 0
 	local target_date = GetTargetDate(start_date, days_ago)
-
-	for i,n in pairs(MemeTracker_LootHistoryTable_Filtered) do
+	for i,n in ipairs(MemeTracker_LootHistoryTable) do
 		if (n.player_name == player_name) and (n.date >= target_date) then
 			loot_count = loot_count + 1
 		end
@@ -884,11 +882,7 @@ function MemeTracker_LootHistoryScrollFrame_Update()
 		 		player_class = ""
 		 	end
 
-		 	local rgb = class_colors[player_class] 
-		 	if not rgb then
-		 		rgb = defualt_rgb
-		 	end
-
+		 	local rgb = class_colors[player_class]
 			getglobal("MemeTracker_LootHistoryListItem"..line.."TextPlayerName"):SetTextColor(rgb.r,rgb.g,rgb.b,1)
 			getglobal("MemeTracker_LootHistoryListItem"..line.."TextPlayerName"):SetText(MemeTracker_LootHistoryTable_Filtered[lineplusoffset].player_name)
 			getglobal("MemeTracker_LootHistoryListItem"..line.."TextItemName"):SetText(MemeTracker_LootHistoryTable_Filtered[lineplusoffset].item_link)
@@ -907,6 +901,7 @@ function MemeTracker_Session_List()
 	for k,v in pairs(session_queue) do
 		echo(k, v)
 	end
+	-- body
 end
 
 function MemeTracker_Session_Queue(item_link)

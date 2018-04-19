@@ -3,7 +3,7 @@ local WARN_CHANNEL				= "RAID_WARNING"
 local OFFICER_CHANNEL			= "OFFICER"
 
 MemeTracker_Title = "MemeTracker"
-MemeTracker_Version = "3.0.1"
+MemeTracker_Version = "3.1.0"
 
 MemeTracker_RecipientTable = {}
 MemeTracker_LootHistoryTable = {}
@@ -33,7 +33,7 @@ MemeTracker_color_rare = "ff0070dd"
 MemeTracker_color_epic = "ffa335ee"
 MemeTracker_color_legendary = "ffff8000"
 
-
+local default_rgb = {["r"]=0.83, ["g"]=0.83, ["b"]=0.83}
 local LootHistoryEditorEntry = {}
 
 local class_colors = {
@@ -373,14 +373,14 @@ function GetTargetDate(start_time, days_ago)
 		last_time = start_time - (days_ago * 86400)	
 	end
 
-	local last_date = date( "%y-%m-%d 00:00:00", last_time )
+	local last_date = date( "%y-%m-%d", last_time )
 	return last_date
 end
 
 function GetPlayerLootCount_DaysAgo(player_name, start_date, days_ago)
 	local loot_count = 0
 	local target_date = GetTargetDate(start_date, days_ago)
-	for i,n in ipairs(MemeTracker_LootHistoryTable) do
+	for i,n in ipairs(MemeTracker_LootHistoryTable_Filtered) do
 		if (n.player_name == player_name) and (n.date >= target_date) then
 			loot_count = loot_count + 1
 		end
@@ -647,6 +647,9 @@ function MemeTracker_RecipientListScrollFrame_Update()
 
 			if MemeTracker_OverviewTable.in_session then
 				rgb = class_colors[recipient.player_class]
+				if not rgb then
+					rgb = default_rgb
+				end
 				getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerName"):SetTextColor(rgb.r,rgb.g,rgb.b,1)
 				getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerGuildRank"):SetTextColor(.83,.68,.04,1)
 				getglobal("MemeTracker_RecipientListItem"..line.."TextItemName"):SetTextColor(.83,.68,.04,1)
@@ -883,6 +886,9 @@ function MemeTracker_LootHistoryScrollFrame_Update()
 		 	end
 
 		 	local rgb = class_colors[player_class]
+		 	if not rgb then
+				rgb = default_rgb
+			end
 			getglobal("MemeTracker_LootHistoryListItem"..line.."TextPlayerName"):SetTextColor(rgb.r,rgb.g,rgb.b,1)
 			getglobal("MemeTracker_LootHistoryListItem"..line.."TextPlayerName"):SetText(MemeTracker_LootHistoryTable_Filtered[lineplusoffset].player_name)
 			getglobal("MemeTracker_LootHistoryListItem"..line.."TextItemName"):SetText(MemeTracker_LootHistoryTable_Filtered[lineplusoffset].item_link)
@@ -1537,17 +1543,20 @@ local lootHistoryUseCase = {
 
 function MemeTracker_LootHistoryEditorSaveButton_OnClick()
 	getglobal("MemeTracker_LootHistoryEditorFrame"):Hide()
+	local name_box_text = MemeTracker_LootHistoryEditor_NameBox:GetText()
 
-	LootHistoryEditorEntry.player_name = MemeTracker_LootHistoryEditor_NameBox:GetText();
+	if name_box_text ~= "" then
+		LootHistoryEditorEntry.player_name = name_box_text
 
-	if LootHistoryEditorEntry["use_case"] == DE_BANK then
-		LootHistoryEditorEntry.player_class = ""
+		if LootHistoryEditorEntry["use_case"] == DE_BANK then
+			LootHistoryEditorEntry.player_class = ""
+		end
+
+		MemeTracker_Broadcast_DownloadSync_Start();
+		local sync_string = MemeTracker_SendSync_String("loothistory", LootHistoryEditorEntry)
+		MemeTracker_Broadcast_DownloadSync_Add("loothistory", sync_string)
+		MemeTracker_Broadcast_DownloadSync_End(false);
 	end
-
-	MemeTracker_Broadcast_DownloadSync_Start();
-	local sync_string = MemeTracker_SendSync_String("loothistory", LootHistoryEditorEntry)
-	MemeTracker_Broadcast_DownloadSync_Add("loothistory", sync_string)
-	MemeTracker_Broadcast_DownloadSync_End(false);
 end
 
 function LootTracker_OptionCheckButton_Check(id)

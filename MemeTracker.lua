@@ -15,7 +15,7 @@ my_vote = nil
 
 sort_direction = "ascending"
 recipient_sort_field = "player_name"
-recipient_sort_entry_key = 1
+recipient_sort_id = 1
 
 loot_sort_direction = "ascending"
 loot_sort_field = "time_stamp";
@@ -117,17 +117,17 @@ end
 
 local function getPlayerGuildRank(player_name)
 	local guild_rank_name = nil
-	local guild_rank_entry_key = -1
+	local guild_rank_rank_id = -1
 	local entry_key = 1
 	while guild_rank_name == nil do
-		name, rank, rankentry_key, _ = GetGuildRosterInfo(entry_key);
+		name, rank, rank_id, _ = GetGuildRosterInfo(entry_key);
 		if name == player_name then
 			guild_rank_name = rank
-			guild_rank_entry_key = rankentry_key
+			guild_rank_rank_id = rank_rank_id
 
 		elseif name == nil then
 			guild_rank_name = "Unknown"
-			guild_rank_entry_key = 100
+			guild_rank_id = 100
 		end
 
 		entry_key = entry_key + 1
@@ -135,7 +135,7 @@ local function getPlayerGuildRank(player_name)
 
 	local dict = {}
 	dict["name"] = guild_rank_name
-	dict["entry_key"] = guild_rank_entry_key
+	dict["id"] = guild_rank_rank_id
 	return dict
 end
 
@@ -145,8 +145,8 @@ local function getPlayerClass(player_name)
 		return ""
 	end
 
-	for raid_entry_key = 1,40 do
-		local name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML = GetRaidRosterInfo(raid_entry_key)
+	for raid_id = 1,40 do
+		local name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML = GetRaidRosterInfo(raid_id)
 		if name == player_name then
 			return class
 		end
@@ -451,12 +451,12 @@ local function Session_CanEnd()
 	end
 end
 
-local function RecipientTable_Sort_Function_LootCount(sort_direction, start_entry_key, a, b)
-	if  a.loot_count_table[recipient_sort_entry_key] ~= b.loot_count_table[recipient_sort_entry_key] then
+local function RecipientTable_Sort_Function_LootCount(sort_direction, start_id, a, b)
+	if  a.loot_count_table[recipient_sort_id] ~= b.loot_count_table[recipient_sort_id] then
 		if sort_direction == "ascending" then
-			return a.loot_count_table[recipient_sort_entry_key] < b.loot_count_table[recipient_sort_entry_key]
+			return a.loot_count_table[recipient_sort_id] < b.loot_count_table[recipient_sort_id]
 		else
-			return a.loot_count_table[recipient_sort_entry_key] > b.loot_count_table[recipient_sort_entry_key]
+			return a.loot_count_table[recipient_sort_id] > b.loot_count_table[recipient_sort_id]
 		end
 	else
 		for entry_key = 1,5 do 
@@ -481,7 +481,7 @@ local function RecipientTable_Sort_Function(sort_direction, recipient_sort_field
 	if recipient_sort_field then
 		if sort_direction == "ascending" then
 			if recipient_sort_field == "loot_count_table" then
-				return RecipientTable_Sort_Function_LootCount(sort_direction, recipient_sort_entry_key, a, b)
+				return RecipientTable_Sort_Function_LootCount(sort_direction, recipient_sort_id, a, b)
 			else
 				if ( a[recipient_sort_field] == b[recipient_sort_field]) then
 					return a.player_name < b.player_name
@@ -491,7 +491,7 @@ local function RecipientTable_Sort_Function(sort_direction, recipient_sort_field
 			end
 		else
 			if recipient_sort_field == "loot_count_table" then
-				return RecipientTable_Sort_Function_LootCount(sort_direction, recipient_sort_entry_key, a, b)
+				return RecipientTable_Sort_Function_LootCount(sort_direction, recipient_sort_id, a, b)
 			else
 				if ( a[recipient_sort_field] == b[recipient_sort_field]) then
 					return a.player_name > b.player_name
@@ -568,7 +568,7 @@ local function RecipientTable_Add(player_name, item_link)
 	local _, _, item_id, item_name = parseItemLink(item_link)
 	MemeTracker_RecipientTable[entry_key].player_class = getPlayerClass(player_name)
 	MemeTracker_RecipientTable[entry_key].player_guild_rank = guild_rank.name
-	MemeTracker_RecipientTable[entry_key].player_guild_rank_entry_key = guild_rank.entry_key
+	MemeTracker_RecipientTable[entry_key].player_guild_rank_id = guild_rank.entry_key
 	MemeTracker_RecipientTable[entry_key].player_name = player_name
 	MemeTracker_RecipientTable[entry_key].item_id = item_id
 	MemeTracker_RecipientTable[entry_key].item_link = item_link
@@ -1291,6 +1291,7 @@ function MemeTracker_Save_Sync(clear_table)
 	end
 
 	local time_stamp = date("%y-%m-%d %H:%M:%S")
+	MemeTracker_LastUpdate = {}
 	MemeTracker_LastUpdate["time_stamp"] = time_stamp
 
 	-- Refresh View
@@ -1800,7 +1801,7 @@ function MemeTracker_LootHistory_Sort_OnClick(field)
 	MemeTracker_LootHistoryScrollFrame_Update()
 end
 
-function MemeTracker_CouncilSession_Sort_OnClick(field, entry_key)
+function MemeTracker_CouncilSession_Sort_OnClick(field, id)
 
 	if recipient_sort_field == field and field == "player_name" then
 		field = "player_class"
@@ -1813,7 +1814,7 @@ function MemeTracker_CouncilSession_Sort_OnClick(field, entry_key)
 	end
 
 	recipient_sort_field = field
-	recipient_sort_entry_key = entry_key
+	recipient_sort_id = id
 	MemeTracker_RecipientListScrollFrame_Update()
 end
 

@@ -3,7 +3,7 @@ local WARN_CHANNEL				= "RAID_WARNING"
 local OFFICER_CHANNEL			= "OFFICER"
 
 MemeTracker_Title = "MemeTracker"
-MemeTracker_Version = "3.0.1"
+MemeTracker_Version = "3.0.2"
 
 MemeTracker_RecipientTable = {}
 MemeTracker_LootHistoryTable = {}

@@ -22,7 +22,7 @@ loot_sort_field = "time_stamp";
 
 version_request_in_progress = false
 
-debug_enabled = true
+debug_enabled = false
 
 local session_queue = {}
 local MT_MESSAGE_PREFIX		= "MemeTracker"
@@ -717,6 +717,8 @@ function MemeTracker_RecipientListScrollFrame_Update()
 			getglobal("MemeTracker_RecipientListVoteBox"..line):Hide()
 		 end
 	end
+
+	MemeTracker_Mode_Update()
 end
 
 -- Attendance Table
@@ -1675,6 +1677,175 @@ function MemeTracker_LootHistoryEditor_ItemNameButton_OnLeave()
 end
 -- Session UI
 
+
+function MemeTracker_Mode_Update()
+	if is_min_mode then
+		getglobal("MemeTracker_SessionMinButton"):SetText("Max")
+		MemeTracker_SessionMinMode()
+	else
+		getglobal("MemeTracker_SessionMinButton"):SetText("Min")
+		MemeTracker_SessionMaxMode()
+	end
+end
+
+function MemeTracker_SessionMinButton_OnClick()
+	is_min_mode = not is_min_mode
+	MemeTracker_Mode_Update()
+end
+
+function MemeTracker_SessionMinMode() 
+	local max_lines = getn(MemeTracker_RecipientTable)
+
+	local min_width = 272
+
+	local min_height = 320
+
+	getglobal("MemeTracker_OverviewButtonTextVoters"):Hide()
+	
+	getglobal("MemeTracker_OverviewButtonTextItemName"):SetWidth(125);
+	getglobal("MemeTracker_OverviewButtonTextItemName"):SetPoint("LEFT", 5, 0);
+
+	getglobal("MemeTracker_OverviewButtonTextVoters"):Hide()
+
+	getglobal("MemeTracker_SessionEndButton"):Hide()
+	getglobal("MemeTracker_SessionDEButton"):Hide()
+	getglobal("MemeTracker_SessionCancelButton"):Hide()
+	getglobal("MemeTracker_SessionAutoEndCheckButton"):Hide()
+
+	getglobal("MemeTracker_LootHistoryTabButton"):Hide()
+
+	getglobal("MemeTracker_RecipientListSortPlayerGuildRank"):Hide()
+
+	for i,n in ipairs(week_list) do
+		getglobal("MemeTracker_RecipientListSortLootCount"..i):Hide()
+	end
+	-- 320
+	getglobal("MemeTracker_RecipientListSortLootCountTitle"):Hide()
+	getglobal("MemeTracker_RecipientListSortPlayerAttendanceTitle"):Hide()
+	getglobal("MemeTracker_RecipientListSortPlayerAttendanceLast4Weeks"):Hide()
+	getglobal("MemeTracker_RecipientListSortPlayerAttendanceLast2Weeks"):Hide()
+
+	getglobal("MemeTracker_BrowseFrame"):SetHeight(min_width+18)
+	getglobal("MemeTracker_LootSessionFrame"):SetHeight(min_width)
+
+	getglobal("MemeTracker_BrowseFrame"):SetWidth(min_width+18)
+	getglobal("MemeTracker_RecipientListSortFrame"):SetWidth(min_width-7)
+	getglobal("MemeTracker_LootSessionFrame"):SetWidth(min_width)
+	--getglobal("MemeTracker_RecipientListSortFrame"):SetWidth(300)
+	local max_lines = getn(MemeTracker_RecipientTable)
+	local offset = FauxScrollFrame_GetOffset(MemeTracker_RecipientListScrollFrame);
+	 -- maxlines is max entries, 10 is number of lines, 16 is pixel height of each linevmkm
+	
+	if max_lines < 15 then
+		min_height = min_height - 16*(15 - max_lines)
+	end
+
+	getglobal("MemeTracker_BrowseFrame"):SetHeight(min_height + 11)
+	getglobal("MemeTracker_LootSessionFrame"):SetHeight(min_height)
+
+	for line = 1,15 do
+
+		local index = line + offset
+
+		if index <= max_lines then
+			local recipient = MemeTracker_RecipientTable[index]
+			getglobal("MemeTracker_RecipientListItem"..line):SetWidth(min_width)
+			getglobal("MemeTracker_RecipientListItem"..line.."HighlightTexture"):SetWidth(min_width)
+
+			getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerGuildRank"):Hide()
+			getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerAttendanceLast4Weeks"):Hide()
+			getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerAttendanceLast2Weeks"):Hide()
+			getglobal("MemeTracker_RecipientListItem"..line.."TextVoters"):Hide()
+			getglobal("MemeTracker_RecipientListItem"..line.."TextItemName"):SetWidth(125);
+			getglobal("MemeTracker_RecipientListItem"..line.."TextItemName"):SetPoint("LEFT", getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerName"), "RIGHT", 5, 0);
+
+			for i,n in ipairs(recipient.loot_count_table) do
+				getglobal("MemeTracker_RecipientListItem"..line.."TextLootCount"..i):Hide()
+			end
+		end
+	end
+end
+
+
+function MemeTracker_SessionMaxMode() 
+	local max_width = 700
+	getglobal("MemeTracker_OverviewButtonTextVoters"):Show()
+	getglobal("MemeTracker_OverviewButtonTextItemName"):SetWidth(200);
+	getglobal("MemeTracker_OverviewButtonTextItemName"):SetPoint("LEFT", 265, 0);
+
+	getglobal("MemeTracker_SessionEndButton"):Show()
+	getglobal("MemeTracker_SessionDEButton"):Show()
+	getglobal("MemeTracker_SessionCancelButton"):Show()
+	getglobal("MemeTracker_LootHistoryTabButton"):Show()
+
+	getglobal("MemeTracker_RecipientListSortPlayerGuildRank"):Show()
+
+	getglobal("MemeTracker_RecipientListSortPlayerAttendanceTitle"):Show()
+	getglobal("MemeTracker_RecipientListSortPlayerAttendanceLast4Weeks"):Show()
+	getglobal("MemeTracker_RecipientListSortPlayerAttendanceLast2Weeks"):Show()
+
+	getglobal("MemeTracker_BrowseFrame"):SetWidth(max_width+18)
+	getglobal("MemeTracker_RecipientListSortFrame"):SetWidth(max_width-10)
+	getglobal("MemeTracker_LootSessionFrame"):SetWidth(max_width)
+
+	getglobal("MemeTracker_BrowseFrame"):SetHeight(320)
+	getglobal("MemeTracker_LootSessionFrame"):SetHeight(287)
+
+	for i,n in ipairs(week_list) do
+		getglobal("MemeTracker_RecipientListSortLootCount"..i):Show()
+	end
+
+	if isOfficer() or isLeader() then
+		getglobal("MemeTracker_OverviewButtonTextVotes"):Show()
+		getglobal("MemeTracker_OverviewButtonTextVoters"):Show()
+	else 
+		getglobal("MemeTracker_OverviewButtonTextVotes"):Hide()
+		getglobal("MemeTracker_OverviewButtonTextVoters"):Hide()
+	end
+
+	getglobal("MemeTracker_RecipientListSortLootCountTitle"):Show()
+
+	local max_lines = getn(MemeTracker_RecipientTable)
+	local offset = FauxScrollFrame_GetOffset(MemeTracker_RecipientListScrollFrame);
+	 -- maxlines is max entries, 10 is number of lines, 16 is pixel height of each line
+	FauxScrollFrame_Update(MemeTracker_RecipientListScrollFrame, max_lines, 15, 25)
+	for line = 1,15 do
+
+		local index = line + offset
+		if index <= max_lines then
+			local recipient = MemeTracker_RecipientTable[index]
+			getglobal("MemeTracker_RecipientListItem"..line):SetWidth(max_width)
+			getglobal("MemeTracker_RecipientListItem"..line.."HighlightTexture"):SetWidth(max_width)
+
+			getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerGuildRank"):Show()
+			getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerAttendanceLast4Weeks"):Show()
+			getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerAttendanceLast2Weeks"):Show()
+			getglobal("MemeTracker_RecipientListItem"..line.."TextItemName"):SetWidth(175);
+			getglobal("MemeTracker_RecipientListItem"..line.."TextItemName"):SetPoint("LEFT", getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerGuildRank"), "RIGHT", 5, 0);
+
+			for i,n in ipairs(recipient.loot_count_table) do
+				getglobal("MemeTracker_RecipientListItem"..line.."TextLootCount"..i):Show()
+			end
+		end
+
+		getglobal("MemeTracker_SessionAutoEndCheckButton"):Show()
+
+		if isOfficer() or isLeader() then
+			getglobal("MemeTracker_RecipientListVoteBox"..line):Show()
+			getglobal("MemeTracker_RecipientListItem"..line.."TextVotes"):Show()
+			getglobal("MemeTracker_RecipientListItem"..line.."TextVoters"):Show()
+
+		else
+			getglobal("MemeTracker_RecipientListVoteBox"..line):Hide()
+			getglobal("MemeTracker_RecipientListItem"..line.."TextVotes"):Hide()
+			getglobal("MemeTracker_RecipientListItem"..line.."TextVoters"):Hide()
+		end
+	end
+end
+
+
+
+
 function MemeTracker_VoteCheckButton_OnClick(line)
 	local offset = FauxScrollFrame_GetOffset(MemeTracker_RecipientListScrollFrame);
 	local entry_key = line + offset
@@ -1798,6 +1969,7 @@ function MemeTracker_SessionAutoEndCheckButton_OnClick()
 end
 
 function MemeTracker_RecipientTable_Show()
+	MemeTracker_Mode_Update()
 	if isLeader() then
 		getglobal("MemeTracker_SessionAutoEndCheckButton"):Enable()
 		getglobal("MemeTracker_SessionEndButton"):Show()

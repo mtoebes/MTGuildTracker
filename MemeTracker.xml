@@ -134,7 +134,7 @@
             </Anchor>
          </Anchors>
       </NormalText>
-      <HighlightTexture file="Interface\QuestFrame\UI-QuestTitleHighlight" alphaMode="ADD">
+      <HighlightTexture name="$parentHighlightTexture" file="Interface\QuestFrame\UI-QuestTitleHighlight" alphaMode="ADD">
          <Size>
             <AbsDimension x="700" y="16" />
          </Size>
@@ -530,31 +530,7 @@
                <Anchor point="TOPLEFT" />
             </Anchors>
             <Frames>
-               <CheckButton name="MemeTracker_SessionAutoEndCheckButton" inherits="MemeTracker_CheckButton">
-                  <HitRectInsets>
-                     <AbsInset left="0" right="-100" top="0" bottom="0" />
-                  </HitRectInsets>
-                  <Size>
-                     <AbsDimension x="20" y="20" />
-                  </Size>
-                  <Anchors>
-                     <Anchor point="TOPLEFT">
-                        <Offset>
-                           <AbsDimension x="15" y="-32" />
-                        </Offset>
-                     </Anchor>
-                  </Anchors>
-                  <NormalTexture file="Interface\Buttons\UI-CheckBox-Up" />
-                  <PushedTexture file="Interface\Buttons\UI-CheckBox-Down" />
-                  <HighlightTexture file="Interface\Buttons\UI-CheckBox-Highlight" alphaMode="ADD" />
-                  <CheckedTexture file="Interface\Buttons\UI-CheckBox-Check" />
-                  <DisabledCheckedTexture file="Interface\Buttons\UI-CheckBox-Check-Disabled" />
-                  <Scripts>
-                     <OnLoad>getglobal(this:GetName().."Text"):SetText("Auto End Sessions")</OnLoad>
-                     <OnClick>MemeTracker_SessionAutoEndCheckButton_OnClick();</OnClick>
-                     <OnEnter>MemeTracker_SessionAutoEndCheckButton_OnEnter();</OnEnter>
-                  </Scripts>
-               </CheckButton>
+
                <Button name="MemeTracker_SessionEndButton" inherits="UIPanelButtonTemplate" text="End Session">
                   <Size>
                      <AbsDimension x="100" y="22" />
@@ -597,8 +573,47 @@
                      </Anchor>
                   </Anchors>
                   <Scripts>
-                     1
                      <OnClick>MemeTracker_SessionCancelButton_OnClick();</OnClick>
+                  </Scripts>
+               </Button>
+               <CheckButton name="MemeTracker_SessionAutoEndCheckButton" inherits="MemeTracker_CheckButton">
+                  <HitRectInsets>
+                     <AbsInset left="0" right="-100" top="0" bottom="0" />
+                  </HitRectInsets>
+                  <Size>
+                     <AbsDimension x="20" y="20" />
+                  </Size>
+                  <Anchors>
+                     <Anchor point="TOPLEFT" relativeTo="MemeTracker_SessionCancelButton" relativePoint="TOPRIGHT">
+                        <Offset>
+                           <AbsDimension x="0" y="0" />
+                        </Offset>
+                     </Anchor>
+                  </Anchors>
+                  <NormalTexture file="Interface\Buttons\UI-CheckBox-Up" />
+                  <PushedTexture file="Interface\Buttons\UI-CheckBox-Down" />
+                  <HighlightTexture file="Interface\Buttons\UI-CheckBox-Highlight" alphaMode="ADD" />
+                  <CheckedTexture file="Interface\Buttons\UI-CheckBox-Check" />
+                  <DisabledCheckedTexture file="Interface\Buttons\UI-CheckBox-Check-Disabled" />
+                  <Scripts>
+                     <OnLoad>getglobal(this:GetName().."Text"):SetText("Auto End Sessions")</OnLoad>
+                     <OnClick>MemeTracker_SessionAutoEndCheckButton_OnClick();</OnClick>
+                     <OnEnter>MemeTracker_SessionAutoEndCheckButton_OnEnter();</OnEnter>
+                  </Scripts>
+               </CheckButton>
+               <Button name="MemeTracker_SessionMinButton" inherits="UIPanelButtonTemplate" text="Min">
+                  <Size>
+                     <AbsDimension x="50" y="22" />
+                  </Size>
+                  <Anchors>
+                     <Anchor point="TOPLEFT">
+                        <Offset>
+                           <AbsDimension x="10" y="-10" />
+                        </Offset>
+                     </Anchor>
+                  </Anchors>
+                  <Scripts>
+                     <OnClick>MemeTracker_SessionMinButton_OnClick();</OnClick>
                   </Scripts>
                </Button>
                <Button name="MemeTracker_LootHistoryTabButton" inherits="UIPanelButtonTemplate" text="Loot History">
@@ -652,7 +667,6 @@
                   </Backdrop>
                   <Anchors>
                      <Anchor point="TOPLEFT">
-                        1
                         <Offset>
                            <AbsDimension x="12" y="-80" />
                         </Offset>
@@ -951,7 +965,7 @@
                            <OnClick>MemeTracker_CouncilSession_Sort_OnClick("player_guild_rank_index");</OnClick>
                         </Scripts>
                      </Button>
-                     <Button inherits="MemeTracker_TitleButtonTemplate" text="Raid Attendance For Last">
+                     <Button name="MemeTracker_RecipientListSortPlayerAttendanceTitle" inherits="MemeTracker_TitleButtonTemplate" text="Raid Attendance For Last">
                         <Size>
                            <AbsDimension x="140" y="16" />
                         </Size>
@@ -1098,7 +1112,7 @@
                            <OnClick>MemeTracker_CouncilSession_Sort_OnClick("loot_count_table",5);</OnClick>
                         </Scripts>
                      </Button>
-                     <Button inherits="MemeTracker_TitleButtonTemplate" text="Loot Earned Last X Weeks">
+                     <Button name="MemeTracker_RecipientListSortLootCountTitle" inherits="MemeTracker_TitleButtonTemplate" text="Loot Earned Last X Weeks">
                         <Size>
                            <AbsDimension x="120" y="16" />
                         </Size>

@@ -3,7 +3,7 @@ local WARN_CHANNEL				= "RAID_WARNING"
 local OFFICER_CHANNEL			= "OFFICER"
 
 MemeTracker_Title = "MemeTracker"
-MemeTracker_Version = "3.2.0"
+MemeTracker_Version = "3.2.1"
 
 MemeTracker_RecipientTable = {}
 MemeTracker_LootHistoryTable = {}
@@ -36,6 +36,27 @@ MemeTracker_color_legendary = "ffff8000"
 local default_rgb = {["r"]=0.83, ["g"]=0.83, ["b"]=0.83}
 local LootHistoryEditorEntry = {}
 
+local DE_BANK = "DE-Bank"
+
+local playerClassSlotNames = {
+	{slot = "???", 				    name = "???"},
+	{slot = "Druid",				name = "druid"},
+	{slot = "Hunter", 				name = "hunter"},
+	{slot = "Mage", 				name = "mage"},
+	{slot = "Paladin", 				name = "paladin"},
+	{slot = "Priest", 				name = "priest"},
+	{slot = "Rogue", 				name = "rogue"},
+	{slot = "Warlock", 				name = "warlock"},
+	{slot = "Warrior", 				name = "warrior"},
+}
+
+local lootHistoryUseCase = {
+	[1] = "MS",
+	[2] = "OS",
+	[3] = "RES",
+	[4] = DE_BANK
+}
+
 local class_colors = {
 	["Hunter"] =  {["r"] = 0.67, ["g"] = 0.83, ["b"] = 0.45},
 	["Mage"] =    {["r"] = 0.41, ["g"] = 0.80, ["b"] = 0.94},
@@ -54,9 +75,7 @@ local class_default_color
 
 local DEFAULT_VOTES_NEEDED = 5
 
-local BANK_DE = "Bank-DE"
 
-local DE_BANK = "DE-Bank"
 local string_gmatch = lua51 and string.gmatch or string.gfind
 
 local function echo(tag, msg)
@@ -66,7 +85,6 @@ local function echo(tag, msg)
 		DEFAULT_CHAT_FRAME:AddMessage(string.format("|cffa335ee<MemeTracker> |r"..tag));
 	end
 end
-
 
 local function debug(tag, msg)
 	if debug_enabled then
@@ -781,6 +799,7 @@ local function LootHistoryTable_Build()
 		MemeTracker_LootHistoryTable[entry_key].entry_key    = entry_key
 		MemeTracker_LootHistoryTable[entry_key].time_stamp   = MemeTrackerDB[entry_key].time_stamp
 		MemeTracker_LootHistoryTable[entry_key].date         = MemeTrackerDB[entry_key].date
+		MemeTracker_LootHistoryTable[entry_key].use_case     = MemeTrackerDB[entry_key].use_case
 		MemeTracker_LootHistoryTable[entry_key].raid_name    = MemeTrackerDB[entry_key].raid_name
 		MemeTracker_LootHistoryTable[entry_key].item_name    = item_name
 		MemeTracker_LootHistoryTable[entry_key].item_id      = item_id
@@ -806,11 +825,6 @@ local function LootHistoryTable_UpdateEntry(entry)
 	end
 
 	MemeTrackerDB[entry_key] = entry
-	local time_stamp = date("%y-%m-%d %H:%M:%S")
-	--echo("LootHistoryTable_UpdateEntry", time_stamp)
-	--MemeTracker_LastUpdate["time_stamp"] = time_stamp
-	--echo("LootHistoryTable_UpdateEntry", MemeTracker_LastUpdate["time_stamp"])
-
 end
 
 local function LootHistoryTable_BuildEntry(item_link, player_name)
@@ -830,6 +844,7 @@ local function LootHistoryTable_BuildEntry(item_link, player_name)
 	entry = {}
 	entry["player_name"] = player_name
 	entry["date"] = date
+	entry["use_case"] = lootHistoryUseCase[1]
 	entry["raid_name"] = zone_name
 	entry["time_stamp"] = time_stamp
 	entry["player_class"] = localized_class
@@ -901,6 +916,7 @@ function MemeTracker_LootHistoryScrollFrame_Update()
 			getglobal("MemeTracker_LootHistoryListItem"..line.."TextItemName"):SetText(MemeTracker_LootHistoryTable_Filtered[lineplusoffset].item_link)
 			getglobal("MemeTracker_LootHistoryListItem"..line.."TextRaidName"):SetText(MemeTracker_LootHistoryTable_Filtered[lineplusoffset].raid_name)
 			getglobal("MemeTracker_LootHistoryListItem"..line.."TextDate"):SetText(MemeTracker_LootHistoryTable_Filtered[lineplusoffset].date)
+			getglobal("MemeTracker_LootHistoryListItem"..line.."TextUseCase"):SetText(MemeTracker_LootHistoryTable_Filtered[lineplusoffset].use_case)
 			getglobal("MemeTracker_LootHistoryListItem"..line):Show()
 		 else
 			getglobal("MemeTracker_LootHistoryListItem"..line):Hide()
@@ -1126,10 +1142,13 @@ function MemeTracker_Broadcast_Session_Finish(mode)
 			end
 
 			if MemeTracker_OverviewTable.item_link then
+				echo("MemeTracker_OverviewTable.item_link",MemeTracker_OverviewTable.item_link)
+				echo("player_name",player_name)
 				local entry = LootHistoryTable_AddEntry(MemeTracker_OverviewTable.item_link, player_name)
 				MemeTracker_Broadcast_Sync_Start();
 				local sync_string = MemeTracker_SendSync_String("loothistory", entry)
-				MemeTracker_Broadcast_UpSync_Add("loothistory", sync_string)
+				echo("sync_string", sync_string)
+				MemeTracker_Broadcast_Sync_Add("loothistory", sync_string)
 				MemeTracker_Broadcast_Sync_End(false);
 			end
 		end
@@ -1179,12 +1198,13 @@ function MemeTracker_SendSync_String(table_name, entry, key)
 	sync_string = "";
 
 	if entry and table_name == "loothistory" then
-		sync_string = string.format("%s/%s/%s/%s/%s/%s/%s/%s/%s/%s",
+		sync_string = string.format("%s/%s/%s/%s/%s/%s/%s/%s/%s/%s/%s",
 			table_name,
 			entry.entry_key,
 			entry.date,
 			entry.time_stamp,
 			entry.raid_name,
+			entry.use_case,
 			entry.item_name,
 			entry.item_id,
 			entry.item_quality,
@@ -1210,13 +1230,14 @@ function MemeTracker_ReadSync_Entry(table_name, fields_string)
 
 	entry = {}
 	if table_name == "loothistory" then
-		local _, _, entry_key, date, time_stamp, raid_name, item_name, item_id, item_quality,  player_name, player_class =
-		string.find(fields_string, "(.*)/(.*)/(.*)/(.*)/(.*)/(.*)/(.*)/(.*)/(.*)");
+		local _, _, entry_key, date, time_stamp, raid_name, use_case, item_name, item_id, item_quality,  player_name, player_class =
+		string.find(fields_string, "(.*)/(.*)/(.*)/(.*)/(.*)/(.*)/(.*)/(.*)/(.*)/(.*)");
 
 		entry["entry_key"] = entry_key
 		entry["date"] = date
 		entry["time_stamp"] = time_stamp
 		entry["raid_name"] = raid_name
+		entry["use_case"] = use_case
 		entry["item_name"] = item_name
 		entry["item_id"] = item_id
 		entry["item_quality"] = item_quality
@@ -1441,35 +1462,20 @@ function MemeTracker_RecipientButton_OnClick(button, entry_key)
 	MemeTracker_ChatLink(button, link)
 end
 
-local playerClassSlotNames = {
-	{slot = "???", 				    name = "???"},
-	{slot = "Druid",				name = "druid"},
-	{slot = "Hunter", 				name = "hunter"},
-	{slot = "Mage", 				name = "mage"},
-	{slot = "Paladin", 				name = "paladin"},
-	{slot = "Priest", 				name = "priest"},
-	{slot = "Rogue", 				name = "rogue"},
-	{slot = "Warlock", 				name = "warlock"},
-	{slot = "Warrior", 				name = "warrior"},
-}
 
-local lootHistoryUseCase = {
-	[1] = "MS",
-	[2] = "OS",
-	[3] = "RES",
-	[4] = DE_BANK
-}
 
 function MemeTracker_LootHistoryEditorSaveButton_OnClick()
 	getglobal("MemeTracker_LootHistoryEditorFrame"):Hide()
 	local name_box_text = MemeTracker_LootHistoryEditor_NameBox:GetText()
 
-	if name_box_text ~= "" then
+	if name_box_text4 ~= "" then
 		LootHistoryEditorEntry.player_name = name_box_text
 
 		if LootHistoryEditorEntry["use_case"] == DE_BANK then
 			LootHistoryEditorEntry.player_class = ""
 		end
+
+		echo(' LootHistoryEditorEntry["use_case"]', LootHistoryEditorEntry["use_case"])
 
 		MemeTracker_Broadcast_Sync_Start();
 		local sync_string = MemeTracker_SendSync_String("loothistory", LootHistoryEditorEntry)
@@ -1485,7 +1491,7 @@ function LootTracker_OptionCheckButton_Check(id)
 	end
 
 	if id == 4 then
-		player_name= BANK_DE
+		player_name= DE_BANK
 		use_index = 1
 	else
 		player_name = LootHistoryEditorEntry.player_name
@@ -1494,7 +1500,8 @@ function LootTracker_OptionCheckButton_Check(id)
 
 	getglobal("MemeTracker_LootHistoryEditor_NameBox"):SetText(player_name)
 	UIDropDownMenu_SetSelectedID(MemeTracker_LootHistoryEditor_ClassDropDown,use_index)
-
+	echo("use_index",use_index)
+	echo("id",id)
 	LootHistoryEditorEntry["use_case"] = lootHistoryUseCase[id]
 end
 
@@ -1552,7 +1559,7 @@ end
 function GetUseCaseDropDownIndex(player_name, use_case)
 	local use_case_index = 1
 
-	if player_name == DE_BANK or player_name == BANK_DE then
+	if player_name == DE_BANK then
 		use_case_index = 4
 	end
 
@@ -1705,6 +1712,8 @@ function MemeTracker_SessionMinMode()
 	getglobal("MemeTracker_OverviewButtonTextItemName"):SetWidth(125);
 	getglobal("MemeTracker_OverviewButtonTextItemName"):SetPoint("LEFT", 5, 0);
 
+
+
 	getglobal("MemeTracker_OverviewButtonTextVoters"):Hide()
 
 	getglobal("MemeTracker_SessionEndButton"):Hide()
@@ -1744,28 +1753,21 @@ function MemeTracker_SessionMinMode()
 	getglobal("MemeTracker_LootSessionFrame"):SetHeight(min_height)
 
 	for line = 1,15 do
+		getglobal("MemeTracker_RecipientListItem"..line):SetWidth(min_width)
+		getglobal("MemeTracker_RecipientListItem"..line.."HighlightTexture"):SetWidth(min_width)
 
-		local index = line + offset
+		getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerGuildRank"):Hide()
+		getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerAttendanceLast4Weeks"):Hide()
+		getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerAttendanceLast2Weeks"):Hide()
+		getglobal("MemeTracker_RecipientListItem"..line.."TextVoters"):Hide()
+		getglobal("MemeTracker_RecipientListItem"..line.."TextItemName"):SetWidth(125);
+		getglobal("MemeTracker_RecipientListItem"..line.."TextItemName"):SetPoint("LEFT", getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerName"), "RIGHT", 5, 0);
 
-		if index <= max_lines then
-			local recipient = MemeTracker_RecipientTable[index]
-			getglobal("MemeTracker_RecipientListItem"..line):SetWidth(min_width)
-			getglobal("MemeTracker_RecipientListItem"..line.."HighlightTexture"):SetWidth(min_width)
-
-			getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerGuildRank"):Hide()
-			getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerAttendanceLast4Weeks"):Hide()
-			getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerAttendanceLast2Weeks"):Hide()
-			getglobal("MemeTracker_RecipientListItem"..line.."TextVoters"):Hide()
-			getglobal("MemeTracker_RecipientListItem"..line.."TextItemName"):SetWidth(125);
-			getglobal("MemeTracker_RecipientListItem"..line.."TextItemName"):SetPoint("LEFT", getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerName"), "RIGHT", 5, 0);
-
-			for i,n in ipairs(recipient.loot_count_table) do
-				getglobal("MemeTracker_RecipientListItem"..line.."TextLootCount"..i):Hide()
-			end
+		for i,n in ipairs(week_list) do
+			getglobal("MemeTracker_RecipientListItem"..line.."TextLootCount"..i):Hide()
 		end
 	end
 end
-
 
 function MemeTracker_SessionMaxMode() 
 	local max_width = 700
@@ -1773,9 +1775,7 @@ function MemeTracker_SessionMaxMode()
 	getglobal("MemeTracker_OverviewButtonTextItemName"):SetWidth(200);
 	getglobal("MemeTracker_OverviewButtonTextItemName"):SetPoint("LEFT", 265, 0);
 
-	getglobal("MemeTracker_SessionEndButton"):Show()
-	getglobal("MemeTracker_SessionDEButton"):Show()
-	getglobal("MemeTracker_SessionCancelButton"):Show()
+
 	getglobal("MemeTracker_LootHistoryTabButton"):Show()
 
 	getglobal("MemeTracker_RecipientListSortPlayerGuildRank"):Show()
@@ -1784,8 +1784,8 @@ function MemeTracker_SessionMaxMode()
 	getglobal("MemeTracker_RecipientListSortPlayerAttendanceLast4Weeks"):Show()
 	getglobal("MemeTracker_RecipientListSortPlayerAttendanceLast2Weeks"):Show()
 
-	getglobal("MemeTracker_BrowseFrame"):SetWidth(max_width+18)
-	getglobal("MemeTracker_RecipientListSortFrame"):SetWidth(max_width-10)
+	getglobal("MemeTracker_BrowseFrame"):SetWidth(max_width+43)
+	getglobal("MemeTracker_RecipientListSortFrame"):SetWidth(max_width+20)
 	getglobal("MemeTracker_LootSessionFrame"):SetWidth(max_width)
 
 	getglobal("MemeTracker_BrowseFrame"):SetHeight(320)
@@ -1803,6 +1803,15 @@ function MemeTracker_SessionMaxMode()
 		getglobal("MemeTracker_OverviewButtonTextVoters"):Hide()
 	end
 
+	if isLeader() then
+		getglobal("MemeTracker_SessionEndButton"):Show()
+		getglobal("MemeTracker_SessionDEButton"):Show()
+		getglobal("MemeTracker_SessionCancelButton"):Show()
+	else 
+		getglobal("MemeTracker_SessionEndButton"):Hide()
+		getglobal("MemeTracker_SessionDEButton"):Hide()
+		getglobal("MemeTracker_SessionCancelButton"):Hide()
+	end
 	getglobal("MemeTracker_RecipientListSortLootCountTitle"):Show()
 
 	local max_lines = getn(MemeTracker_RecipientTable)
@@ -1810,22 +1819,16 @@ function MemeTracker_SessionMaxMode()
 	 -- maxlines is max entries, 10 is number of lines, 16 is pixel height of each line
 	FauxScrollFrame_Update(MemeTracker_RecipientListScrollFrame, max_lines, 15, 25)
 	for line = 1,15 do
+		getglobal("MemeTracker_RecipientListItem"..line):SetWidth(max_width)
+		getglobal("MemeTracker_RecipientListItem"..line.."HighlightTexture"):SetWidth(max_width)
+		getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerGuildRank"):Show()
+		getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerAttendanceLast4Weeks"):Show()
+		getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerAttendanceLast2Weeks"):Show()
+		getglobal("MemeTracker_RecipientListItem"..line.."TextItemName"):SetWidth(175);
+		getglobal("MemeTracker_RecipientListItem"..line.."TextItemName"):SetPoint("LEFT", getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerGuildRank"), "RIGHT", 5, 0);
 
-		local index = line + offset
-		if index <= max_lines then
-			local recipient = MemeTracker_RecipientTable[index]
-			getglobal("MemeTracker_RecipientListItem"..line):SetWidth(max_width)
-			getglobal("MemeTracker_RecipientListItem"..line.."HighlightTexture"):SetWidth(max_width)
-
-			getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerGuildRank"):Show()
-			getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerAttendanceLast4Weeks"):Show()
-			getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerAttendanceLast2Weeks"):Show()
-			getglobal("MemeTracker_RecipientListItem"..line.."TextItemName"):SetWidth(175);
-			getglobal("MemeTracker_RecipientListItem"..line.."TextItemName"):SetPoint("LEFT", getglobal("MemeTracker_RecipientListItem"..line.."TextPlayerGuildRank"), "RIGHT", 5, 0);
-
-			for i,n in ipairs(recipient.loot_count_table) do
-				getglobal("MemeTracker_RecipientListItem"..line.."TextLootCount"..i):Show()
-			end
+		for i,n in ipairs(week_list) do
+			getglobal("MemeTracker_RecipientListItem"..line.."TextLootCount"..i):Show()
 		end
 
 		getglobal("MemeTracker_SessionAutoEndCheckButton"):Show()
@@ -1842,9 +1845,6 @@ function MemeTracker_SessionMaxMode()
 		end
 	end
 end
-
-
-
 
 function MemeTracker_VoteCheckButton_OnClick(line)
 	local offset = FauxScrollFrame_GetOffset(MemeTracker_RecipientListScrollFrame);

@@ -394,6 +394,18 @@
                   </Anchor>
                </Anchors>
             </FontString>
+            <FontString name="$parentTextUseCase" inherits="GameFontNormalSmall" justifyH="LEFT">
+               <Size>
+                  <AbsDimension x="45" y="10" />
+               </Size>
+               <Anchors>
+                  <Anchor point="LEFT" relativeTo="$parentTextDate" relativePoint="RIGHT">
+                     <Offset>
+                        <AbsDimension x="0" y="0" />
+                     </Offset>
+                  </Anchor>
+               </Anchors>
+            </FontString>
          </Layer>
       </Layers>
    </Button>
@@ -1491,6 +1503,21 @@
                            <OnClick>MemeTracker_LootHistory_Sort_OnClick("time_stamp");</OnClick>
                         </Scripts>
                      </Button>
+                     <Button name="MemeTracker_LootHistoryListSortUseCase" inherits="MemeTracker_SortButtonTemplate" text="Use Case">
+                        <Size>
+                           <AbsDimension x="45" y="16" />
+                        </Size>
+                        <Anchors>
+                           <Anchor point="BOTTOMLEFT" relativeTo="MemeTracker_LootHistoryListItem1TextUseCase" relativePoint="TOPLEFT">
+                              <Offset>
+                                 <AbsDimension x="-5" y="2" />
+                              </Offset>
+                           </Anchor>
+                        </Anchors>
+                        <Scripts>
+                           <OnClick>MemeTracker_LootHistory_Sort_OnClick("use_case");</OnClick>
+                        </Scripts>
+                     </Button>
                   </Frames>
                </Frame>
             </Frames>
@@ -1499,7 +1526,7 @@
    </Frame>
    <Frame name="MemeTracker_LootHistoryEditorFrame" frameStrata="DIALOG" toplevel="true" parent="UIParent" movable="true" enableMouse="true" hidden="true" clampedToScreen="true">
       <Size>
-         <AbsDimension x="250" y="350" />
+         <AbsDimension x="250" y="270" />
       </Size>
       <Anchors>
          <Anchor point="CENTER">
@@ -1624,7 +1651,7 @@
             <Anchors>
                <Anchor point="TOPLEFT" relativeTo="MemeTracker_LootHistoryEditor_ClassDropDown" relativePoint="BOTTOMLEFT">
                   <Offset>
-                     <AbsDimension x="0" y="0" />
+                     <AbsDimension x="10" y="0" />
                   </Offset>
                </Anchor>
             </Anchors>

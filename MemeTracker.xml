@@ -1,1490 +1,1486 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/">
-	<script file="MemeTracker.lua" />
-	<script file="MemeTrackerGP.lua" />
-	<GameTooltip name="MemeTracker_Tooltip" inherits="GameTooltipTemplate" frameStrata="TOOLTIP" parent="UIParent" hidden="true" />
-	<CheckButton name="MemeTracker_VoteCheckButton" virtual="true">
-		<HitRectInsets>
-			<AbsInset left="0" right="-100" top="0" bottom="0" />
-		</HitRectInsets>
-		<Size>
-			<AbsDimension x="20" y="20" />
-		</Size>
-		<Anchors>
-			<Anchor point="LEFT">
-				<Offset>
-					<AbsDimension x="0" y="0" />
-				</Offset>
-			</Anchor>
-		</Anchors>
-		<NormalTexture file="Interface\Buttons\UI-CheckBox-Up" />
-		<PushedTexture file="Interface\Buttons\UI-CheckBox-Down" />
-		<HighlightTexture file="Interface\Buttons\UI-CheckBox-Highlight" alphaMode="ADD" />
-		<CheckedTexture file="Interface\Buttons\UI-CheckBox-Check" />
-		<DisabledCheckedTexture file="Interface\Buttons\UI-CheckBox-Check-Disabled" />
-		<Scripts>
-			<OnClick>local line =  this:GetID()
+   <script file="MemeTracker.lua" />
+   <script file="MemeTrackerGP.lua" />
+   <GameTooltip name="MemeTracker_Tooltip" inherits="GameTooltipTemplate" frameStrata="TOOLTIP" parent="UIParent" hidden="true" />
+   <CheckButton name="MemeTracker_VoteCheckButton" virtual="true">
+      <HitRectInsets>
+         <AbsInset left="0" right="-100" top="0" bottom="0" />
+      </HitRectInsets>
+      <Size>
+         <AbsDimension x="20" y="20" />
+      </Size>
+      <Anchors>
+         <Anchor point="LEFT">
+            <Offset>
+               <AbsDimension x="0" y="0" />
+            </Offset>
+         </Anchor>
+      </Anchors>
+      <NormalTexture file="Interface\Buttons\UI-CheckBox-Up" />
+      <PushedTexture file="Interface\Buttons\UI-CheckBox-Down" />
+      <HighlightTexture file="Interface\Buttons\UI-CheckBox-Highlight" alphaMode="ADD" />
+      <CheckedTexture file="Interface\Buttons\UI-CheckBox-Check" />
+      <DisabledCheckedTexture file="Interface\Buttons\UI-CheckBox-Check-Disabled" />
+      <Scripts>
+         <OnClick>local line =  this:GetID()
 					local index = line + FauxScrollFrame_GetOffset(MemeTracker_RecipientListScrollFrame);
 				MemeTracker_VoteCheckButton_OnClick(line);</OnClick>
-		</Scripts>
-	</CheckButton>
-	<Button name="MemeTracker_OverviewButtonTemplate" virtual="true">
-		<Size>
-			<AbsDimension x="718" y="16" />
-		</Size>
-		<Scripts>
-			<OnLoad>this:RegisterForClicks("LeftButtonUp", "RightButtonUp");</OnLoad>
-			<OnClick>MemeTracker_OverviewButton_OnClick();</OnClick>
-			<OnEnter>MemeTracker_OverviewButton_OnEnter();</OnEnter>
-			<OnLeave>MemeTracker_OverviewButton_OnLeave();</OnLeave>
-		</Scripts>
-		<NormalText name="$parentText" inherits="GameFontNormalSmall" justifyH="LEFT">
-			<Size>
-				<AbsDimension x="160" y="10" />
-			</Size>
-			<Anchors>
-				<Anchor point="TOPLEFT">
-					<Offset>
-						<AbsDimension x="20" y="0" />
-					</Offset>
-				</Anchor>
-			</Anchors>
-		</NormalText>
-		<Layers>
-			<Layer level="OVERLAY">
-				<FontString name="$parentTextItemName" inherits="GameFontNormalSmall" justifyH="LEFT">
-					<Size>
-						<AbsDimension x="200" y="10" />
-					</Size>
-					<Anchors>
-						<Anchor point="LEFT">
-							<Offset>
-								<AbsDimension x="265" y="0" />
-							</Offset>
-						</Anchor>
-					</Anchors>
-				</FontString>
-				<FontString name="$parentTextVotes" inherits="GameFontNormalSmall" justifyH="LEFT">
-					<Size>
-						<AbsDimension x="20" y="10" />
-					</Size>
-					<Anchors>
-						<Anchor point="LEFT" relativeTo="$parentTextItemName" relativePoint="RIGHT">
-							<Offset>
-								<AbsDimension x="0" y="0" />
-							</Offset>
-						</Anchor>
-					</Anchors>
-				</FontString>
-				<FontString name="$parentTextVoters" inherits="GameFontNormalSmall" justifyH="LEFT">
-					<Size>
-						<AbsDimension x="300" y="10" />
-					</Size>
-					<Anchors>
-						<Anchor point="LEFT" relativeTo="$parentTextVotes" relativePoint="RIGHT">
-							<Offset>
-								<AbsDimension x="0" y="0" />
-							</Offset>
-						</Anchor>
-					</Anchors>
-				</FontString>
-			</Layer>
-		</Layers>
-	</Button>
-	<Button name="MemeTracker_RecipientButtonTemplate" virtual="true">
-		<Size>
-			<AbsDimension x="718" y="16" />
-		</Size>
-		<Scripts>
-			<OnLoad>this:RegisterForClicks("LeftButtonUp", "RightButtonUp");
+      </Scripts>
+   </CheckButton>
+   <Button name="MemeTracker_OverviewButtonTemplate" virtual="true">
+      <Size>
+         <AbsDimension x="718" y="16" />
+      </Size>
+      <Scripts>
+         <OnLoad>this:RegisterForClicks("LeftButtonUp", "RightButtonUp");</OnLoad>
+         <OnClick>MemeTracker_OverviewButton_OnClick();</OnClick>
+         <OnEnter>MemeTracker_OverviewButton_OnEnter();</OnEnter>
+         <OnLeave>MemeTracker_OverviewButton_OnLeave();</OnLeave>
+      </Scripts>
+      <NormalText name="$parentText" inherits="GameFontNormalSmall" justifyH="LEFT">
+         <Size>
+            <AbsDimension x="160" y="10" />
+         </Size>
+         <Anchors>
+            <Anchor point="TOPLEFT">
+               <Offset>
+                  <AbsDimension x="20" y="0" />
+               </Offset>
+            </Anchor>
+         </Anchors>
+      </NormalText>
+      <Layers>
+         <Layer level="OVERLAY">
+            <FontString name="$parentTextItemName" inherits="GameFontNormalSmall" justifyH="LEFT">
+               <Size>
+                  <AbsDimension x="200" y="10" />
+               </Size>
+               <Anchors>
+                  <Anchor point="LEFT">
+                     <Offset>
+                        <AbsDimension x="265" y="0" />
+                     </Offset>
+                  </Anchor>
+               </Anchors>
+            </FontString>
+            <FontString name="$parentTextVotes" inherits="GameFontNormalSmall" justifyH="LEFT">
+               <Size>
+                  <AbsDimension x="20" y="10" />
+               </Size>
+               <Anchors>
+                  <Anchor point="LEFT" relativeTo="$parentTextItemName" relativePoint="RIGHT">
+                     <Offset>
+                        <AbsDimension x="0" y="0" />
+                     </Offset>
+                  </Anchor>
+               </Anchors>
+            </FontString>
+            <FontString name="$parentTextVoters" inherits="GameFontNormalSmall" justifyH="LEFT">
+               <Size>
+                  <AbsDimension x="300" y="10" />
+               </Size>
+               <Anchors>
+                  <Anchor point="LEFT" relativeTo="$parentTextVotes" relativePoint="RIGHT">
+                     <Offset>
+                        <AbsDimension x="0" y="0" />
+                     </Offset>
+                  </Anchor>
+               </Anchors>
+            </FontString>
+         </Layer>
+      </Layers>
+   </Button>
+   <Button name="MemeTracker_RecipientButtonTemplate" virtual="true">
+      <Size>
+         <AbsDimension x="718" y="16" />
+      </Size>
+      <Scripts>
+         <OnLoad>this:RegisterForClicks("LeftButtonUp", "RightButtonUp");
 				this:SetBackdropColor(0.8, 0.8, 0.8, 0.2);</OnLoad>
-			<OnClick>local index = this:GetID() + FauxScrollFrame_GetOffset(MemeTracker_RecipientListScrollFrame);
+         <OnClick>local index = this:GetID() + FauxScrollFrame_GetOffset(MemeTracker_RecipientListScrollFrame);
 				MemeTracker_RecipientButton_OnClick(arg1, index);</OnClick>
-			<OnEnter>local index = this:GetID() + FauxScrollFrame_GetOffset(MemeTracker_RecipientListScrollFrame);
+         <OnEnter>local index = this:GetID() + FauxScrollFrame_GetOffset(MemeTracker_RecipientListScrollFrame);
 				MemeTracker_RecipientButton_OnEnter(index);</OnEnter>
-			<OnLeave>MemeTracker_RecipientButton_OnLeave();</OnLeave>
-		</Scripts>
-		<NormalText name="$parentText" inherits="GameFontNormalSmall" justifyH="LEFT">
-			<Size>
-				<AbsDimension x="160" y="10" />
-			</Size>
-			<Anchors>
-				<Anchor point="LEFT">
-					<Offset>
-						<AbsDimension x="20" y="0" />
-					</Offset>
-				</Anchor>
-			</Anchors>
-		</NormalText>
-		<HighlightTexture file="Interface\QuestFrame\UI-QuestTitleHighlight" alphaMode="ADD">
-			<Size>
-				<AbsDimension x="700" y="16" />
-			</Size>
-			<Anchors>
-				<Anchor point="TOP">
-					<Offset>
-						<AbsDimension x="2" y="0" />
-					</Offset>
-				</Anchor>
-			</Anchors>
-		</HighlightTexture>
-		<Layers>
-			<Layer level="OVERLAY">
-				<FontString name="$parentTextVotebox" inherits="GameFontNormalSmall" justifyH="LEFT">
-					<Size>
-						<AbsDimension x="25" y="10" />
-					</Size>
-					<Anchors>
-						<Anchor point="LEFT">
-							<Offset>
-								<AbsDimension x="0" y="0" />
-							</Offset>
-						</Anchor>
-					</Anchors>
-				</FontString>
-				<FontString name="$parentTextPlayerName" inherits="GameFontNormalSmall" justifyH="LEFT">
-					<Size>
-						<AbsDimension x="65" y="10" />
-					</Size>
-					<Anchors>
-						<Anchor point="LEFT" relativeTo="$parentTextVotebox" relativePoint="RIGHT">
-							<Offset>
-								<AbsDimension x="0" y="0" />
-							</Offset>
-						</Anchor>
-					</Anchors>
-				</FontString>
-				<FontString name="$parentTextPlayerGuildRank" inherits="GameFontNormalSmall" justifyH="LEFT">
-					<Size>
-						<AbsDimension x="65" y="10" />
-					</Size>
-					<Anchors>
-						<Anchor point="LEFT" relativeTo="$parentTextPlayerName" relativePoint="RIGHT">
-							<Offset>
-								<AbsDimension x="5" y="0" />
-							</Offset>
-						</Anchor>
-					</Anchors>
-				</FontString>
-				<FontString name="$parentTextItemName" inherits="GameFontNormalSmall" justifyH="LEFT">
-					<Size>
-						<AbsDimension x="175" y="10" />
-					</Size>
-					<Anchors>
-						<Anchor point="LEFT" relativeTo="$parentTextPlayerGuildRank" relativePoint="RIGHT">
-							<Offset>
-								<AbsDimension x="5" y="0" />
-							</Offset>
-						</Anchor>
-					</Anchors>
-				</FontString>
-				<FontString name="$parentTextVotes" inherits="GameFontNormalSmall" justifyH="RIGHT">
-					<Size>
-						<AbsDimension x="20" y="10" />
-					</Size>
-					<Anchors>
-						<Anchor point="LEFT" relativeTo="$parentTextItemName" relativePoint="RIGHT">
-							<Offset>
-								<AbsDimension x="0" y="0" />
-							</Offset>
-						</Anchor>
-					</Anchors>
-				</FontString>
-				<FontString name="$parentTextVoters" inherits="GameFontNormalSmall" justifyH="LEFT">
-					<Size>
-						<AbsDimension x="125" y="10" />
-					</Size>
-					<Anchors>
-						<Anchor point="LEFT" relativeTo="$parentTextVotes" relativePoint="RIGHT">
-							<Offset>
-								<AbsDimension x="5" y="0" />
-							</Offset>
-						</Anchor>
-					</Anchors>
-				</FontString>
-
-				<FontString name="$parentTextLootCount5" inherits="GameFontNormalSmall" justifyH="RIGHT">
-					<Size>
-						<AbsDimension x="15" y="10" />
-					</Size>
-					<Anchors>
-						<Anchor point="RIGHT" relativePoint="RIGHT">
-							<Offset>
-								<AbsDimension x="-10" y="0" />
-							</Offset>
-						</Anchor>
-					</Anchors>
-				</FontString>
-				<FontString name="$parentTextLootCount4" inherits="GameFontNormalSmall" justifyH="RIGHT">
-					<Size>
-						<AbsDimension x="15" y="10" />
-					</Size>
-					<Anchors>
-						<Anchor point="RIGHT" relativeTo="$parentTextLootCount5" relativePoint="LEFT">
-							<Offset>
-								<AbsDimension x="-10" y="0" />
-							</Offset>
-						</Anchor>
-					</Anchors>
-				</FontString>
-				<FontString name="$parentTextLootCount3" inherits="GameFontNormalSmall" justifyH="RIGHT">
-					<Size>
-						<AbsDimension x="15" y="10" />
-					</Size>
-					<Anchors>
-						<Anchor point="RIGHT" relativeTo="$parentTextLootCount4" relativePoint="LEFT">
-							<Offset>
-								<AbsDimension x="-10" y="0" />
-							</Offset>
-						</Anchor>
-					</Anchors>
-				</FontString>
-				<FontString name="$parentTextLootCount2" inherits="GameFontNormalSmall" justifyH="RIGHT">
-					<Size>
-						<AbsDimension x="15" y="10" />
-					</Size>
-					<Anchors>
-						<Anchor point="RIGHT" relativeTo="$parentTextLootCount3" relativePoint="LEFT">
-							<Offset>
-								<AbsDimension x="-10" y="0" />
-							</Offset>
-						</Anchor>
-					</Anchors>
-				</FontString>
-				<FontString name="$parentTextLootCount1" inherits="GameFontNormalSmall" justifyH="RIGHT">
-					<Size>
-						<AbsDimension x="10" y="10" />
-					</Size>
-					<Anchors>
-						<Anchor point="RIGHT" relativeTo="$parentTextLootCount2" relativePoint="LEFT">
-							<Offset>
-								<AbsDimension x="-10" y="0" />
-							</Offset>
-						</Anchor>
-					</Anchors>
-				</FontString>
-
-				<FontString name="$parentTextPlayerAttendanceLast2Weeks" inherits="GameFontNormalSmall" justifyH="RIGHT">
-					<Size>
-						<AbsDimension x="60" y="10" />
-					</Size>
-					<Anchors>
-						<Anchor point="RIGHT" relativeTo="$parentTextLootCount1" relativePoint="LEFT">
-							<Offset>
-								<AbsDimension x="-30" y="0" />
-							</Offset>
-						</Anchor>
-					</Anchors>
-				</FontString>									
-				<FontString name="$parentTextPlayerAttendanceLast4Weeks" inherits="GameFontNormalSmall" justifyH="RIGHT">
-					<Size>
-						<AbsDimension x="60" y="10" />
-					</Size>
-					<Anchors>
-						<Anchor point="RIGHT" relativeTo="$parentTextPlayerAttendanceLast2Weeks" relativePoint="LEFT">
-							<Offset>
-								<AbsDimension x="0" y="0" />
-							</Offset>
-						</Anchor>
-					</Anchors>
-				</FontString>
-			</Layer>
-		</Layers>
-	</Button>
-	<Button name="MemeTracker_LootHistoryButtonTemplate" virtual="true">
-		<Size>
-			<AbsDimension x="718" y="16" />
-		</Size>
-		<Scripts>
-			<OnLoad>this:RegisterForClicks("LeftButtonUp", "RightButtonUp");
+         <OnLeave>MemeTracker_RecipientButton_OnLeave();</OnLeave>
+      </Scripts>
+      <NormalText name="$parentText" inherits="GameFontNormalSmall" justifyH="LEFT">
+         <Size>
+            <AbsDimension x="160" y="10" />
+         </Size>
+         <Anchors>
+            <Anchor point="LEFT">
+               <Offset>
+                  <AbsDimension x="20" y="0" />
+               </Offset>
+            </Anchor>
+         </Anchors>
+      </NormalText>
+      <HighlightTexture file="Interface\QuestFrame\UI-QuestTitleHighlight" alphaMode="ADD">
+         <Size>
+            <AbsDimension x="700" y="16" />
+         </Size>
+         <Anchors>
+            <Anchor point="TOP">
+               <Offset>
+                  <AbsDimension x="2" y="0" />
+               </Offset>
+            </Anchor>
+         </Anchors>
+      </HighlightTexture>
+      <Layers>
+         <Layer level="OVERLAY">
+            <FontString name="$parentTextVotebox" inherits="GameFontNormalSmall" justifyH="LEFT">
+               <Size>
+                  <AbsDimension x="25" y="10" />
+               </Size>
+               <Anchors>
+                  <Anchor point="LEFT">
+                     <Offset>
+                        <AbsDimension x="0" y="0" />
+                     </Offset>
+                  </Anchor>
+               </Anchors>
+            </FontString>
+            <FontString name="$parentTextPlayerName" inherits="GameFontNormalSmall" justifyH="LEFT">
+               <Size>
+                  <AbsDimension x="65" y="10" />
+               </Size>
+               <Anchors>
+                  <Anchor point="LEFT" relativeTo="$parentTextVotebox" relativePoint="RIGHT">
+                     <Offset>
+                        <AbsDimension x="0" y="0" />
+                     </Offset>
+                  </Anchor>
+               </Anchors>
+            </FontString>
+            <FontString name="$parentTextPlayerGuildRank" inherits="GameFontNormalSmall" justifyH="LEFT">
+               <Size>
+                  <AbsDimension x="65" y="10" />
+               </Size>
+               <Anchors>
+                  <Anchor point="LEFT" relativeTo="$parentTextPlayerName" relativePoint="RIGHT">
+                     <Offset>
+                        <AbsDimension x="5" y="0" />
+                     </Offset>
+                  </Anchor>
+               </Anchors>
+            </FontString>
+            <FontString name="$parentTextItemName" inherits="GameFontNormalSmall" justifyH="LEFT">
+               <Size>
+                  <AbsDimension x="175" y="10" />
+               </Size>
+               <Anchors>
+                  <Anchor point="LEFT" relativeTo="$parentTextPlayerGuildRank" relativePoint="RIGHT">
+                     <Offset>
+                        <AbsDimension x="5" y="0" />
+                     </Offset>
+                  </Anchor>
+               </Anchors>
+            </FontString>
+            <FontString name="$parentTextVotes" inherits="GameFontNormalSmall" justifyH="RIGHT">
+               <Size>
+                  <AbsDimension x="20" y="10" />
+               </Size>
+               <Anchors>
+                  <Anchor point="LEFT" relativeTo="$parentTextItemName" relativePoint="RIGHT">
+                     <Offset>
+                        <AbsDimension x="0" y="0" />
+                     </Offset>
+                  </Anchor>
+               </Anchors>
+            </FontString>
+            <FontString name="$parentTextVoters" inherits="GameFontNormalSmall" justifyH="LEFT">
+               <Size>
+                  <AbsDimension x="125" y="10" />
+               </Size>
+               <Anchors>
+                  <Anchor point="LEFT" relativeTo="$parentTextVotes" relativePoint="RIGHT">
+                     <Offset>
+                        <AbsDimension x="5" y="0" />
+                     </Offset>
+                  </Anchor>
+               </Anchors>
+            </FontString>
+            <FontString name="$parentTextLootCount5" inherits="GameFontNormalSmall" justifyH="RIGHT">
+               <Size>
+                  <AbsDimension x="15" y="10" />
+               </Size>
+               <Anchors>
+                  <Anchor point="RIGHT" relativePoint="RIGHT">
+                     <Offset>
+                        <AbsDimension x="-10" y="0" />
+                     </Offset>
+                  </Anchor>
+               </Anchors>
+            </FontString>
+            <FontString name="$parentTextLootCount4" inherits="GameFontNormalSmall" justifyH="RIGHT">
+               <Size>
+                  <AbsDimension x="15" y="10" />
+               </Size>
+               <Anchors>
+                  <Anchor point="RIGHT" relativeTo="$parentTextLootCount5" relativePoint="LEFT">
+                     <Offset>
+                        <AbsDimension x="-10" y="0" />
+                     </Offset>
+                  </Anchor>
+               </Anchors>
+            </FontString>
+            <FontString name="$parentTextLootCount3" inherits="GameFontNormalSmall" justifyH="RIGHT">
+               <Size>
+                  <AbsDimension x="15" y="10" />
+               </Size>
+               <Anchors>
+                  <Anchor point="RIGHT" relativeTo="$parentTextLootCount4" relativePoint="LEFT">
+                     <Offset>
+                        <AbsDimension x="-10" y="0" />
+                     </Offset>
+                  </Anchor>
+               </Anchors>
+            </FontString>
+            <FontString name="$parentTextLootCount2" inherits="GameFontNormalSmall" justifyH="RIGHT">
+               <Size>
+                  <AbsDimension x="15" y="10" />
+               </Size>
+               <Anchors>
+                  <Anchor point="RIGHT" relativeTo="$parentTextLootCount3" relativePoint="LEFT">
+                     <Offset>
+                        <AbsDimension x="-10" y="0" />
+                     </Offset>
+                  </Anchor>
+               </Anchors>
+            </FontString>
+            <FontString name="$parentTextLootCount1" inherits="GameFontNormalSmall" justifyH="RIGHT">
+               <Size>
+                  <AbsDimension x="10" y="10" />
+               </Size>
+               <Anchors>
+                  <Anchor point="RIGHT" relativeTo="$parentTextLootCount2" relativePoint="LEFT">
+                     <Offset>
+                        <AbsDimension x="-10" y="0" />
+                     </Offset>
+                  </Anchor>
+               </Anchors>
+            </FontString>
+            <FontString name="$parentTextPlayerAttendanceLast2Weeks" inherits="GameFontNormalSmall" justifyH="RIGHT">
+               <Size>
+                  <AbsDimension x="60" y="10" />
+               </Size>
+               <Anchors>
+                  <Anchor point="RIGHT" relativeTo="$parentTextLootCount1" relativePoint="LEFT">
+                     <Offset>
+                        <AbsDimension x="-30" y="0" />
+                     </Offset>
+                  </Anchor>
+               </Anchors>
+            </FontString>
+            <FontString name="$parentTextPlayerAttendanceLast4Weeks" inherits="GameFontNormalSmall" justifyH="RIGHT">
+               <Size>
+                  <AbsDimension x="60" y="10" />
+               </Size>
+               <Anchors>
+                  <Anchor point="RIGHT" relativeTo="$parentTextPlayerAttendanceLast2Weeks" relativePoint="LEFT">
+                     <Offset>
+                        <AbsDimension x="0" y="0" />
+                     </Offset>
+                  </Anchor>
+               </Anchors>
+            </FontString>
+         </Layer>
+      </Layers>
+   </Button>
+   <Button name="MemeTracker_LootHistoryButtonTemplate" virtual="true">
+      <Size>
+         <AbsDimension x="718" y="16" />
+      </Size>
+      <Scripts>
+         <OnLoad>this:RegisterForClicks("LeftButtonUp", "RightButtonUp");
 				this:SetBackdropColor(0.8, 0.8, 0.8, 0.2);</OnLoad>
-			<OnClick>local index = this:GetID() + FauxScrollFrame_GetOffset(MemeTracker_LootHistoryScrollFrame);
+         <OnClick>local index = this:GetID() + FauxScrollFrame_GetOffset(MemeTracker_LootHistoryScrollFrame);
 				MemeTracker_LootHistoryButton_OnClick(arg1, index);</OnClick>
-			<OnEnter>local index = this:GetID() + FauxScrollFrame_GetOffset(MemeTracker_LootHistoryScrollFrame);
+         <OnEnter>local index = this:GetID() + FauxScrollFrame_GetOffset(MemeTracker_LootHistoryScrollFrame);
 				MemeTracker_LootHistoryButton_OnEnter(index);</OnEnter>
-			<OnLeave>MemeTracker_LootHistoryButton_OnLeave();</OnLeave>
-		</Scripts>
-		<NormalText name="$parentText" inherits="GameFontNormalSmall" justifyH="LEFT">
-			<Size>
-				<AbsDimension x="160" y="10" />
-			</Size>
-			<Anchors>
-				<Anchor point="LEFT">
-					<Offset>
-						<AbsDimension x="20" y="0" />
-					</Offset>
-				</Anchor>
-			</Anchors>
-		</NormalText>
-		<HighlightTexture file="Interface\QuestFrame\UI-QuestTitleHighlight" alphaMode="ADD">
-			<Size>
-				<AbsDimension x="700" y="16" />
-			</Size>
-			<Anchors>
-				<Anchor point="TOP">
-					<Offset>
-						<AbsDimension x="2" y="0" />
-					</Offset>
-				</Anchor>
-			</Anchors>
-		</HighlightTexture>
-		<Layers>
-			<Layer level="OVERLAY">
-				<FontString name="$parentTextPlayerName" inherits="GameFontNormalSmall" justifyH="LEFT">
-					<Size>
-						<AbsDimension x="75" y="10" />
-					</Size>
-					<Anchors>
-						<Anchor point="LEFT">
-							<Offset>
-								<AbsDimension x="0" y="0" />
-							</Offset>
-						</Anchor>
-					</Anchors>
-				</FontString>
-				<FontString name="$parentTextItemName" inherits="GameFontNormalSmall" justifyH="LEFT">
-					<Size>
-						<AbsDimension x="150" y="10" />
-					</Size>
-					<Anchors>
-						<Anchor point="LEFT" relativeTo="$parentTextPlayerName" relativePoint="RIGHT">
-							<Offset>
-								<AbsDimension x="0" y="0" />
-							</Offset>
-						</Anchor>
-					</Anchors>
-				</FontString>
-				<FontString name="$parentTextRaidName" inherits="GameFontNormalSmall" justifyH="LEFT">
-					<Size>
-						<AbsDimension x="150" y="10" />
-					</Size>
-					<Anchors>
-						<Anchor point="LEFT" relativeTo="$parentTextItemName" relativePoint="RIGHT">
-							<Offset>
-								<AbsDimension x="0" y="0" />
-							</Offset>
-						</Anchor>
-					</Anchors>
-				</FontString>
-				<FontString name="$parentTextDate" inherits="GameFontNormalSmall" justifyH="LEFT">
-					<Size>
-						<AbsDimension x="100" y="10" />
-					</Size>
-					<Anchors>
-						<Anchor point="LEFT" relativeTo="$parentTextRaidName" relativePoint="RIGHT">
-							<Offset>
-								<AbsDimension x="0" y="0" />
-							</Offset>
-						</Anchor>
-					</Anchors>
-				</FontString>
-			</Layer>
-		</Layers>
-	</Button>
-	<Button name="MemeTracker_SortButtonTemplate" virtual="true">
-		<NormalText name="$parentText" inherits="GameFontHighlightSmall">
-			<Anchors>
-				<Anchor point="LEFT">
-					<Offset>
-						<AbsDimension x="4" y="0" />
-					</Offset>
-				</Anchor>
-			</Anchors>
-		</NormalText>
-		<NormalTexture name="$parentArrow" file="Interface\Buttons\UI-SortArrow">
-			<Size>
-				<AbsDimension x="9" y="8" />
-			</Size>
-			<Anchors>
-				<Anchor point="LEFT" relativeTo="$parentText" relativePoint="RIGHT">
-					<Offset>
-						<AbsDimension x="1" y="-2" />
-					</Offset>
-				</Anchor>
-			</Anchors>
-			<TexCoords left="0" right="0.5625" top="0" bottom="1.0" />
-		</NormalTexture>
-		<HighlightTexture file="Interface\PaperDollInfoFrame\UI-Character-Tab-Highlight" alphaMode="ADD">
-			<Size>
-				<AbsDimension x="5" y="24" />
-			</Size>
-			<Anchors>
-				<Anchor point="LEFT">
-					<Offset>
-						<AbsDimension x="-4" y="0" />
-					</Offset>
-				</Anchor>
-				<Anchor point="RIGHT">
-					<Offset>
-						<AbsDimension x="4" y="0" />
-					</Offset>
-				</Anchor>
-			</Anchors>
-		</HighlightTexture>
-		<Scripts>
-			<OnLoad>this:RegisterForClicks("LeftButtonUp", "RightButtonUp");</OnLoad>
-		</Scripts>
-	</Button>
-	<Button name="MemeTracker_TitleButtonTemplate" virtual="true">
-		<NormalText name="$parentText" inherits="GameFontHighlightSmall">
-			<Anchors>
-				<Anchor point="LEFT">
-					<Offset>
-						<AbsDimension x="4" y="0" />
-					</Offset>
-				</Anchor>
-			</Anchors>
-		</NormalText>
-	</Button>
-
-	<Frame name="MemeTracker_BrowseFrame" frameStrata="HIGH" toplevel="true" parent="UIParent" movable="true" enableMouse="true" hidden="true" clampedToScreen="true">
-		<Size>
-			<AbsDimension x="743" y="320" />
-		</Size>
-		<Anchors>
-			<Anchor point="TOPLEFT">
-				<Offset>
-					<AbsDimension x="0" y="-104" />
-				</Offset>
-			</Anchor>
-		</Anchors>
-		<Anchors>
-			<Anchor point="CENTER">
-				<Offset>
-					<AbsDimension x="5" y="0" />
-				</Offset>
-			</Anchor>
-		</Anchors>
-		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
-			<BackgroundInsets>
-				<AbsInset left="11" right="12" top="12" bottom="11" />
-			</BackgroundInsets>
-			<TileSize>
-				<AbsValue val="32" />
-			</TileSize>
-			<EdgeSize>
-				<AbsValue val="32" />
-			</EdgeSize>
-		</Backdrop>
-		<Layers>
-			<Layer level="ARTWORK">
-				<Texture name="MemeTracker_FrameHeader" file="Interface\DialogFrame\UI-DialogBox-Header">
-					<Size>
-						<AbsDimension x="310" y="64" />
-					</Size>
-					<Anchors>
-						<Anchor point="TOP">
-							<Offset>
-								<AbsDimension x="0" y="12" />
-							</Offset>
-						</Anchor>
-					</Anchors>
-				</Texture>
-				<FontString name="MemeTracker_FrameTitle" inherits="GameFontNormal" text="MemeTracker">
-					<Anchors>
-						<Anchor point="TOP">
-							<Offset>
-								<AbsDimension x="0" y="0" />
-							</Offset>
-						</Anchor>
-					</Anchors>
-				</FontString>
-				<FontString name="MemeTracker_AutoEnd_FontString" inherits="GameFontHighlightSmall" text="Auto End Sessions">
-						<Size>
-							<AbsDimension x="120" y="22" />
-						</Size>
-						<Anchors>
-							<Anchor point="TOPLEFT">
-								<Offset>
-									<AbsDimension x="25" y="-30" />
-								</Offset>
-							</Anchor>
-						</Anchors>
-				</FontString>
-			</Layer>
-		</Layers>
-		<Scripts>
-			<OnShow>MemeTracker_Main_OnShow();</OnShow>
-			<OnHide />
-			<OnMouseDown>MemeTracker_Main_OnMouseDown(arg1);</OnMouseDown>
-			<OnMouseUp>MemeTracker_Main_OnMouseUp(arg1);</OnMouseUp>
-		</Scripts>
-		<Frames>
-			<Button name="MemeTracker_ListCloseButton" inherits="UIPanelCloseButton">
-				<Anchors>
-					<Anchor point="TOPRIGHT" relativeTo="MemeTracker_BrowseFrame" relativePoint="TOPRIGHT">
-						<Offset>
-							<AbsDimension x="-5" y="-6" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</Button>
-			<Frame name="MemeTracker_LootSessionFrame">
-				<Size>
-					<AbsDimension x="700" y="287" />
-				</Size>
-				<Anchors>
-					<Anchor point="TOPLEFT" />
-				</Anchors>
-				<Frames>
-					<CheckButton name="MemeTracker_SessionAutoEndCheckButton">
-						<HitRectInsets>
-							<AbsInset left="0" right="-100" top="0" bottom="0" />
-						</HitRectInsets>
-						<Size>
-							<AbsDimension x="20" y="20" />
-						</Size>
-						<Anchors>
-							<Anchor point="TOPLEFT">
-								<Offset>
-									<AbsDimension x="15" y="-32" />
-								</Offset>
-							</Anchor>
-						</Anchors>
-						<NormalTexture file="Interface\Buttons\UI-CheckBox-Up" />
-						<PushedTexture file="Interface\Buttons\UI-CheckBox-Down" />
-						<HighlightTexture file="Interface\Buttons\UI-CheckBox-Highlight" alphaMode="ADD" />
-						<CheckedTexture file="Interface\Buttons\UI-CheckBox-Check" />
-						<DisabledCheckedTexture file="Interface\Buttons\UI-CheckBox-Check-Disabled" />
-						<Scripts>
-							<OnClick>MemeTracker_SessionAutoEndCheckButton_OnClick();</OnClick>
-							<OnEnter>MemeTracker_SessionAutoEndCheckButton_OnEnter();</OnEnter>
-						</Scripts>
-					</CheckButton>
-					<Button name="MemeTracker_SessionEndButton" inherits="UIPanelButtonTemplate" text="End Session">
-						<Size>
-							<AbsDimension x="100" y="22" />
-						</Size>
-						<Anchors>
-							<Anchor point="BOTTOMLEFT">
-								<Offset>
-									<AbsDimension x="10" y="-22" />
-								</Offset>
-							</Anchor>
-						</Anchors>
-						<Scripts>
-							<OnClick>MemeTracker_SessionEndButton_OnClick();</OnClick>
-						</Scripts>
-					</Button>
-					<Button name="MemeTracker_SessionDEButton" inherits="UIPanelButtonTemplate" text="DE/Bank Item">
-						<Size>
-							<AbsDimension x="120" y="22" />
-						</Size>
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="MemeTracker_SessionEndButton" relativePoint="TOPRIGHT">
-								<Offset>
-									<AbsDimension x="0" y="0" />
-								</Offset>
-							</Anchor>
-						</Anchors>
-						<Scripts>
-							<OnClick>MemeTracker_SessionDEButton_OnClick();</OnClick>
-						</Scripts>
-					</Button>
-					<Button name="MemeTracker_SessionCancelButton" inherits="UIPanelButtonTemplate" text="Cancel Session">
-						<Size>
-							<AbsDimension x="120" y="22" />
-						</Size>
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="MemeTracker_SessionDEButton" relativePoint="TOPRIGHT">
-								<Offset>
-									<AbsDimension x="0" y="0" />
-								</Offset>
-							</Anchor>
-						</Anchors>
-						<Scripts>1
-							<OnClick>MemeTracker_SessionCancelButton_OnClick();</OnClick>
-						</Scripts>
-					</Button>
-					<Button name="MemeTracker_LootHistoryTabButton" inherits="UIPanelButtonTemplate" text="Loot History">
-						<Size>
-							<AbsDimension x="150" y="22" />
-						</Size>
-						<Anchors>
-							<Anchor point="TOPRIGHT">
-								<Offset>
-									<AbsDimension x="15" y="-10" />
-								</Offset>
-							</Anchor>
-						</Anchors>
-						<Scripts>
-							<OnClick>MemeTracker_LootHistoryTabButton_OnClick();</OnClick>
-						</Scripts>
-					</Button>
-					<Button name="MemeTracker_OverviewButton" inherits="MemeTracker_OverviewButtonTemplate">
-						<Size>
-							<AbsDimension x="750" y="22" />
-						</Size>
-						<Anchors>
-							<Anchor point="TOPLEFT">
-								<Offset>
-									<AbsDimension x="12" y="-30" />
-								</Offset>
-							</Anchor>
-						</Anchors>
-					</Button>
-					<ScrollFrame name="MemeTracker_RecipientListScrollFrame" inherits="FauxScrollFrameTemplate">
-						<Size>
-							<AbsDimension x="700" y="240" />
-						</Size>
-						<Anchors>
-							<Anchor point="TOPRIGHT">
-								<Offset>
-									<AbsDimension x="8" y="-70" />
-								</Offset>
-							</Anchor>
-						</Anchors>
-						<Scripts>
-							<OnVerticalScroll>FauxScrollFrame_OnVerticalScroll(25, MemeTracker_RecipientListScrollFrame_Update);</OnVerticalScroll>
-							<OnShow>MemeTracker_RecipientListScrollFrame_Update()</OnShow>
-						</Scripts>
-					</ScrollFrame>
-					<Button name="MemeTracker_RecipientListItem1" inherits="MemeTracker_RecipientButtonTemplate" id="1" hidden="true">
-						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
-							<TileSize>
-								<AbsValue val="16" />
-							</TileSize>
-						</Backdrop>
-						<Anchors>
-							<Anchor point="TOPLEFT">
-								1
-								<Offset>
-									<AbsDimension x="12" y="-80" />
-								</Offset>
-							</Anchor>
-						</Anchors>
-						<Frames>
-							<CheckButton name="MemeTracker_RecipientListVoteBox1" inherits="MemeTracker_VoteCheckButton" id="1" hidden="true" />
-						</Frames>
-					</Button>
-					<Button name="MemeTracker_RecipientListItem2" inherits="MemeTracker_RecipientButtonTemplate" id="2" hidden="true">
-						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
-							<TileSize>
-								<AbsValue val="16" />
-							</TileSize>
-						</Backdrop>
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="MemeTracker_RecipientListItem1" relativePoint="BOTTOMLEFT">
-								<Offset>
-									<AbsDimension x="0" y="0" />
-								</Offset>
-							</Anchor>
-						</Anchors>
-						<Frames>
-							<CheckButton name="MemeTracker_RecipientListVoteBox2" inherits="MemeTracker_VoteCheckButton" id="2" hidden="true" />
-						</Frames>
-					</Button>
-					<Button name="MemeTracker_RecipientListItem3" inherits="MemeTracker_RecipientButtonTemplate" id="3" hidden="true">
-						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
-							<TileSize>
-								<AbsValue val="16" />
-							</TileSize>
-						</Backdrop>
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="MemeTracker_RecipientListItem2" relativePoint="BOTTOMLEFT">
-								<Offset>
-									<AbsDimension x="0" y="0" />
-								</Offset>
-							</Anchor>
-						</Anchors>
-						<Frames>
-							<CheckButton name="MemeTracker_RecipientListVoteBox3" inherits="MemeTracker_VoteCheckButton" id="3" hidden="true" />
-						</Frames>
-					</Button>
-					<Button name="MemeTracker_RecipientListItem4" inherits="MemeTracker_RecipientButtonTemplate" id="4" hidden="true">
-						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
-							<TileSize>
-								<AbsValue val="16" />
-							</TileSize>
-						</Backdrop>
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="MemeTracker_RecipientListItem3" relativePoint="BOTTOMLEFT">
-								<Offset>
-									<AbsDimension x="0" y="0" />
-								</Offset>
-							</Anchor>
-						</Anchors>
-						<Frames>
-							<CheckButton name="MemeTracker_RecipientListVoteBox4" inherits="MemeTracker_VoteCheckButton" id="4" hidden="true" />
-						</Frames>
-					</Button>
-					<Button name="MemeTracker_RecipientListItem5" inherits="MemeTracker_RecipientButtonTemplate" id="5" hidden="true">
-						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
-							<TileSize>
-								<AbsValue val="16" />
-							</TileSize>
-						</Backdrop>
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="MemeTracker_RecipientListItem4" relativePoint="BOTTOMLEFT">
-								<Offset>
-									<AbsDimension x="0" y="0" />
-								</Offset>
-							</Anchor>
-						</Anchors>
-						<Frames>
-							<CheckButton name="MemeTracker_RecipientListVoteBox5" inherits="MemeTracker_VoteCheckButton" id="5" hidden="true" />
-						</Frames>
-					</Button>
-					<Button name="MemeTracker_RecipientListItem6" inherits="MemeTracker_RecipientButtonTemplate" id="6" hidden="true">
-						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
-							<TileSize>
-								<AbsValue val="16" />
-							</TileSize>
-						</Backdrop>
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="MemeTracker_RecipientListItem5" relativePoint="BOTTOMLEFT">
-								<Offset>
-									<AbsDimension x="0" y="0" />
-								</Offset>
-							</Anchor>
-						</Anchors>
-						<Frames>
-							<CheckButton name="MemeTracker_RecipientListVoteBox6" inherits="MemeTracker_VoteCheckButton" id="6" hidden="true" />
-						</Frames>
-					</Button>
-					<Button name="MemeTracker_RecipientListItem7" inherits="MemeTracker_RecipientButtonTemplate" id="7" hidden="true">
-						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
-							<TileSize>
-								<AbsValue val="16" />
-							</TileSize>
-						</Backdrop>
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="MemeTracker_RecipientListItem6" relativePoint="BOTTOMLEFT">
-								<Offset>
-									<AbsDimension x="0" y="0" />
-								</Offset>
-							</Anchor>
-						</Anchors>
-						<Frames>
-							<CheckButton name="MemeTracker_RecipientListVoteBox7" inherits="MemeTracker_VoteCheckButton" id="7" hidden="true" />
-						</Frames>
-					</Button>
-					<Button name="MemeTracker_RecipientListItem8" inherits="MemeTracker_RecipientButtonTemplate" id="8" hidden="true">
-						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
-							<TileSize>
-								<AbsValue val="16" />
-							</TileSize>
-						</Backdrop>
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="MemeTracker_RecipientListItem7" relativePoint="BOTTOMLEFT">
-								<Offset>
-									<AbsDimension x="0" y="0" />
-								</Offset>
-							</Anchor>
-						</Anchors>
-						<Frames>
-							<CheckButton name="MemeTracker_RecipientListVoteBox8" inherits="MemeTracker_VoteCheckButton" id="8" hidden="true" />
-						</Frames>
-					</Button>
-					<Button name="MemeTracker_RecipientListItem9" inherits="MemeTracker_RecipientButtonTemplate" id="9" hidden="true">
-						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
-							<TileSize>
-								<AbsValue val="16" />
-							</TileSize>
-						</Backdrop>
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="MemeTracker_RecipientListItem8" relativePoint="BOTTOMLEFT">
-								<Offset>
-									<AbsDimension x="0" y="0" />
-								</Offset>
-							</Anchor>
-						</Anchors>
-						<Frames>
-							<CheckButton name="MemeTracker_RecipientListVoteBox9" inherits="MemeTracker_VoteCheckButton" id="9" hidden="true" />
-						</Frames>
-					</Button>
-					<Button name="MemeTracker_RecipientListItem10" inherits="MemeTracker_RecipientButtonTemplate" id="10" hidden="true">
-						<Backdrop bgFile="Inter7	face\Tooltips\UI-Tooltip-Background" tile="true">
-							<TileSize>
-								<AbsValue val="16" />
-							</TileSize>
-						</Backdrop>
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="MemeTracker_RecipientListItem9" relativePoint="BOTTOMLEFT">
-								<Offset>
-									<AbsDimension x="0" y="0" />
-								</Offset>
-							</Anchor>
-						</Anchors>
-						<Frames>
-							<CheckButton name="MemeTracker_RecipientListVoteBox10" inherits="MemeTracker_VoteCheckButton" id="10" hidden="true" />
-						</Frames>
-					</Button>
-					<Button name="MemeTracker_RecipientListItem11" inherits="MemeTracker_RecipientButtonTemplate" id="11" hidden="true">
-						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
-							<TileSize>
-								<AbsValue val="16" />
-							</TileSize>
-						</Backdrop>
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="MemeTracker_RecipientListItem10" relativePoint="BOTTOMLEFT">
-								<Offset>
-									<AbsDimension x="0" y="0" />
-								</Offset>
-							</Anchor>
-						</Anchors>
-						<Frames>
-							<CheckButton name="MemeTracker_RecipientListVoteBox11" inherits="MemeTracker_VoteCheckButton" id="11" hidden="true" />
-						</Frames>
-					</Button>
-					<Button name="MemeTracker_RecipientListItem12" inherits="MemeTracker_RecipientButtonTemplate" id="12" hidden="true">
-						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
-							<TileSize>
-								<AbsValue val="16" />
-							</TileSize>
-						</Backdrop>
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="MemeTracker_RecipientListItem11" relativePoint="BOTTOMLEFT">
-								<Offset>
-									<AbsDimension x="0" y="0" />
-								</Offset>
-							</Anchor>
-						</Anchors>
-						<Frames>
-							<CheckButton name="MemeTracker_RecipientListVoteBox12" inherits="MemeTracker_VoteCheckButton" id="12" hidden="true" />
-						</Frames>
-					</Button>
-					<Button name="MemeTracker_RecipientListItem13" inherits="MemeTracker_RecipientButtonTemplate" id="13" hidden="true">
-						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
-							<TileSize>
-								<AbsValue val="16" />
-							</TileSize>
-						</Backdrop>
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="MemeTracker_RecipientListItem12" relativePoint="BOTTOMLEFT">
-								<Offset>
-									<AbsDimension x="0" y="0" />
-								</Offset>
-							</Anchor>
-						</Anchors>
-						<Frames>
-							<CheckButton name="MemeTracker_RecipientListVoteBox13" inherits="MemeTracker_VoteCheckButton" id="13" hidden="true" />
-						</Frames>
-					</Button>
-					<Button name="MemeTracker_RecipientListItem14" inherits="MemeTracker_RecipientButtonTemplate" id="14" hidden="true">
-						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
-							<TileSize>
-								<AbsValue val="16" />
-							</TileSize>
-						</Backdrop>
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="MemeTracker_RecipientListItem13" relativePoint="BOTTOMLEFT">
-								<Offset>
-									<AbsDimension x="0" y="0" />
-								</Offset>
-							</Anchor>
-						</Anchors>
-						<Frames>
-							<CheckButton name="MemeTracker_RecipientListVoteBox14" inherits="MemeTracker_VoteCheckButton" id="14" hidden="true" />
-						</Frames>
-					</Button>
-					<Button name="MemeTracker_RecipientListItem15" inherits="MemeTracker_RecipientButtonTemplate" id="15" hidden="true">
-						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
-							<TileSize>
-								<AbsValue val="16" />
-							</TileSize>
-						</Backdrop>
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="MemeTracker_RecipientListItem14" relativePoint="BOTTOMLEFT">
-								<Offset>
-									<AbsDimension x="0" y="0" />
-								</Offset>
-							</Anchor>
-						</Anchors>
-						<Frames>
-							<CheckButton name="MemeTracker_RecipientListVoteBox15" inherits="MemeTracker_VoteCheckButton" id="15" hidden="true" />
-						</Frames>
-					</Button>
-					<Frame name="MemeTracker_RecipientListSortFrame">
-						<Size>
-							<AbsDimension x="718" y="25" />
-						</Size>
-						<Anchors>
-							<Anchor point="TOPLEFT">
-								<Offset>
-									<AbsDimension x="12" y="-55" />
-								</Offset>
-							</Anchor>
-						</Anchors>
-						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
-							<TileSize>
-								12
-								<AbsValue val="16" />
-							</TileSize>
-						</Backdrop>
-						<Scripts>
-							<OnLoad>this:SetBackdropColor(0.9, 0.9, 0.9, 0.9)</OnLoad>
-						</Scripts>
-						<Frames>
-							<Button name="MemeTracker_RecipientListSortPlayerName" inherits="MemeTracker_SortButtonTemplate" text="Player" >
-								<Size>
-									<AbsDimension x="55" y="16" />
-								</Size>
-								<Anchors>
-									<Anchor point="BOTTOMLEFT" relativeTo="MemeTracker_RecipientListItem1TextPlayerName" relativePoint="TOPLEFT">
-										<Offset>
-											<AbsDimension x="-5" y="2" />
-										</Offset>
-									</Anchor>
-								</Anchors>
-								<Scripts>
-									<OnClick>MemeTracker_CouncilSession_Sort_OnClick("player_name");</OnClick>
-								</Scripts>
-							</Button>
-							<Button name="MemeTracker_RecipientListSortPlayerGuildRank" inherits="MemeTracker_SortButtonTemplate" text="Rank" >
-								<Size>
-									<AbsDimension x="55" y="16" />
-								</Size>
-								<Anchors>
-									<Anchor point="BOTTOMLEFT" relativeTo="MemeTracker_RecipientListItem1TextPlayerGuildRank" relativePoint="TOPLEFT">
-										<Offset>
-											<AbsDimension x="-5" y="2" />
-										</Offset>
-									</Anchor>
-								</Anchors>
-								<Scripts>
-									<OnClick>MemeTracker_CouncilSession_Sort_OnClick("player_guild_rank_index");</OnClick>
-								</Scripts>
-							</Button>
-							<Button  inherits="MemeTracker_TitleButtonTemplate" text = "Raid Attendance For Last">
-								<Size>
-									<AbsDimension x="140" y="16" />
-								</Size>
-								<Anchors>
-									<Anchor point="BOTTOMLEFT" relativeTo="MemeTracker_RecipientListItem1TextPlayerAttendanceLast4Weeks" relativePoint="TOPLEFt">
-										<Offset>
-											<AbsDimension x="0" y="12" />
-										</Offset>
-									</Anchor>
-								</Anchors>
-							</Button>
-							<Button name="MemeTracker_RecipientListSortPlayerAttendanceLast4Weeks" inherits="MemeTracker_SortButtonTemplate" text="4 Weeks">
-								<Size>
-									<AbsDimension x="60" y="16" />
-								</Size>
-								<Anchors>
-									<Anchor point="BOTTOMRIGHT" relativeTo="MemeTracker_RecipientListItem1TextPlayerAttendanceLast4Weeks" relativePoint="TOPRIGHT">
-										<Offset>
-											<AbsDimension x="5" y="2" />
-										</Offset>
-									</Anchor>
-								</Anchors>
-								<Scripts>
-									<OnClick>MemeTracker_CouncilSession_Sort_OnClick("attendance_last_4_weeks");</OnClick>
-								</Scripts>
-							</Button>
-							<Button name="MemeTracker_RecipientListSortPlayerAttendanceLast2Weeks" inherits="MemeTracker_SortButtonTemplate" text="2 Weeks">
-								<Size>
-									<AbsDimension x="60" y="16" />
-								</Size>
-								<Anchors>
-									<Anchor point="BOTTOMRIGHT" relativeTo="MemeTracker_RecipientListItem1TextPlayerAttendanceLast2Weeks" relativePoint="TOPRIGHT">
-										<Offset>
-											<AbsDimension x="5" y="2" />
-										</Offset>
-									</Anchor>
-								</Anchors>
-								<Scripts>
-									<OnClick>MemeTracker_CouncilSession_Sort_OnClick("attendance_last_2_weeks");</OnClick>
-								</Scripts>
-							</Button>
-							<Button name="MemeTracker_RecipientListSortItemName" inherits="MemeTracker_SortButtonTemplate" text="ItemName">
-								<Size>
-									<AbsDimension x="80" y="16" />
-								</Size>
-								<Anchors>
-									<Anchor point="BOTTOMLEFT" relativeTo="MemeTracker_RecipientListItem1TextItemName" relativePoint="TOPLEFT">
-										<Offset>
-											<AbsDimension x="-5" y="2" />
-										</Offset>
-									</Anchor>
-								</Anchors>
-								<Scripts>
-									<OnClick>MemeTracker_CouncilSession_Sort_OnClick("item_name");</OnClick>
-								</Scripts>
-							</Button>
-							<Button name="MemeTracker_RecipientListSortVotes" inherits="MemeTracker_SortButtonTemplate" text="Votes">
-								<Size>
-									<AbsDimension x="55" y="16" />
-								</Size>
-								<Anchors>
-									<Anchor point="BOTTOMLEFT" relativeTo="MemeTracker_RecipientListItem1TextVotes" relativePoint="TOPLEFT">
-										<Offset>
-											<AbsDimension x="-5" y="2" />
-										</Offset>
-									</Anchor>
-								</Anchors>
-								<Scripts>
-									<OnClick>MemeTracker_CouncilSession_Sort_OnClick("votes");</OnClick>
-								</Scripts>
-							</Button>
-							
-							<Button name="MemeTracker_RecipientListSortLootCount1" inherits="MemeTracker_SortButtonTemplate" text="1">
-								<Size>
-									<AbsDimension x="25" y="16" />
-								</Size>
-								<Anchors>
-									<Anchor point="BOTTOMRIGHT" relativeTo="MemeTracker_RecipientListItem1TextLootCount1" relativePoint="TOPRIGHT">
-										<Offset>
-											<AbsDimension x="5" y="2" />
-										</Offset>
-									</Anchor>
-								</Anchors>
-								<Scripts>
-									<OnClick>MemeTracker_CouncilSession_Sort_OnClick("loot_count_table",1);</OnClick>
-								</Scripts>
-							</Button>
-							<Button name="MemeTracker_RecipientListSortLootCount2" inherits="MemeTracker_SortButtonTemplate" text="2">
-								<Size>
-									<AbsDimension x="25" y="16" />
-								</Size>
-								<Anchors>
-									<Anchor point="BOTTOMRIGHT" relativeTo="MemeTracker_RecipientListItem1TextLootCount2" relativePoint="TOPRIGHT">
-										<Offset>
-											<AbsDimension x="5" y="2" />
-										</Offset>
-									</Anchor>
-								</Anchors>
-								<Scripts>
-									<OnClick>MemeTracker_CouncilSession_Sort_OnClick("loot_count_table",2);</OnClick>
-								</Scripts>
-							</Button>
-							<Button name="MemeTracker_RecipientListSortLootCount3" inherits="MemeTracker_SortButtonTemplate" text="4">
-								<Size>
-									<AbsDimension x="25" y="16" />
-								</Size>
-								<Anchors>
-									<Anchor point="BOTTOMRIGHT" relativeTo="MemeTracker_RecipientListItem1TextLootCount3" relativePoint="TOPRIGHT">
-										<Offset>
-											<AbsDimension x="5" y="2" />
-										</Offset>
-									</Anchor>
-								</Anchors>
-								<Scripts>
-									<OnClick>MemeTracker_CouncilSession_Sort_OnClick("loot_count_table",3);</OnClick>
-								</Scripts>
-							</Button>
-							<Button name="MemeTracker_RecipientListSortLootCount4" inherits="MemeTracker_SortButtonTemplate" text="6">
-								<Size>
-									<AbsDimension x="25" y="16" />
-								</Size>
-								<Anchors>
-									<Anchor point="BOTTOMRIGHT" relativeTo="MemeTracker_RecipientListItem1TextLootCount4" relativePoint="TOPRIGHT">
-										<Offset>
-											<AbsDimension x="5" y="2" />
-										</Offset>
-									</Anchor>
-								</Anchors>
-								<Scripts>
-									<OnClick>MemeTracker_CouncilSession_Sort_OnClick("loot_count_table",4);</OnClick>
-								</Scripts>
-							</Button>
-							<Button name="MemeTracker_RecipientListSortLootCount5" inherits="MemeTracker_SortButtonTemplate" text="All">
-								<Size>
-									<AbsDimension x="25" y="16" />
-								</Size>
-								<Anchors>
-									<Anchor point="BOTTOMRIGHT" relativeTo="MemeTracker_RecipientListItem1TextLootCount5" relativePoint="TOPRIGHT">
-										<Offset>
-											<AbsDimension x="5" y="2" />
-										</Offset>
-									</Anchor>
-								</Anchors>
-								<Scripts>
-									<OnClick>MemeTracker_CouncilSession_Sort_OnClick("loot_count_table",5);</OnClick>
-								</Scripts>
-							</Button>
-							<Button  inherits="MemeTracker_TitleButtonTemplate" text = "Loot Earned Last X Weeks">
-								<Size>
-									<AbsDimension x="120" y="16" />
-								</Size>
-								<Anchors>
-									<Anchor point="BOTTOMRIGHT" relativeTo="MemeTracker_RecipientListItem1TextLootCount5" relativePoint="TOPRIGHT">
-										<Offset>
-											<AbsDimension x="-5" y="12" />
-										</Offset>
-									</Anchor>
-								</Anchors>
-							</Button>
-						</Frames>
-					</Frame>
-				</Frames>
-			</Frame>
-			<Frame name="MemeTracker_LootHistoryFrame" hidden="true">
-				<Size>
-					<AbsDimension x="700" y="287" />
-				</Size>
-				<Anchors>
-					<Anchor point="TOPLEFT" />
-				</Anchors>
-				<Frames>
-					<EditBox name="MemeTracker_LootHistorySearchBox" autoFocus="false" inherits="InputBoxTemplate">
-						<Size>
-							<AbsDimension x="300" y="15" />
-						</Size>
-						<Anchors>
-							<Anchor point="TOPLEFT">
-								1
-								<Offset>
-									<AbsDimension x="20" y="-30" />
-								</Offset>
-							</Anchor>
-						</Anchors>
-						<Scripts>
-							<OnEscapePressed>this:ClearFocus();</OnEscapePressed>
-							<OnEnterPressed>MemeTracker_LootHistorySearchBox_OnEnterPressed();</OnEnterPressed>
-						</Scripts>
-					</EditBox>
-					<Button name="MemeTracker_LootSessionTabButton" inherits="UIPanelButtonTemplate" text="Loot Session">
-							<Size>
-							<AbsDimension x="125" y="22" />
-						</Size>
-						<Anchors>
-							<Anchor point="TOPRIGHT">
-								<Offset>
-									<AbsDimension x="15" y="-10" />
-								</Offset>
-							</Anchor>
-						</Anchors>
-						<Scripts>
-							<OnClick>MemeTracker_LootSessionTabButton_OnClick();</OnClick>
-						</Scripts>
-					</Button>
-					<Button name="MemeTracker_LootHistorySyncButton" inherits="UIPanelButtonTemplate" text="Sync">
-						<Size>
-							<AbsDimension x="125" y="22" />
-						</Size>
-						<Anchors>
-							<Anchor point="TOPRIGHT" relativeTo="MemeTracker_LootSessionTabButton" relativePoint="TOPLEFT">
-								<Offset>
-									<AbsDimension x="0" y="0" />
-								</Offset>
-							</Anchor>
-						</Anchors>
-						<Scripts>
-							<OnClick>MemeTracker_LootHistorySyncButton_OnClick();</OnClick>
-						</Scripts>
-					</Button>
-					<ScrollFrame name="MemeTracker_LootHistoryScrollFrame" inherits="FauxScrollFrameTemplate">
-						<Size>
-							<AbsDimension x="700" y="240" />
-						</Size>
-						<Anchors>
-							<Anchor point="TOPRIGHT">
-								<Offset>
-									<AbsDimension x="8" y="-70" />
-								</Offset>
-							</Anchor>
-						</Anchors>
-						<Scripts>
-							<OnVerticalScroll>FauxScrollFrame_OnVerticalScroll(25, MemeTracker_LootHistoryScrollFrame_Update);</OnVerticalScroll>
-							<OnShow>MemeTracker_LootHistoryScrollFrame_Update()</OnShow>
-						</Scripts>
-					</ScrollFrame>				
-					<Button name="MemeTracker_LootHistoryListItem1" inherits="MemeTracker_LootHistoryButtonTemplate" id="1" hidden="true">
-						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
-							<TileSize>
-								<AbsValue val="16" />
-							</TileSize>
-						</Backdrop>
-						<Anchors>
-							<Anchor point="TOPLEFT">
-								1
-								<Offset>
-									<AbsDimension x="12" y="-70" />
-								</Offset>
-							</Anchor>
-						</Anchors>
-					</Button>
-					<Button name="MemeTracker_LootHistoryListItem2" inherits="MemeTracker_LootHistoryButtonTemplate" id="2" hidden="true">
-						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
-							<TileSize>
-								<AbsValue val="16" />
-							</TileSize>
-						</Backdrop>
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="MemeTracker_LootHistoryListItem1" relativePoint="BOTTOMLEFT">
-								<Offset>
-									<AbsDimension x="0" y="0" />
-								</Offset>
-							</Anchor>
-						</Anchors>
-					</Button>
-					<Button name="MemeTracker_LootHistoryListItem3" inherits="MemeTracker_LootHistoryButtonTemplate" id="3" hidden="true">
-						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
-							<TileSize>
-								<AbsValue val="16" />
-							</TileSize>
-						</Backdrop>
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="MemeTracker_LootHistoryListItem2" relativePoint="BOTTOMLEFT">
-								<Offset>
-									<AbsDimension x="0" y="0" />
-								</Offset>
-							</Anchor>
-						</Anchors>
-					</Button>
-					<Button name="MemeTracker_LootHistoryListItem4" inherits="MemeTracker_LootHistoryButtonTemplate" id="4" hidden="true">
-						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
-							<TileSize>
-								<AbsValue val="16" />
-							</TileSize>
-						</Backdrop>
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="MemeTracker_LootHistoryListItem3" relativePoint="BOTTOMLEFT">
-								<Offset>
-									<AbsDimension x="0" y="0" />
-								</Offset>
-							</Anchor>
-						</Anchors>
-					</Button>
-					<Button name="MemeTracker_LootHistoryListItem5" inherits="MemeTracker_LootHistoryButtonTemplate" id="5" hidden="true">
-						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
-							<TileSize>
-								<AbsValue val="16" />
-							</TileSize>
-						</Backdrop>
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="MemeTracker_LootHistoryListItem4" relativePoint="BOTTOMLEFT">
-								<Offset>
-									<AbsDimension x="0" y="0" />
-								</Offset>
-							</Anchor>
-						</Anchors>
-					</Button>
-					<Button name="MemeTracker_LootHistoryListItem6" inherits="MemeTracker_LootHistoryButtonTemplate" id="6" hidden="true">
-						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
-							<TileSize>
-								<AbsValue val="16" />
-							</TileSize>
-						</Backdrop>
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="MemeTracker_LootHistoryListItem5" relativePoint="BOTTOMLEFT">
-								<Offset>
-									<AbsDimension x="0" y="0" />
-								</Offset>
-							</Anchor>
-						</Anchors>
-					</Button>
-					<Button name="MemeTracker_LootHistoryListItem7" inherits="MemeTracker_LootHistoryButtonTemplate" id="7" hidden="true">
-						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
-							<TileSize>
-								<AbsValue val="16" />
-							</TileSize>
-						</Backdrop>
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="MemeTracker_LootHistoryListItem6" relativePoint="BOTTOMLEFT">
-								<Offset>
-									<AbsDimension x="0" y="0" />
-								</Offset>
-							</Anchor>
-						</Anchors>
-					</Button>
-					<Button name="MemeTracker_LootHistoryListItem8" inherits="MemeTracker_LootHistoryButtonTemplate" id="8" hidden="true">
-						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
-							<TileSize>
-								<AbsValue val="16" />
-							</TileSize>
-						</Backdrop>
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="MemeTracker_LootHistoryListItem7" relativePoint="BOTTOMLEFT">
-								<Offset>
-									<AbsDimension x="0" y="0" />
-								</Offset>
-							</Anchor>
-						</Anchors>
-					</Button>
-					<Button name="MemeTracker_LootHistoryListItem9" inherits="MemeTracker_LootHistoryButtonTemplate" id="9" hidden="true">
-						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
-							<TileSize>
-								<AbsValue val="16" />
-							</TileSize>
-						</Backdrop>
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="MemeTracker_LootHistoryListItem8" relativePoint="BOTTOMLEFT">
-								<Offset>
-									<AbsDimension x="0" y="0" />
-								</Offset>
-							</Anchor>
-						</Anchors>
-					</Button>
-					<Button name="MemeTracker_LootHistoryListItem10" inherits="MemeTracker_LootHistoryButtonTemplate" id="10" hidden="true">
-						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
-							<TileSize>
-								<AbsValue val="16" />
-							</TileSize>
-						</Backdrop>
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="MemeTracker_LootHistoryListItem9" relativePoint="BOTTOMLEFT">
-								<Offset>
-									<AbsDimension x="0" y="0" />
-								</Offset>
-							</Anchor>
-						</Anchors>
-					</Button>
-					<Button name="MemeTracker_LootHistoryListItem11" inherits="MemeTracker_LootHistoryButtonTemplate" id="11" hidden="true">
-						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
-							<TileSize>
-								<AbsValue val="16" />
-							</TileSize>
-						</Backdrop>
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="MemeTracker_LootHistoryListItem10" relativePoint="BOTTOMLEFT">
-								<Offset>
-									<AbsDimension x="0" y="0" />
-								</Offset>
-							</Anchor>
-						</Anchors>
-					</Button>
-					<Button name="MemeTracker_LootHistoryListItem12" inherits="MemeTracker_LootHistoryButtonTemplate" id="12" hidden="true">
-						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
-							<TileSize>
-								<AbsValue val="16" />
-							</TileSize>
-						</Backdrop>
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="MemeTracker_LootHistoryListItem11" relativePoint="BOTTOMLEFT">
-								<Offset>
-									<AbsDimension x="0" y="0" />
-								</Offset>
-							</Anchor>
-						</Anchors>
-					</Button>
-					<Button name="MemeTracker_LootHistoryListItem13" inherits="MemeTracker_LootHistoryButtonTemplate" id="13" hidden="true">
-						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
-							<TileSize>
-								<AbsValue val="16" />
-							</TileSize>
-						</Backdrop>
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="MemeTracker_LootHistoryListItem12" relativePoint="BOTTOMLEFT">
-								<Offset>
-									<AbsDimension x="0" y="0" />
-								</Offset>
-							</Anchor>
-						</Anchors>
-					</Button>
-					<Button name="MemeTracker_LootHistoryListItem14" inherits="MemeTracker_LootHistoryButtonTemplate" id="14" hidden="true">
-						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
-							<TileSize>
-								<AbsValue val="16" />
-							</TileSize>
-						</Backdrop>
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="MemeTracker_LootHistoryListItem13" relativePoint="BOTTOMLEFT">
-								<Offset>
-									<AbsDimension x="0" y="0" />
-								</Offset>
-							</Anchor>
-						</Anchors>
-					</Button>
-					<Button name="MemeTracker_LootHistoryListItem15" inherits="MemeTracker_LootHistoryButtonTemplate" id="15" hidden="true">
-						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
-							<TileSize>
-								<AbsValue val="16" />
-							</TileSize>
-						</Backdrop>
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="MemeTracker_LootHistoryListItem14" relativePoint="BOTTOMLEFT">
-								<Offset>
-									<AbsDimension x="0" y="0" />
-								</Offset>
-							</Anchor>
-						</Anchors>
-					</Button>
-					<Frame name="MemeTracker_LootHistoryListSortFrame">
-						<Size>
-							<AbsDimension x="718" y="15" />
-						</Size>
-						<Anchors>
-							<Anchor point="TOPLEFT">
-								<Offset>
-									<AbsDimension x="12" y="-55" />
-								</Offset>
-							</Anchor>
-						</Anchors>
-						<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
-							<TileSize>
-								12
-								<AbsValue val="16" />
-							</TileSize>
-						</Backdrop>
-						<Scripts>
-							<OnLoad>this:SetBackdropColor(0.9, 0.9, 0.9, 0.9)</OnLoad>
-						</Scripts>
-						<Frames>					
-							<Button name="MemeTracker_LootHistoryListSortPlayerName" inherits="MemeTracker_SortButtonTemplate" text="Player">
-								<Size>
-									<AbsDimension x="55" y="16" />
-								</Size>
-								<Anchors>
-									<Anchor point="BOTTOMLEFT" relativeTo="MemeTracker_LootHistoryListItem1TextPlayerName" relativePoint="TOPLEFT">
-										<Offset>
-											<AbsDimension x="-5" y="2" />
-										</Offset>
-									</Anchor>
-								</Anchors>
-								<Scripts>
-									<OnClick>MemeTracker_LootHistory_Sort_OnClick("player_name");</OnClick>
-								</Scripts>
-							</Button>
-							<Button name="MemeTracker_LootHistoryListSortItemName" inherits="MemeTracker_SortButtonTemplate" text="ItemName">
-								<Size>
-									<AbsDimension x="80" y="16" />
-								</Size>
-								<Anchors>
-									<Anchor point="BOTTOMLEFT" relativeTo="MemeTracker_LootHistoryListItem1TextItemName" relativePoint="TOPLEFT">
-										<Offset>
-											<AbsDimension x="-5" y="2" />
-										</Offset>
-									</Anchor>
-								</Anchors>
-								<Scripts>
-									<OnClick>MemeTracker_LootHistory_Sort_OnClick("item_name");</OnClick>
-								</Scripts>
-							</Button>
-							<Button name="MemeTracker_LootHistoryListSortRaidName" inherits="MemeTracker_SortButtonTemplate" text="RaidName">
-								<Size>
-									<AbsDimension x="75" y="16" />
-								</Size>
-								<Anchors>
-									<Anchor point="BOTTOMLEFT" relativeTo="MemeTracker_LootHistoryListItem1TextRaidName" relativePoint="TOPLEFT">
-										<Offset>
-											<AbsDimension x="-5" y="2" />
-										</Offset>
-									</Anchor>
-								</Anchors>
-								<Scripts>
-									<OnClick>MemeTracker_LootHistory_Sort_OnClick("raid_name");</OnClick>
-								</Scripts>
-							</Button>
-							
-							<Button name="MemeTracker_LootHistoryListSortDate" inherits="MemeTracker_SortButtonTemplate" text="Date">
-								<Size>
-									<AbsDimension x="45" y="16" />
-								</Size>
-								<Anchors>
-									<Anchor point="BOTTOMLEFT" relativeTo="MemeTracker_LootHistoryListItem1TextDate" relativePoint="TOPLEFT">
-										<Offset>
-											<AbsDimension x="-5" y="2" />
-										</Offset>
-									</Anchor>
-								</Anchors>
-								<Scripts>
-									<OnClick>MemeTracker_LootHistory_Sort_OnClick("time_stamp");</OnClick>
-								</Scripts>
-							</Button>
-						</Frames>
-					</Frame>
-				</Frames>
-			</Frame>
-		</Frames>
-	</Frame>
-	<Frame name="MemeTrackerFrame" parent="UIParent">
-		<Scripts>
-			<OnLoad>MemeTracker_OnLoad();</OnLoad>
-			<OnEvent>MemeTracker_OnEvent(event, arg1, arg2, arg3, arg4, arg5);</OnEvent>
-			<OnUpdate>MemeTracker_OnUpdate(arg1)</OnUpdate>
-		</Scripts>
-	</Frame>
+         <OnLeave>MemeTracker_LootHistoryButton_OnLeave();</OnLeave>
+      </Scripts>
+      <NormalText name="$parentText" inherits="GameFontNormalSmall" justifyH="LEFT">
+         <Size>
+            <AbsDimension x="160" y="10" />
+         </Size>
+         <Anchors>
+            <Anchor point="LEFT">
+               <Offset>
+                  <AbsDimension x="20" y="0" />
+               </Offset>
+            </Anchor>
+         </Anchors>
+      </NormalText>
+      <HighlightTexture file="Interface\QuestFrame\UI-QuestTitleHighlight" alphaMode="ADD">
+         <Size>
+            <AbsDimension x="700" y="16" />
+         </Size>
+         <Anchors>
+            <Anchor point="TOP">
+               <Offset>
+                  <AbsDimension x="2" y="0" />
+               </Offset>
+            </Anchor>
+         </Anchors>
+      </HighlightTexture>
+      <Layers>
+         <Layer level="OVERLAY">
+            <FontString name="$parentTextPlayerName" inherits="GameFontNormalSmall" justifyH="LEFT">
+               <Size>
+                  <AbsDimension x="75" y="10" />
+               </Size>
+               <Anchors>
+                  <Anchor point="LEFT">
+                     <Offset>
+                        <AbsDimension x="0" y="0" />
+                     </Offset>
+                  </Anchor>
+               </Anchors>
+            </FontString>
+            <FontString name="$parentTextItemName" inherits="GameFontNormalSmall" justifyH="LEFT">
+               <Size>
+                  <AbsDimension x="150" y="10" />
+               </Size>
+               <Anchors>
+                  <Anchor point="LEFT" relativeTo="$parentTextPlayerName" relativePoint="RIGHT">
+                     <Offset>
+                        <AbsDimension x="0" y="0" />
+                     </Offset>
+                  </Anchor>
+               </Anchors>
+            </FontString>
+            <FontString name="$parentTextRaidName" inherits="GameFontNormalSmall" justifyH="LEFT">
+               <Size>
+                  <AbsDimension x="150" y="10" />
+               </Size>
+               <Anchors>
+                  <Anchor point="LEFT" relativeTo="$parentTextItemName" relativePoint="RIGHT">
+                     <Offset>
+                        <AbsDimension x="0" y="0" />
+                     </Offset>
+                  </Anchor>
+               </Anchors>
+            </FontString>
+            <FontString name="$parentTextDate" inherits="GameFontNormalSmall" justifyH="LEFT">
+               <Size>
+                  <AbsDimension x="100" y="10" />
+               </Size>
+               <Anchors>
+                  <Anchor point="LEFT" relativeTo="$parentTextRaidName" relativePoint="RIGHT">
+                     <Offset>
+                        <AbsDimension x="0" y="0" />
+                     </Offset>
+                  </Anchor>
+               </Anchors>
+            </FontString>
+         </Layer>
+      </Layers>
+   </Button>
+   <Button name="MemeTracker_SortButtonTemplate" virtual="true">
+      <NormalText name="$parentText" inherits="GameFontHighlightSmall">
+         <Anchors>
+            <Anchor point="LEFT">
+               <Offset>
+                  <AbsDimension x="4" y="0" />
+               </Offset>
+            </Anchor>
+         </Anchors>
+      </NormalText>
+      <NormalTexture name="$parentArrow" file="Interface\Buttons\UI-SortArrow">
+         <Size>
+            <AbsDimension x="9" y="8" />
+         </Size>
+         <Anchors>
+            <Anchor point="LEFT" relativeTo="$parentText" relativePoint="RIGHT">
+               <Offset>
+                  <AbsDimension x="1" y="-2" />
+               </Offset>
+            </Anchor>
+         </Anchors>
+         <TexCoords left="0" right="0.5625" top="0" bottom="1.0" />
+      </NormalTexture>
+      <HighlightTexture file="Interface\PaperDollInfoFrame\UI-Character-Tab-Highlight" alphaMode="ADD">
+         <Size>
+            <AbsDimension x="5" y="24" />
+         </Size>
+         <Anchors>
+            <Anchor point="LEFT">
+               <Offset>
+                  <AbsDimension x="-4" y="0" />
+               </Offset>
+            </Anchor>
+            <Anchor point="RIGHT">
+               <Offset>
+                  <AbsDimension x="4" y="0" />
+               </Offset>
+            </Anchor>
+         </Anchors>
+      </HighlightTexture>
+      <Scripts>
+         <OnLoad>this:RegisterForClicks("LeftButtonUp", "RightButtonUp");</OnLoad>
+      </Scripts>
+   </Button>
+   <Button name="MemeTracker_TitleButtonTemplate" virtual="true">
+      <NormalText name="$parentText" inherits="GameFontHighlightSmall">
+         <Anchors>
+            <Anchor point="LEFT">
+               <Offset>
+                  <AbsDimension x="4" y="0" />
+               </Offset>
+            </Anchor>
+         </Anchors>
+      </NormalText>
+   </Button>
+   <Frame name="MemeTracker_BrowseFrame" frameStrata="HIGH" toplevel="true" parent="UIParent" movable="true" enableMouse="true" hidden="true" clampedToScreen="true">
+      <Size>
+         <AbsDimension x="743" y="320" />
+      </Size>
+      <Anchors>
+         <Anchor point="TOPLEFT">
+            <Offset>
+               <AbsDimension x="0" y="-104" />
+            </Offset>
+         </Anchor>
+      </Anchors>
+      <Anchors>
+         <Anchor point="CENTER">
+            <Offset>
+               <AbsDimension x="5" y="0" />
+            </Offset>
+         </Anchor>
+      </Anchors>
+      <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
+         <BackgroundInsets>
+            <AbsInset left="11" right="12" top="12" bottom="11" />
+         </BackgroundInsets>
+         <TileSize>
+            <AbsValue val="32" />
+         </TileSize>
+         <EdgeSize>
+            <AbsValue val="32" />
+         </EdgeSize>
+      </Backdrop>
+      <Layers>
+         <Layer level="ARTWORK">
+            <Texture name="MemeTracker_FrameHeader" file="Interface\DialogFrame\UI-DialogBox-Header">
+               <Size>
+                  <AbsDimension x="310" y="64" />
+               </Size>
+               <Anchors>
+                  <Anchor point="TOP">
+                     <Offset>
+                        <AbsDimension x="0" y="12" />
+                     </Offset>
+                  </Anchor>
+               </Anchors>
+            </Texture>
+            <FontString name="MemeTracker_FrameTitle" inherits="GameFontNormal" text="MemeTracker">
+               <Anchors>
+                  <Anchor point="TOP">
+                     <Offset>
+                        <AbsDimension x="0" y="0" />
+                     </Offset>
+                  </Anchor>
+               </Anchors>
+            </FontString>
+            <FontString name="MemeTracker_AutoEnd_FontString" inherits="GameFontHighlightSmall" text="Auto End Sessions">
+               <Size>
+                  <AbsDimension x="120" y="22" />
+               </Size>
+               <Anchors>
+                  <Anchor point="TOPLEFT">
+                     <Offset>
+                        <AbsDimension x="25" y="-30" />
+                     </Offset>
+                  </Anchor>
+               </Anchors>
+            </FontString>
+         </Layer>
+      </Layers>
+      <Scripts>
+         <OnShow>MemeTracker_Main_OnShow();</OnShow>
+         <OnHide />
+         <OnMouseDown>MemeTracker_Main_OnMouseDown(arg1);</OnMouseDown>
+         <OnMouseUp>MemeTracker_Main_OnMouseUp(arg1);</OnMouseUp>
+      </Scripts>
+      <Frames>
+         <Button name="MemeTracker_ListCloseButton" inherits="UIPanelCloseButton">
+            <Anchors>
+               <Anchor point="TOPRIGHT" relativeTo="MemeTracker_BrowseFrame" relativePoint="TOPRIGHT">
+                  <Offset>
+                     <AbsDimension x="-5" y="-6" />
+                  </Offset>
+               </Anchor>
+            </Anchors>
+         </Button>
+         <Frame name="MemeTracker_LootSessionFrame">
+            <Size>
+               <AbsDimension x="700" y="287" />
+            </Size>
+            <Anchors>
+               <Anchor point="TOPLEFT" />
+            </Anchors>
+            <Frames>
+               <CheckButton name="MemeTracker_SessionAutoEndCheckButton">
+                  <HitRectInsets>
+                     <AbsInset left="0" right="-100" top="0" bottom="0" />
+                  </HitRectInsets>
+                  <Size>
+                     <AbsDimension x="20" y="20" />
+                  </Size>
+                  <Anchors>
+                     <Anchor point="TOPLEFT">
+                        <Offset>
+                           <AbsDimension x="15" y="-32" />
+                        </Offset>
+                     </Anchor>
+                  </Anchors>
+                  <NormalTexture file="Interface\Buttons\UI-CheckBox-Up" />
+                  <PushedTexture file="Interface\Buttons\UI-CheckBox-Down" />
+                  <HighlightTexture file="Interface\Buttons\UI-CheckBox-Highlight" alphaMode="ADD" />
+                  <CheckedTexture file="Interface\Buttons\UI-CheckBox-Check" />
+                  <DisabledCheckedTexture file="Interface\Buttons\UI-CheckBox-Check-Disabled" />
+                  <Scripts>
+                     <OnClick>MemeTracker_SessionAutoEndCheckButton_OnClick();</OnClick>
+                     <OnEnter>MemeTracker_SessionAutoEndCheckButton_OnEnter();</OnEnter>
+                  </Scripts>
+               </CheckButton>
+               <Button name="MemeTracker_SessionEndButton" inherits="UIPanelButtonTemplate" text="End Session">
+                  <Size>
+                     <AbsDimension x="100" y="22" />
+                  </Size>
+                  <Anchors>
+                     <Anchor point="BOTTOMLEFT">
+                        <Offset>
+                           <AbsDimension x="10" y="-22" />
+                        </Offset>
+                     </Anchor>
+                  </Anchors>
+                  <Scripts>
+                     <OnClick>MemeTracker_SessionEndButton_OnClick();</OnClick>
+                  </Scripts>
+               </Button>
+               <Button name="MemeTracker_SessionDEButton" inherits="UIPanelButtonTemplate" text="DE/Bank Item">
+                  <Size>
+                     <AbsDimension x="120" y="22" />
+                  </Size>
+                  <Anchors>
+                     <Anchor point="TOPLEFT" relativeTo="MemeTracker_SessionEndButton" relativePoint="TOPRIGHT">
+                        <Offset>
+                           <AbsDimension x="0" y="0" />
+                        </Offset>
+                     </Anchor>
+                  </Anchors>
+                  <Scripts>
+                     <OnClick>MemeTracker_SessionDEButton_OnClick();</OnClick>
+                  </Scripts>
+               </Button>
+               <Button name="MemeTracker_SessionCancelButton" inherits="UIPanelButtonTemplate" text="Cancel Session">
+                  <Size>
+                     <AbsDimension x="120" y="22" />
+                  </Size>
+                  <Anchors>
+                     <Anchor point="TOPLEFT" relativeTo="MemeTracker_SessionDEButton" relativePoint="TOPRIGHT">
+                        <Offset>
+                           <AbsDimension x="0" y="0" />
+                        </Offset>
+                     </Anchor>
+                  </Anchors>
+                  <Scripts>
+                     1
+                     <OnClick>MemeTracker_SessionCancelButton_OnClick();</OnClick>
+                  </Scripts>
+               </Button>
+               <Button name="MemeTracker_LootHistoryTabButton" inherits="UIPanelButtonTemplate" text="Loot History">
+                  <Size>
+                     <AbsDimension x="150" y="22" />
+                  </Size>
+                  <Anchors>
+                     <Anchor point="TOPRIGHT">
+                        <Offset>
+                           <AbsDimension x="15" y="-10" />
+                        </Offset>
+                     </Anchor>
+                  </Anchors>
+                  <Scripts>
+                     <OnClick>MemeTracker_LootHistoryTabButton_OnClick();</OnClick>
+                  </Scripts>
+               </Button>
+               <Button name="MemeTracker_OverviewButton" inherits="MemeTracker_OverviewButtonTemplate">
+                  <Size>
+                     <AbsDimension x="750" y="22" />
+                  </Size>
+                  <Anchors>
+                     <Anchor point="TOPLEFT">
+                        <Offset>
+                           <AbsDimension x="12" y="-30" />
+                        </Offset>
+                     </Anchor>
+                  </Anchors>
+               </Button>
+               <ScrollFrame name="MemeTracker_RecipientListScrollFrame" inherits="FauxScrollFrameTemplate">
+                  <Size>
+                     <AbsDimension x="700" y="240" />
+                  </Size>
+                  <Anchors>
+                     <Anchor point="TOPRIGHT">
+                        <Offset>
+                           <AbsDimension x="8" y="-70" />
+                        </Offset>
+                     </Anchor>
+                  </Anchors>
+                  <Scripts>
+                     <OnVerticalScroll>FauxScrollFrame_OnVerticalScroll(25, MemeTracker_RecipientListScrollFrame_Update);</OnVerticalScroll>
+                     <OnShow>MemeTracker_RecipientListScrollFrame_Update()</OnShow>
+                  </Scripts>
+               </ScrollFrame>
+               <Button name="MemeTracker_RecipientListItem1" inherits="MemeTracker_RecipientButtonTemplate" id="1" hidden="true">
+                  <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+                     <TileSize>
+                        <AbsValue val="16" />
+                     </TileSize>
+                  </Backdrop>
+                  <Anchors>
+                     <Anchor point="TOPLEFT">
+                        1
+                        <Offset>
+                           <AbsDimension x="12" y="-80" />
+                        </Offset>
+                     </Anchor>
+                  </Anchors>
+                  <Frames>
+                     <CheckButton name="MemeTracker_RecipientListVoteBox1" inherits="MemeTracker_VoteCheckButton" id="1" hidden="true" />
+                  </Frames>
+               </Button>
+               <Button name="MemeTracker_RecipientListItem2" inherits="MemeTracker_RecipientButtonTemplate" id="2" hidden="true">
+                  <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+                     <TileSize>
+                        <AbsValue val="16" />
+                     </TileSize>
+                  </Backdrop>
+                  <Anchors>
+                     <Anchor point="TOPLEFT" relativeTo="MemeTracker_RecipientListItem1" relativePoint="BOTTOMLEFT">
+                        <Offset>
+                           <AbsDimension x="0" y="0" />
+                        </Offset>
+                     </Anchor>
+                  </Anchors>
+                  <Frames>
+                     <CheckButton name="MemeTracker_RecipientListVoteBox2" inherits="MemeTracker_VoteCheckButton" id="2" hidden="true" />
+                  </Frames>
+               </Button>
+               <Button name="MemeTracker_RecipientListItem3" inherits="MemeTracker_RecipientButtonTemplate" id="3" hidden="true">
+                  <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+                     <TileSize>
+                        <AbsValue val="16" />
+                     </TileSize>
+                  </Backdrop>
+                  <Anchors>
+                     <Anchor point="TOPLEFT" relativeTo="MemeTracker_RecipientListItem2" relativePoint="BOTTOMLEFT">
+                        <Offset>
+                           <AbsDimension x="0" y="0" />
+                        </Offset>
+                     </Anchor>
+                  </Anchors>
+                  <Frames>
+                     <CheckButton name="MemeTracker_RecipientListVoteBox3" inherits="MemeTracker_VoteCheckButton" id="3" hidden="true" />
+                  </Frames>
+               </Button>
+               <Button name="MemeTracker_RecipientListItem4" inherits="MemeTracker_RecipientButtonTemplate" id="4" hidden="true">
+                  <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+                     <TileSize>
+                        <AbsValue val="16" />
+                     </TileSize>
+                  </Backdrop>
+                  <Anchors>
+                     <Anchor point="TOPLEFT" relativeTo="MemeTracker_RecipientListItem3" relativePoint="BOTTOMLEFT">
+                        <Offset>
+                           <AbsDimension x="0" y="0" />
+                        </Offset>
+                     </Anchor>
+                  </Anchors>
+                  <Frames>
+                     <CheckButton name="MemeTracker_RecipientListVoteBox4" inherits="MemeTracker_VoteCheckButton" id="4" hidden="true" />
+                  </Frames>
+               </Button>
+               <Button name="MemeTracker_RecipientListItem5" inherits="MemeTracker_RecipientButtonTemplate" id="5" hidden="true">
+                  <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+                     <TileSize>
+                        <AbsValue val="16" />
+                     </TileSize>
+                  </Backdrop>
+                  <Anchors>
+                     <Anchor point="TOPLEFT" relativeTo="MemeTracker_RecipientListItem4" relativePoint="BOTTOMLEFT">
+                        <Offset>
+                           <AbsDimension x="0" y="0" />
+                        </Offset>
+                     </Anchor>
+                  </Anchors>
+                  <Frames>
+                     <CheckButton name="MemeTracker_RecipientListVoteBox5" inherits="MemeTracker_VoteCheckButton" id="5" hidden="true" />
+                  </Frames>
+               </Button>
+               <Button name="MemeTracker_RecipientListItem6" inherits="MemeTracker_RecipientButtonTemplate" id="6" hidden="true">
+                  <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+                     <TileSize>
+                        <AbsValue val="16" />
+                     </TileSize>
+                  </Backdrop>
+                  <Anchors>
+                     <Anchor point="TOPLEFT" relativeTo="MemeTracker_RecipientListItem5" relativePoint="BOTTOMLEFT">
+                        <Offset>
+                           <AbsDimension x="0" y="0" />
+                        </Offset>
+                     </Anchor>
+                  </Anchors>
+                  <Frames>
+                     <CheckButton name="MemeTracker_RecipientListVoteBox6" inherits="MemeTracker_VoteCheckButton" id="6" hidden="true" />
+                  </Frames>
+               </Button>
+               <Button name="MemeTracker_RecipientListItem7" inherits="MemeTracker_RecipientButtonTemplate" id="7" hidden="true">
+                  <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+                     <TileSize>
+                        <AbsValue val="16" />
+                     </TileSize>
+                  </Backdrop>
+                  <Anchors>
+                     <Anchor point="TOPLEFT" relativeTo="MemeTracker_RecipientListItem6" relativePoint="BOTTOMLEFT">
+                        <Offset>
+                           <AbsDimension x="0" y="0" />
+                        </Offset>
+                     </Anchor>
+                  </Anchors>
+                  <Frames>
+                     <CheckButton name="MemeTracker_RecipientListVoteBox7" inherits="MemeTracker_VoteCheckButton" id="7" hidden="true" />
+                  </Frames>
+               </Button>
+               <Button name="MemeTracker_RecipientListItem8" inherits="MemeTracker_RecipientButtonTemplate" id="8" hidden="true">
+                  <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+                     <TileSize>
+                        <AbsValue val="16" />
+                     </TileSize>
+                  </Backdrop>
+                  <Anchors>
+                     <Anchor point="TOPLEFT" relativeTo="MemeTracker_RecipientListItem7" relativePoint="BOTTOMLEFT">
+                        <Offset>
+                           <AbsDimension x="0" y="0" />
+                        </Offset>
+                     </Anchor>
+                  </Anchors>
+                  <Frames>
+                     <CheckButton name="MemeTracker_RecipientListVoteBox8" inherits="MemeTracker_VoteCheckButton" id="8" hidden="true" />
+                  </Frames>
+               </Button>
+               <Button name="MemeTracker_RecipientListItem9" inherits="MemeTracker_RecipientButtonTemplate" id="9" hidden="true">
+                  <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+                     <TileSize>
+                        <AbsValue val="16" />
+                     </TileSize>
+                  </Backdrop>
+                  <Anchors>
+                     <Anchor point="TOPLEFT" relativeTo="MemeTracker_RecipientListItem8" relativePoint="BOTTOMLEFT">
+                        <Offset>
+                           <AbsDimension x="0" y="0" />
+                        </Offset>
+                     </Anchor>
+                  </Anchors>
+                  <Frames>
+                     <CheckButton name="MemeTracker_RecipientListVoteBox9" inherits="MemeTracker_VoteCheckButton" id="9" hidden="true" />
+                  </Frames>
+               </Button>
+               <Button name="MemeTracker_RecipientListItem10" inherits="MemeTracker_RecipientButtonTemplate" id="10" hidden="true">
+                  <Backdrop bgFile="Inter7 face\Tooltips\UI-Tooltip-Background" tile="true">
+                     <TileSize>
+                        <AbsValue val="16" />
+                     </TileSize>
+                  </Backdrop>
+                  <Anchors>
+                     <Anchor point="TOPLEFT" relativeTo="MemeTracker_RecipientListItem9" relativePoint="BOTTOMLEFT">
+                        <Offset>
+                           <AbsDimension x="0" y="0" />
+                        </Offset>
+                     </Anchor>
+                  </Anchors>
+                  <Frames>
+                     <CheckButton name="MemeTracker_RecipientListVoteBox10" inherits="MemeTracker_VoteCheckButton" id="10" hidden="true" />
+                  </Frames>
+               </Button>
+               <Button name="MemeTracker_RecipientListItem11" inherits="MemeTracker_RecipientButtonTemplate" id="11" hidden="true">
+                  <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+                     <TileSize>
+                        <AbsValue val="16" />
+                     </TileSize>
+                  </Backdrop>
+                  <Anchors>
+                     <Anchor point="TOPLEFT" relativeTo="MemeTracker_RecipientListItem10" relativePoint="BOTTOMLEFT">
+                        <Offset>
+                           <AbsDimension x="0" y="0" />
+                        </Offset>
+                     </Anchor>
+                  </Anchors>
+                  <Frames>
+                     <CheckButton name="MemeTracker_RecipientListVoteBox11" inherits="MemeTracker_VoteCheckButton" id="11" hidden="true" />
+                  </Frames>
+               </Button>
+               <Button name="MemeTracker_RecipientListItem12" inherits="MemeTracker_RecipientButtonTemplate" id="12" hidden="true">
+                  <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+                     <TileSize>
+                        <AbsValue val="16" />
+                     </TileSize>
+                  </Backdrop>
+                  <Anchors>
+                     <Anchor point="TOPLEFT" relativeTo="MemeTracker_RecipientListItem11" relativePoint="BOTTOMLEFT">
+                        <Offset>
+                           <AbsDimension x="0" y="0" />
+                        </Offset>
+                     </Anchor>
+                  </Anchors>
+                  <Frames>
+                     <CheckButton name="MemeTracker_RecipientListVoteBox12" inherits="MemeTracker_VoteCheckButton" id="12" hidden="true" />
+                  </Frames>
+               </Button>
+               <Button name="MemeTracker_RecipientListItem13" inherits="MemeTracker_RecipientButtonTemplate" id="13" hidden="true">
+                  <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+                     <TileSize>
+                        <AbsValue val="16" />
+                     </TileSize>
+                  </Backdrop>
+                  <Anchors>
+                     <Anchor point="TOPLEFT" relativeTo="MemeTracker_RecipientListItem12" relativePoint="BOTTOMLEFT">
+                        <Offset>
+                           <AbsDimension x="0" y="0" />
+                        </Offset>
+                     </Anchor>
+                  </Anchors>
+                  <Frames>
+                     <CheckButton name="MemeTracker_RecipientListVoteBox13" inherits="MemeTracker_VoteCheckButton" id="13" hidden="true" />
+                  </Frames>
+               </Button>
+               <Button name="MemeTracker_RecipientListItem14" inherits="MemeTracker_RecipientButtonTemplate" id="14" hidden="true">
+                  <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+                     <TileSize>
+                        <AbsValue val="16" />
+                     </TileSize>
+                  </Backdrop>
+                  <Anchors>
+                     <Anchor point="TOPLEFT" relativeTo="MemeTracker_RecipientListItem13" relativePoint="BOTTOMLEFT">
+                        <Offset>
+                           <AbsDimension x="0" y="0" />
+                        </Offset>
+                     </Anchor>
+                  </Anchors>
+                  <Frames>
+                     <CheckButton name="MemeTracker_RecipientListVoteBox14" inherits="MemeTracker_VoteCheckButton" id="14" hidden="true" />
+                  </Frames>
+               </Button>
+               <Button name="MemeTracker_RecipientListItem15" inherits="MemeTracker_RecipientButtonTemplate" id="15" hidden="true">
+                  <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+                     <TileSize>
+                        <AbsValue val="16" />
+                     </TileSize>
+                  </Backdrop>
+                  <Anchors>
+                     <Anchor point="TOPLEFT" relativeTo="MemeTracker_RecipientListItem14" relativePoint="BOTTOMLEFT">
+                        <Offset>
+                           <AbsDimension x="0" y="0" />
+                        </Offset>
+                     </Anchor>
+                  </Anchors>
+                  <Frames>
+                     <CheckButton name="MemeTracker_RecipientListVoteBox15" inherits="MemeTracker_VoteCheckButton" id="15" hidden="true" />
+                  </Frames>
+               </Button>
+               <Frame name="MemeTracker_RecipientListSortFrame">
+                  <Size>
+                     <AbsDimension x="718" y="25" />
+                  </Size>
+                  <Anchors>
+                     <Anchor point="TOPLEFT">
+                        <Offset>
+                           <AbsDimension x="12" y="-55" />
+                        </Offset>
+                     </Anchor>
+                  </Anchors>
+                  <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+                     <TileSize>
+                        12
+                        <AbsValue val="16" />
+                     </TileSize>
+                  </Backdrop>
+                  <Scripts>
+                     <OnLoad>this:SetBackdropColor(0.9, 0.9, 0.9, 0.9)</OnLoad>
+                  </Scripts>
+                  <Frames>
+                     <Button name="MemeTracker_RecipientListSortPlayerName" inherits="MemeTracker_SortButtonTemplate" text="Player">
+                        <Size>
+                           <AbsDimension x="55" y="16" />
+                        </Size>
+                        <Anchors>
+                           <Anchor point="BOTTOMLEFT" relativeTo="MemeTracker_RecipientListItem1TextPlayerName" relativePoint="TOPLEFT">
+                              <Offset>
+                                 <AbsDimension x="-5" y="2" />
+                              </Offset>
+                           </Anchor>
+                        </Anchors>
+                        <Scripts>
+                           <OnClick>MemeTracker_CouncilSession_Sort_OnClick("player_name");</OnClick>
+                        </Scripts>
+                     </Button>
+                     <Button name="MemeTracker_RecipientListSortPlayerGuildRank" inherits="MemeTracker_SortButtonTemplate" text="Rank">
+                        <Size>
+                           <AbsDimension x="55" y="16" />
+                        </Size>
+                        <Anchors>
+                           <Anchor point="BOTTOMLEFT" relativeTo="MemeTracker_RecipientListItem1TextPlayerGuildRank" relativePoint="TOPLEFT">
+                              <Offset>
+                                 <AbsDimension x="-5" y="2" />
+                              </Offset>
+                           </Anchor>
+                        </Anchors>
+                        <Scripts>
+                           <OnClick>MemeTracker_CouncilSession_Sort_OnClick("player_guild_rank_index");</OnClick>
+                        </Scripts>
+                     </Button>
+                     <Button inherits="MemeTracker_TitleButtonTemplate" text="Raid Attendance For Last">
+                        <Size>
+                           <AbsDimension x="140" y="16" />
+                        </Size>
+                        <Anchors>
+                           <Anchor point="BOTTOMLEFT" relativeTo="MemeTracker_RecipientListItem1TextPlayerAttendanceLast4Weeks" relativePoint="TOPLEFt">
+                              <Offset>
+                                 <AbsDimension x="0" y="12" />
+                              </Offset>
+                           </Anchor>
+                        </Anchors>
+                     </Button>
+                     <Button name="MemeTracker_RecipientListSortPlayerAttendanceLast4Weeks" inherits="MemeTracker_SortButtonTemplate" text="4 Weeks">
+                        <Size>
+                           <AbsDimension x="60" y="16" />
+                        </Size>
+                        <Anchors>
+                           <Anchor point="BOTTOMRIGHT" relativeTo="MemeTracker_RecipientListItem1TextPlayerAttendanceLast4Weeks" relativePoint="TOPRIGHT">
+                              <Offset>
+                                 <AbsDimension x="5" y="2" />
+                              </Offset>
+                           </Anchor>
+                        </Anchors>
+                        <Scripts>
+                           <OnClick>MemeTracker_CouncilSession_Sort_OnClick("attendance_last_4_weeks");</OnClick>
+                        </Scripts>
+                     </Button>
+                     <Button name="MemeTracker_RecipientListSortPlayerAttendanceLast2Weeks" inherits="MemeTracker_SortButtonTemplate" text="2 Weeks">
+                        <Size>
+                           <AbsDimension x="60" y="16" />
+                        </Size>
+                        <Anchors>
+                           <Anchor point="BOTTOMRIGHT" relativeTo="MemeTracker_RecipientListItem1TextPlayerAttendanceLast2Weeks" relativePoint="TOPRIGHT">
+                              <Offset>
+                                 <AbsDimension x="5" y="2" />
+                              </Offset>
+                           </Anchor>
+                        </Anchors>
+                        <Scripts>
+                           <OnClick>MemeTracker_CouncilSession_Sort_OnClick("attendance_last_2_weeks");</OnClick>
+                        </Scripts>
+                     </Button>
+                     <Button name="MemeTracker_RecipientListSortItemName" inherits="MemeTracker_SortButtonTemplate" text="ItemName">
+                        <Size>
+                           <AbsDimension x="80" y="16" />
+                        </Size>
+                        <Anchors>
+                           <Anchor point="BOTTOMLEFT" relativeTo="MemeTracker_RecipientListItem1TextItemName" relativePoint="TOPLEFT">
+                              <Offset>
+                                 <AbsDimension x="-5" y="2" />
+                              </Offset>
+                           </Anchor>
+                        </Anchors>
+                        <Scripts>
+                           <OnClick>MemeTracker_CouncilSession_Sort_OnClick("item_name");</OnClick>
+                        </Scripts>
+                     </Button>
+                     <Button name="MemeTracker_RecipientListSortVotes" inherits="MemeTracker_SortButtonTemplate" text="Votes">
+                        <Size>
+                           <AbsDimension x="55" y="16" />
+                        </Size>
+                        <Anchors>
+                           <Anchor point="BOTTOMLEFT" relativeTo="MemeTracker_RecipientListItem1TextVotes" relativePoint="TOPLEFT">
+                              <Offset>
+                                 <AbsDimension x="-5" y="2" />
+                              </Offset>
+                           </Anchor>
+                        </Anchors>
+                        <Scripts>
+                           <OnClick>MemeTracker_CouncilSession_Sort_OnClick("votes");</OnClick>
+                        </Scripts>
+                     </Button>
+                     <Button name="MemeTracker_RecipientListSortLootCount1" inherits="MemeTracker_SortButtonTemplate" text="1">
+                        <Size>
+                           <AbsDimension x="25" y="16" />
+                        </Size>
+                        <Anchors>
+                           <Anchor point="BOTTOMRIGHT" relativeTo="MemeTracker_RecipientListItem1TextLootCount1" relativePoint="TOPRIGHT">
+                              <Offset>
+                                 <AbsDimension x="5" y="2" />
+                              </Offset>
+                           </Anchor>
+                        </Anchors>
+                        <Scripts>
+                           <OnClick>MemeTracker_CouncilSession_Sort_OnClick("loot_count_table",1);</OnClick>
+                        </Scripts>
+                     </Button>
+                     <Button name="MemeTracker_RecipientListSortLootCount2" inherits="MemeTracker_SortButtonTemplate" text="2">
+                        <Size>
+                           <AbsDimension x="25" y="16" />
+                        </Size>
+                        <Anchors>
+                           <Anchor point="BOTTOMRIGHT" relativeTo="MemeTracker_RecipientListItem1TextLootCount2" relativePoint="TOPRIGHT">
+                              <Offset>
+                                 <AbsDimension x="5" y="2" />
+                              </Offset>
+                           </Anchor>
+                        </Anchors>
+                        <Scripts>
+                           <OnClick>MemeTracker_CouncilSession_Sort_OnClick("loot_count_table",2);</OnClick>
+                        </Scripts>
+                     </Button>
+                     <Button name="MemeTracker_RecipientListSortLootCount3" inherits="MemeTracker_SortButtonTemplate" text="4">
+                        <Size>
+                           <AbsDimension x="25" y="16" />
+                        </Size>
+                        <Anchors>
+                           <Anchor point="BOTTOMRIGHT" relativeTo="MemeTracker_RecipientListItem1TextLootCount3" relativePoint="TOPRIGHT">
+                              <Offset>
+                                 <AbsDimension x="5" y="2" />
+                              </Offset>
+                           </Anchor>
+                        </Anchors>
+                        <Scripts>
+                           <OnClick>MemeTracker_CouncilSession_Sort_OnClick("loot_count_table",3);</OnClick>
+                        </Scripts>
+                     </Button>
+                     <Button name="MemeTracker_RecipientListSortLootCount4" inherits="MemeTracker_SortButtonTemplate" text="6">
+                        <Size>
+                           <AbsDimension x="25" y="16" />
+                        </Size>
+                        <Anchors>
+                           <Anchor point="BOTTOMRIGHT" relativeTo="MemeTracker_RecipientListItem1TextLootCount4" relativePoint="TOPRIGHT">
+                              <Offset>
+                                 <AbsDimension x="5" y="2" />
+                              </Offset>
+                           </Anchor>
+                        </Anchors>
+                        <Scripts>
+                           <OnClick>MemeTracker_CouncilSession_Sort_OnClick("loot_count_table",4);</OnClick>
+                        </Scripts>
+                     </Button>
+                     <Button name="MemeTracker_RecipientListSortLootCount5" inherits="MemeTracker_SortButtonTemplate" text="All">
+                        <Size>
+                           <AbsDimension x="25" y="16" />
+                        </Size>
+                        <Anchors>
+                           <Anchor point="BOTTOMRIGHT" relativeTo="MemeTracker_RecipientListItem1TextLootCount5" relativePoint="TOPRIGHT">
+                              <Offset>
+                                 <AbsDimension x="5" y="2" />
+                              </Offset>
+                           </Anchor>
+                        </Anchors>
+                        <Scripts>
+                           <OnClick>MemeTracker_CouncilSession_Sort_OnClick("loot_count_table",5);</OnClick>
+                        </Scripts>
+                     </Button>
+                     <Button inherits="MemeTracker_TitleButtonTemplate" text="Loot Earned Last X Weeks">
+                        <Size>
+                           <AbsDimension x="120" y="16" />
+                        </Size>
+                        <Anchors>
+                           <Anchor point="BOTTOMRIGHT" relativeTo="MemeTracker_RecipientListItem1TextLootCount5" relativePoint="TOPRIGHT">
+                              <Offset>
+                                 <AbsDimension x="-5" y="12" />
+                              </Offset>
+                           </Anchor>
+                        </Anchors>
+                     </Button>
+                  </Frames>
+               </Frame>
+            </Frames>
+         </Frame>
+         <Frame name="MemeTracker_LootHistoryFrame" hidden="true">
+            <Size>
+               <AbsDimension x="700" y="287" />
+            </Size>
+            <Anchors>
+               <Anchor point="TOPLEFT" />
+            </Anchors>
+            <Frames>
+               <EditBox name="MemeTracker_LootHistorySearchBox" autoFocus="false" inherits="InputBoxTemplate">
+                  <Size>
+                     <AbsDimension x="300" y="15" />
+                  </Size>
+                  <Anchors>
+                     <Anchor point="TOPLEFT">
+                        1
+                        <Offset>
+                           <AbsDimension x="20" y="-30" />
+                        </Offset>
+                     </Anchor>
+                  </Anchors>
+                  <Scripts>
+                     <OnEscapePressed>this:ClearFocus();</OnEscapePressed>
+                     <OnEnterPressed>MemeTracker_LootHistorySearchBox_OnEnterPressed();</OnEnterPressed>
+                  </Scripts>
+               </EditBox>
+               <Button name="MemeTracker_LootSessionTabButton" inherits="UIPanelButtonTemplate" text="Loot Session">
+                  <Size>
+                     <AbsDimension x="125" y="22" />
+                  </Size>
+                  <Anchors>
+                     <Anchor point="TOPRIGHT">
+                        <Offset>
+                           <AbsDimension x="15" y="-10" />
+                        </Offset>
+                     </Anchor>
+                  </Anchors>
+                  <Scripts>
+                     <OnClick>MemeTracker_LootSessionTabButton_OnClick();</OnClick>
+                  </Scripts>
+               </Button>
+               <Button name="MemeTracker_LootHistorySyncButton" inherits="UIPanelButtonTemplate" text="Sync">
+                  <Size>
+                     <AbsDimension x="125" y="22" />
+                  </Size>
+                  <Anchors>
+                     <Anchor point="TOPRIGHT" relativeTo="MemeTracker_LootSessionTabButton" relativePoint="TOPLEFT">
+                        <Offset>
+                           <AbsDimension x="0" y="0" />
+                        </Offset>
+                     </Anchor>
+                  </Anchors>
+                  <Scripts>
+                     <OnClick>MemeTracker_LootHistorySyncButton_OnClick();</OnClick>
+                  </Scripts>
+               </Button>
+               <ScrollFrame name="MemeTracker_LootHistoryScrollFrame" inherits="FauxScrollFrameTemplate">
+                  <Size>
+                     <AbsDimension x="700" y="240" />
+                  </Size>
+                  <Anchors>
+                     <Anchor point="TOPRIGHT">
+                        <Offset>
+                           <AbsDimension x="8" y="-70" />
+                        </Offset>
+                     </Anchor>
+                  </Anchors>
+                  <Scripts>
+                     <OnVerticalScroll>FauxScrollFrame_OnVerticalScroll(25, MemeTracker_LootHistoryScrollFrame_Update);</OnVerticalScroll>
+                     <OnShow>MemeTracker_LootHistoryScrollFrame_Update()</OnShow>
+                  </Scripts>
+               </ScrollFrame>
+               <Button name="MemeTracker_LootHistoryListItem1" inherits="MemeTracker_LootHistoryButtonTemplate" id="1" hidden="true">
+                  <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+                     <TileSize>
+                        <AbsValue val="16" />
+                     </TileSize>
+                  </Backdrop>
+                  <Anchors>
+                     <Anchor point="TOPLEFT">
+                        1
+                        <Offset>
+                           <AbsDimension x="12" y="-70" />
+                        </Offset>
+                     </Anchor>
+                  </Anchors>
+               </Button>
+               <Button name="MemeTracker_LootHistoryListItem2" inherits="MemeTracker_LootHistoryButtonTemplate" id="2" hidden="true">
+                  <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+                     <TileSize>
+                        <AbsValue val="16" />
+                     </TileSize>
+                  </Backdrop>
+                  <Anchors>
+                     <Anchor point="TOPLEFT" relativeTo="MemeTracker_LootHistoryListItem1" relativePoint="BOTTOMLEFT">
+                        <Offset>
+                           <AbsDimension x="0" y="0" />
+                        </Offset>
+                     </Anchor>
+                  </Anchors>
+               </Button>
+               <Button name="MemeTracker_LootHistoryListItem3" inherits="MemeTracker_LootHistoryButtonTemplate" id="3" hidden="true">
+                  <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+                     <TileSize>
+                        <AbsValue val="16" />
+                     </TileSize>
+                  </Backdrop>
+                  <Anchors>
+                     <Anchor point="TOPLEFT" relativeTo="MemeTracker_LootHistoryListItem2" relativePoint="BOTTOMLEFT">
+                        <Offset>
+                           <AbsDimension x="0" y="0" />
+                        </Offset>
+                     </Anchor>
+                  </Anchors>
+               </Button>
+               <Button name="MemeTracker_LootHistoryListItem4" inherits="MemeTracker_LootHistoryButtonTemplate" id="4" hidden="true">
+                  <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+                     <TileSize>
+                        <AbsValue val="16" />
+                     </TileSize>
+                  </Backdrop>
+                  <Anchors>
+                     <Anchor point="TOPLEFT" relativeTo="MemeTracker_LootHistoryListItem3" relativePoint="BOTTOMLEFT">
+                        <Offset>
+                           <AbsDimension x="0" y="0" />
+                        </Offset>
+                     </Anchor>
+                  </Anchors>
+               </Button>
+               <Button name="MemeTracker_LootHistoryListItem5" inherits="MemeTracker_LootHistoryButtonTemplate" id="5" hidden="true">
+                  <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+                     <TileSize>
+                        <AbsValue val="16" />
+                     </TileSize>
+                  </Backdrop>
+                  <Anchors>
+                     <Anchor point="TOPLEFT" relativeTo="MemeTracker_LootHistoryListItem4" relativePoint="BOTTOMLEFT">
+                        <Offset>
+                           <AbsDimension x="0" y="0" />
+                        </Offset>
+                     </Anchor>
+                  </Anchors>
+               </Button>
+               <Button name="MemeTracker_LootHistoryListItem6" inherits="MemeTracker_LootHistoryButtonTemplate" id="6" hidden="true">
+                  <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+                     <TileSize>
+                        <AbsValue val="16" />
+                     </TileSize>
+                  </Backdrop>
+                  <Anchors>
+                     <Anchor point="TOPLEFT" relativeTo="MemeTracker_LootHistoryListItem5" relativePoint="BOTTOMLEFT">
+                        <Offset>
+                           <AbsDimension x="0" y="0" />
+                        </Offset>
+                     </Anchor>
+                  </Anchors>
+               </Button>
+               <Button name="MemeTracker_LootHistoryListItem7" inherits="MemeTracker_LootHistoryButtonTemplate" id="7" hidden="true">
+                  <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+                     <TileSize>
+                        <AbsValue val="16" />
+                     </TileSize>
+                  </Backdrop>
+                  <Anchors>
+                     <Anchor point="TOPLEFT" relativeTo="MemeTracker_LootHistoryListItem6" relativePoint="BOTTOMLEFT">
+                        <Offset>
+                           <AbsDimension x="0" y="0" />
+                        </Offset>
+                     </Anchor>
+                  </Anchors>
+               </Button>
+               <Button name="MemeTracker_LootHistoryListItem8" inherits="MemeTracker_LootHistoryButtonTemplate" id="8" hidden="true">
+                  <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+                     <TileSize>
+                        <AbsValue val="16" />
+                     </TileSize>
+                  </Backdrop>
+                  <Anchors>
+                     <Anchor point="TOPLEFT" relativeTo="MemeTracker_LootHistoryListItem7" relativePoint="BOTTOMLEFT">
+                        <Offset>
+                           <AbsDimension x="0" y="0" />
+                        </Offset>
+                     </Anchor>
+                  </Anchors>
+               </Button>
+               <Button name="MemeTracker_LootHistoryListItem9" inherits="MemeTracker_LootHistoryButtonTemplate" id="9" hidden="true">
+                  <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+                     <TileSize>
+                        <AbsValue val="16" />
+                     </TileSize>
+                  </Backdrop>
+                  <Anchors>
+                     <Anchor point="TOPLEFT" relativeTo="MemeTracker_LootHistoryListItem8" relativePoint="BOTTOMLEFT">
+                        <Offset>
+                           <AbsDimension x="0" y="0" />
+                        </Offset>
+                     </Anchor>
+                  </Anchors>
+               </Button>
+               <Button name="MemeTracker_LootHistoryListItem10" inherits="MemeTracker_LootHistoryButtonTemplate" id="10" hidden="true">
+                  <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+                     <TileSize>
+                        <AbsValue val="16" />
+                     </TileSize>
+                  </Backdrop>
+                  <Anchors>
+                     <Anchor point="TOPLEFT" relativeTo="MemeTracker_LootHistoryListItem9" relativePoint="BOTTOMLEFT">
+                        <Offset>
+                           <AbsDimension x="0" y="0" />
+                        </Offset>
+                     </Anchor>
+                  </Anchors>
+               </Button>
+               <Button name="MemeTracker_LootHistoryListItem11" inherits="MemeTracker_LootHistoryButtonTemplate" id="11" hidden="true">
+                  <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+                     <TileSize>
+                        <AbsValue val="16" />
+                     </TileSize>
+                  </Backdrop>
+                  <Anchors>
+                     <Anchor point="TOPLEFT" relativeTo="MemeTracker_LootHistoryListItem10" relativePoint="BOTTOMLEFT">
+                        <Offset>
+                           <AbsDimension x="0" y="0" />
+                        </Offset>
+                     </Anchor>
+                  </Anchors>
+               </Button>
+               <Button name="MemeTracker_LootHistoryListItem12" inherits="MemeTracker_LootHistoryButtonTemplate" id="12" hidden="true">
+                  <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+                     <TileSize>
+                        <AbsValue val="16" />
+                     </TileSize>
+                  </Backdrop>
+                  <Anchors>
+                     <Anchor point="TOPLEFT" relativeTo="MemeTracker_LootHistoryListItem11" relativePoint="BOTTOMLEFT">
+                        <Offset>
+                           <AbsDimension x="0" y="0" />
+                        </Offset>
+                     </Anchor>
+                  </Anchors>
+               </Button>
+               <Button name="MemeTracker_LootHistoryListItem13" inherits="MemeTracker_LootHistoryButtonTemplate" id="13" hidden="true">
+                  <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+                     <TileSize>
+                        <AbsValue val="16" />
+                     </TileSize>
+                  </Backdrop>
+                  <Anchors>
+                     <Anchor point="TOPLEFT" relativeTo="MemeTracker_LootHistoryListItem12" relativePoint="BOTTOMLEFT">
+                        <Offset>
+                           <AbsDimension x="0" y="0" />
+                        </Offset>
+                     </Anchor>
+                  </Anchors>
+               </Button>
+               <Button name="MemeTracker_LootHistoryListItem14" inherits="MemeTracker_LootHistoryButtonTemplate" id="14" hidden="true">
+                  <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+                     <TileSize>
+                        <AbsValue val="16" />
+                     </TileSize>
+                  </Backdrop>
+                  <Anchors>
+                     <Anchor point="TOPLEFT" relativeTo="MemeTracker_LootHistoryListItem13" relativePoint="BOTTOMLEFT">
+                        <Offset>
+                           <AbsDimension x="0" y="0" />
+                        </Offset>
+                     </Anchor>
+                  </Anchors>
+               </Button>
+               <Button name="MemeTracker_LootHistoryListItem15" inherits="MemeTracker_LootHistoryButtonTemplate" id="15" hidden="true">
+                  <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+                     <TileSize>
+                        <AbsValue val="16" />
+                     </TileSize>
+                  </Backdrop>
+                  <Anchors>
+                     <Anchor point="TOPLEFT" relativeTo="MemeTracker_LootHistoryListItem14" relativePoint="BOTTOMLEFT">
+                        <Offset>
+                           <AbsDimension x="0" y="0" />
+                        </Offset>
+                     </Anchor>
+                  </Anchors>
+               </Button>
+               <Frame name="MemeTracker_LootHistoryListSortFrame">
+                  <Size>
+                     <AbsDimension x="718" y="15" />
+                  </Size>
+                  <Anchors>
+                     <Anchor point="TOPLEFT">
+                        <Offset>
+                           <AbsDimension x="12" y="-55" />
+                        </Offset>
+                     </Anchor>
+                  </Anchors>
+                  <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" tile="true">
+                     <TileSize>
+                        12
+                        <AbsValue val="16" />
+                     </TileSize>
+                  </Backdrop>
+                  <Scripts>
+                     <OnLoad>this:SetBackdropColor(0.9, 0.9, 0.9, 0.9)</OnLoad>
+                  </Scripts>
+                  <Frames>
+                     <Button name="MemeTracker_LootHistoryListSortPlayerName" inherits="MemeTracker_SortButtonTemplate" text="Player">
+                        <Size>
+                           <AbsDimension x="55" y="16" />
+                        </Size>
+                        <Anchors>
+                           <Anchor point="BOTTOMLEFT" relativeTo="MemeTracker_LootHistoryListItem1TextPlayerName" relativePoint="TOPLEFT">
+                              <Offset>
+                                 <AbsDimension x="-5" y="2" />
+                              </Offset>
+                           </Anchor>
+                        </Anchors>
+                        <Scripts>
+                           <OnClick>MemeTracker_LootHistory_Sort_OnClick("player_name");</OnClick>
+                        </Scripts>
+                     </Button>
+                     <Button name="MemeTracker_LootHistoryListSortItemName" inherits="MemeTracker_SortButtonTemplate" text="ItemName">
+                        <Size>
+                           <AbsDimension x="80" y="16" />
+                        </Size>
+                        <Anchors>
+                           <Anchor point="BOTTOMLEFT" relativeTo="MemeTracker_LootHistoryListItem1TextItemName" relativePoint="TOPLEFT">
+                              <Offset>
+                                 <AbsDimension x="-5" y="2" />
+                              </Offset>
+                           </Anchor>
+                        </Anchors>
+                        <Scripts>
+                           <OnClick>MemeTracker_LootHistory_Sort_OnClick("item_name");</OnClick>
+                        </Scripts>
+                     </Button>
+                     <Button name="MemeTracker_LootHistoryListSortRaidName" inherits="MemeTracker_SortButtonTemplate" text="RaidName">
+                        <Size>
+                           <AbsDimension x="75" y="16" />
+                        </Size>
+                        <Anchors>
+                           <Anchor point="BOTTOMLEFT" relativeTo="MemeTracker_LootHistoryListItem1TextRaidName" relativePoint="TOPLEFT">
+                              <Offset>
+                                 <AbsDimension x="-5" y="2" />
+                              </Offset>
+                           </Anchor>
+                        </Anchors>
+                        <Scripts>
+                           <OnClick>MemeTracker_LootHistory_Sort_OnClick("raid_name");</OnClick>
+                        </Scripts>
+                     </Button>
+                     <Button name="MemeTracker_LootHistoryListSortDate" inherits="MemeTracker_SortButtonTemplate" text="Date">
+                        <Size>
+                           <AbsDimension x="45" y="16" />
+                        </Size>
+                        <Anchors>
+                           <Anchor point="BOTTOMLEFT" relativeTo="MemeTracker_LootHistoryListItem1TextDate" relativePoint="TOPLEFT">
+                              <Offset>
+                                 <AbsDimension x="-5" y="2" />
+                              </Offset>
+                           </Anchor>
+                        </Anchors>
+                        <Scripts>
+                           <OnClick>MemeTracker_LootHistory_Sort_OnClick("time_stamp");</OnClick>
+                        </Scripts>
+                     </Button>
+                  </Frames>
+               </Frame>
+            </Frames>
+         </Frame>
+      </Frames>
+   </Frame>
+   <Frame name="MemeTrackerFrame" parent="UIParent">
+      <Scripts>
+         <OnLoad>MemeTracker_OnLoad();</OnLoad>
+         <OnEvent>MemeTracker_OnEvent(event, arg1, arg2, arg3, arg4, arg5);</OnEvent>
+         <OnUpdate>MemeTracker_OnUpdate(arg1)</OnUpdate>
+      </Scripts>
+   </Frame>
 </Ui>

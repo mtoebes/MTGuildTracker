@@ -1500,8 +1500,6 @@ function LootTracker_OptionCheckButton_Check(id)
 
 	getglobal("MemeTracker_LootHistoryEditor_NameBox"):SetText(player_name)
 	UIDropDownMenu_SetSelectedID(MemeTracker_LootHistoryEditor_ClassDropDown,use_index)
-	echo("use_index",use_index)
-	echo("id",id)
 	LootHistoryEditorEntry["use_case"] = lootHistoryUseCase[id]
 end
 
@@ -1603,7 +1601,7 @@ function MemeTracker_LootHistoryButton_OnClick(button, entry_key)
 			echo(link)
 			MemeTracker_ChatLink(button, link)
 		end
-	elseif button == "RightButton" then
+	elseif button == "RightButton" and (isOfficer() or isLeader()) then
 		MemeTracker_LootHistoryEditor_Open(entry_key)
 	end
 end

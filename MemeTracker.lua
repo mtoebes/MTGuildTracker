@@ -859,11 +859,6 @@ end
 
 local function LootHistoryTable_AddEntry(item_link, player_name)
 	entry = LootHistoryTable_BuildEntry(item_link, player_name)
-
-	local time_stamp = date("%y-%m-%d %H:%M:%S")
-	--echo("LootHistoryTable_AddEntry", time_stamp)
-	--MemeTracker_LastUpdate["time_stamp"] = time_stamp
-	--echo(time_stamp)
 	LootHistoryTable_UpdateEntry(entry)
 	LootHistoryTable_Build()
 	return entry
@@ -1520,7 +1515,6 @@ function MemeTracker_LootHistoryEditor_ClassDropDown_OnClick()
 	end	
 
 	LootHistoryEditorEntry.player_class = playerClassSlotNames[id].slot
-	echo(LootHistoryEditorEntry.player_class)
 end
 
 function MemeTracker_LootHistoryEditor_ClassDropDown_Initialize()
@@ -1594,7 +1588,6 @@ function MemeTracker_LootHistoryButton_OnClick(button, entry_key)
 	if button == "LeftButton" then
 		if( IsShiftKeyDown() and ChatFrameEditBox:IsVisible() ) then
 			local link = MemeTracker_LootHistoryTable_Filtered[entry_key].item_link
-			echo(link)
 			MemeTracker_ChatLink(button, link)
 		end
 	elseif button == "RightButton" and (isOfficer() or isLeader()) then

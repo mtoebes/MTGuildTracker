@@ -832,7 +832,6 @@ local function LootHistoryTable_BuildEntry(item_link, player_name)
 	local date = date("%y-%m-%d")
 	local item_link, item_quality, item_id, item_name = parseItemLink(item_link)
 
-	echo(item_quality)
 	if item_link == nil then
 		debug("cant parse this link")
 		return
@@ -1142,14 +1141,12 @@ function MemeTracker_Broadcast_Session_Finish(mode)
 			end
 
 			if MemeTracker_OverviewTable.item_link then
-				echo("MemeTracker_OverviewTable.item_link",MemeTracker_OverviewTable.item_link)
-				echo("player_name",player_name)
 				local entry = LootHistoryTable_AddEntry(MemeTracker_OverviewTable.item_link, player_name)
 				MemeTracker_Broadcast_Sync_Start();
 				local sync_string = MemeTracker_SendSync_String("loothistory", entry)
-				echo("sync_string", sync_string)
 				MemeTracker_Broadcast_Sync_Add("loothistory", sync_string)
 				MemeTracker_Broadcast_Sync_End(false);
+
 			end
 		end
 
@@ -1389,6 +1386,8 @@ function MemeTracker_Handle_Sync_Request(message, sender)
 		MemeTracker_Broadcast_Sync_Start();
 		MemeTracker_Send_Sync();
 		MemeTracker_Broadcast_Sync_End(true);
+		MemeTracker_Broadcast_Message_Echo("Sync Completed")
+
 	end
 end
 
@@ -1443,7 +1442,6 @@ function MemeTracker_Handle_Sync_End(message, sender)
 		getglobal("MemeTracker_LootHistorySyncButton"):Enable()
 
 		MemeTracker_Save_Sync(clear_table == "1")
-		MemeTracker_Broadcast_Message_Echo("Sync Completed")
 	end
 end
 
@@ -1474,8 +1472,6 @@ function MemeTracker_LootHistoryEditorSaveButton_OnClick()
 		if LootHistoryEditorEntry["use_case"] == DE_BANK then
 			LootHistoryEditorEntry.player_class = ""
 		end
-
-		echo(' LootHistoryEditorEntry["use_case"]', LootHistoryEditorEntry["use_case"])
 
 		MemeTracker_Broadcast_Sync_Start();
 		local sync_string = MemeTracker_SendSync_String("loothistory", LootHistoryEditorEntry)

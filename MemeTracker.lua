@@ -3,7 +3,7 @@ local WARN_CHANNEL				= "RAID_WARNING"
 local OFFICER_CHANNEL			= "OFFICER"
 
 MemeTracker_Title = "MemeTracker"
-MemeTracker_Version = "3.2.1"
+MemeTracker_Version = "3.2.2"
 
 MemeTracker_RecipientTable = {}
 MemeTracker_LootHistoryTable = {}
@@ -398,7 +398,7 @@ end
 function GetPlayerLootCount_DaysAgo(player_name, start_date, days_ago)
 	local loot_count = 0
 	local target_date = GetTargetDate(start_date, days_ago)
-	for i,n in ipairs(MemeTracker_LootHistoryTable_Filtered) do
+	for i,n in pairs(MemeTracker_LootHistoryTable) do
 		if (n.player_name == player_name) and (n.date >= target_date) then
 			loot_count = loot_count + 1
 		end
@@ -611,7 +611,6 @@ local function RecipientTable_Add(player_name, item_link)
 end
 
 function MemeTracker_RecipientListScrollFrame_Update()
-
 	if not MemeTracker_RecipientTable then
 		MemeTracker_RecipientTable = {}
 	end

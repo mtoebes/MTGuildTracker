@@ -1307,11 +1307,21 @@ end
 
 -- Version Broadcast
 
+function MemeTracker_Broadcast_PerformSync_Request() 
+	addonEcho("TX_PERFORM_SYNC_REQUEST#".."#");
+end
+
+function MemeTracker_Handle_PerformSync_Request()
+	if isLeader() and not version_request_in_progress then
+		MemeTracker_Version_Start()
+	end
+end
+
 function MemeTracker_Version_Start()
 	if isLeader() and not version_request_in_progress then
-		response_versions = {}
 		getglobal("MemeTracker_LootHistorySyncButton"):Disable()
 		version_request_in_progress = true
+		response_versions = {}
 		MemeTracker_Broadcast_Version_Request()
 	end
 end
@@ -1362,6 +1372,7 @@ function MemeTracker_Version_End()
 		debug("MemeTracker_Version_End", "I am master");
 	end
 	MemeTracker_Broadcast_Sync_Request(max_sender)
+
 end
 
 -- Upload Sync
@@ -1391,6 +1402,8 @@ function MemeTracker_Broadcast_Sync_Start()
 end
 
 function MemeTracker_Handle_Sync_Start(message, sender)
+	getglobal("MemeTracker_LootHistorySyncButton"):Disable()
+
 	if not sync_in_progress then
 		sync_in_progress = true
 		MemeTracker_Attendance_Temp = {}
@@ -1453,8 +1466,6 @@ function MemeTracker_RecipientButton_OnClick(button, entry_key)
 	local link = MemeTracker_RecipientTable[entry_key].item_link
 	MemeTracker_ChatLink(button, link)
 end
-
-
 
 function MemeTracker_LootHistoryEditorSaveButton_OnClick()
 	getglobal("MemeTracker_LootHistoryEditorFrame"):Hide()
@@ -1865,7 +1876,7 @@ function MemeTracker_SessionCancelButton_OnClick()
 end
 
 function MemeTracker_LootHistorySyncButton_OnClick()
-	MemeTracker_Version_Start()
+	MemeTracker_Broadcast_PerformSync_Request()
 end
 
 function MemeTracker_LootHistory_Sort_OnClick(field)
@@ -1974,7 +1985,7 @@ function MemeTracker_RecipientTable_Show()
 end
 
 function MemeTracker_LootHistoryTable_Show()
-	if isLeader() then
+	if isOfficer() then
 		getglobal("MemeTracker_LootHistorySyncButton"):Show()
 	else
 		getglobal("MemeTracker_LootHistorySyncButton"):Hide()
@@ -2033,6 +2044,8 @@ function MemeTracker_OnChatMsgAddon(event, prefix, msg, channel, sender)
 		if isLeader() then
 			if cmd == "TX_VERSION_RESPONSE" then
 				MemeTracker_Handle_Version_Response(message, sender)
+			elseif cmd == "TX_PERFORM_SYNC_REQUEST" then
+				MemeTracker_Handle_PerformSync_Request(message, sender)
 			end
 		else
 			

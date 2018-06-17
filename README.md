@@ -9,12 +9,16 @@ Addon Installation Instructions:
 2. Navigate to your addons directory (Interface/AddOns/).
 3. Place the "MemeTracker" folder here. Overwrite any existing versions of the addon.
 
+
+
 Loot History Saving Instructions:
-1. Exit World of Warcraft completely.
+1. This step no longer needed
+~~1. Exit World of Warcraft completely.
 2. In a file browser, navigate to your "World of Warcraft" directory.
 3. Navigate to your account's saved variable directory (WTF/Account/<account_name>/SavedVariables/).
 4. Place the "MemeTracker.lua" file found in the "SavedVariables" folder here. Overwrite any existing versions of the file.
 5. To keep this information up to date, you will need to re-save the latest version of the file found the add-ons discord channel (or this github page) prior to each raid.
+~~
 
 Base Commands:
 * Open MemeTracker:	/mt

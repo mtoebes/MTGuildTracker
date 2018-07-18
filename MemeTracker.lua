@@ -1,9 +1,11 @@
-local RAID_CHANNEL				= "RAID"
-local WARN_CHANNEL				= "RAID_WARNING"
-local OFFICER_CHANNEL			= "OFFICER"
-
 MemeTracker_Title = "MemeTracker"
 MemeTracker_Version = "3.2.2"
+
+local RAID_CHANNEL				= "RAID"
+local WARN_CHANNEL				= "RAID_WARNING"
+
+local GUILD_NAME = "meme team"
+local GUILD_RANK_INDEX = 4
 
 MemeTracker_RecipientTable = {}
 MemeTracker_LootHistoryTable = {}
@@ -174,10 +176,10 @@ local function getPlayerClass(player_name)
 end
 
 local function isOfficer()
-	local guild_name, guild_rank, _ = GetGuildInfo("player")
+	local guild_name, guild_rank, rank_index = GetGuildInfo("player")
 	if isLeader() then
 		return true
-	elseif guild_name == "meme team" and (guild_rank == "Class Oracle" or guild_rank == "Officer" or guild_rank == "Suprememe Leadr" or guild_rank == "Loot Council") then
+	elseif guild_name == GUILD_NAME and rank_index < GUILD_RANK_INDEX then
 		return true
 	else
 		return false
@@ -214,10 +216,6 @@ end
 
 local function raidEcho(msg)
 	SendChatMessage(msg, RAID_CHANNEL);
-end
-
-local function officerEcho(msg)
-	SendChatMessage(msg, OFFICER_CHANNEL)
 end
 
 local function leaderRaidEcho(msg)

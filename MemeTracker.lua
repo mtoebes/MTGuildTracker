@@ -1,10 +1,13 @@
-MemeTracker_Title = "MemeTracker"
-MemeTracker_Version = "3.3.0"
+local MemeTracker_Version = "3.3.1"
 
-local RAID_CHANNEL				= "RAID"
-local WARN_CHANNEL				= "RAID_WARNING"
+local GUILD_NAME = "meme team"
+local GUILD_NAME_NO_SPACES = "Meme"
+local SLASH_COMMAND_SHORT = "mt"
 
-local GUILD_NAME = "Fearless"
+local SLASH_COMMAND_LONG = GUILD_NAME_NO_SPACES.."Tracker"
+
+local MemeTracker_Title = GUILD_NAME_NO_SPACES.."Tracker"
+local MT_MESSAGE_PREFIX = GUILD_NAME_NO_SPACES.."Tracker"
 
 MemeTracker_RecipientTable = {}
 MemeTracker_LootHistoryTable = {}
@@ -26,7 +29,9 @@ version_request_in_progress = false
 debug_enabled = false
 
 local session_queue = {}
-local MT_MESSAGE_PREFIX		= "MemeTracker"
+
+MemeTracker_color_prefix = "ffa335ee"
+MemeTracker_color_help_command = "ffffff00"
 
 MemeTracker_color_common = "ffffffff"
 MemeTracker_color_uncommon = "ff1eff00"
@@ -82,18 +87,18 @@ local string_gmatch = lua51 and string.gmatch or string.gfind
 
 local function echo(tag, msg)
 	if msg then
-		DEFAULT_CHAT_FRAME:AddMessage(string.format("|cffa335ee<MemeTracker> |r"..tag.." : "..msg));
+		DEFAULT_CHAT_FRAME:AddMessage(string.format("|c"..MemeTracker_color_prefix.."<"..MT_MESSAGE_PREFIX.."> |r"..tag.." : "..msg));
 	else
-		DEFAULT_CHAT_FRAME:AddMessage(string.format("|cffa335ee<MemeTracker> |r"..tag));
+		DEFAULT_CHAT_FRAME:AddMessage(string.format("|c"..MemeTracker_color_prefix.."<"..MT_MESSAGE_PREFIX.."> |r"..tag));
 	end
 end
 
 local function debug(tag, msg)
 	if debug_enabled then
 		if msg then
-			DEFAULT_CHAT_FRAME:AddMessage(string.format("|cffEE3580<MemeTracker Debug> |r"..tag.." : "..msg));
+			DEFAULT_CHAT_FRAME:AddMessage(string.format("|c"..MemeTracker_color_prefix.."<"..MT_MESSAGE_PREFIX.." Debug> |r"..tag.." : "..msg));
 		else
-			DEFAULT_CHAT_FRAME:AddMessage(string.format("|cffEE3580<MemeTracker Debug> |r"..tag));
+			DEFAULT_CHAT_FRAME:AddMessage(string.format("|c"..MemeTracker_color_prefix.."<"..MT_MESSAGE_PREFIX.." Debug> |r"..tag));
 		end
 	end
 end
@@ -190,9 +195,9 @@ end
 local function echo_leader(tag, msg)
 	if isLeader() then
 		if msg then
-			DEFAULT_CHAT_FRAME:AddMessage(string.format("|cffa335ee<MemeTracker> |r"..tag.." : "..msg));
+			DEFAULT_CHAT_FRAME:AddMessage(string.format("|c"..MemeTracker_color_prefix.."<"..MT_MESSAGE_PREFIX.."> |r"..tag.." : "..msg));
 		else
-			DEFAULT_CHAT_FRAME:AddMessage(string.format("|cffa335ee<MemeTracker> |r"..tag));
+			DEFAULT_CHAT_FRAME:AddMessage(string.format("|c"..MemeTracker_color_prefix.."<"..MT_MESSAGE_PREFIX.."> |r"..tag));
 		end
 	end
 end
@@ -210,11 +215,11 @@ local function addonEcho_leader(msg)
 end
 
 local function rwEcho(msg)
-	SendChatMessage(msg, WARN_CHANNEL);
+	SendChatMessage(msg, "RAID_WARNING");
 end
 
 local function raidEcho(msg)
-	SendChatMessage(msg, RAID_CHANNEL);
+	SendChatMessage(msg, "RAID");
 end
 
 local function leaderRaidEcho(msg)
@@ -1051,7 +1056,7 @@ function MemeTracker_Handle_Session_Start(message, sender)
 	local sample_itemlink = buildItemLink(8952, "Your Current Item", MemeTracker_color_common, nil) 
 
 	leaderRaidEcho("Session started : ".. item_message)
-	leaderRaidEcho("To be considered for the item type in raid chat \"mt "..sample_itemlink.."\"")
+	leaderRaidEcho("To be considered for the item type in raid chat \""..SLASH_COMMAND_SHORT.." "..sample_itemlink.."\"")
 end
 
 -- Session End Broadcast
@@ -2088,16 +2093,16 @@ function MemeTracker_SlashCommand(msg)
 			elseif (cmd == "force_cancel") then
 				MemeTracker_Broadcast_Session_ForceCancel()
 			elseif (cmd == "help") then
-				echo("MemeTracker v"..MemeTracker_Version.." Commands")
-				echo("Open MemeTracker: |cffffff00/mt|r") 
-				echo("Start/Queue session: |cffffff00/mt start [item link]|r OR |cffffff00/mt [item link]|r OR |cffffff00/mt queue [item link]|r")
-				echo("End session: |cffffff00/mt end|r")
-				echo("List queued sessions: |cffffff00/mt list|r")
-				echo("Remove queued session: |cffffff00/mt dequeue <entry_key>|r")
-				echo("Manually add a raider to the current session: |cffffff00/mt add <player_name> <entry_key>|r")
-				echo("Cancel session: |cffffff00/mt cancel|r")
-				echo("Force cancel a bad session: |cffffff00/mt force_cancel|r")
-				echo("Print help: |cffffff00/mt help|r")
+				echo(MemeTracker_Title.." v"..MemeTracker_Version.." Commands")
+				echo("Open MemeTracker: |c"..MemeTracker_color_help_command.."/"..SLASH_COMMAND_SHORT.."|r") 
+				echo("Start/Queue session: |c"..MemeTracker_color_help_command.."/"..SLASH_COMMAND_SHORT.." start [item link]|r OR |c"..MemeTracker_color_help_command.."/"..SLASH_COMMAND_SHORT.." [item link]|r OR |c"..MemeTracker_color_help_command.."/"..SLASH_COMMAND_SHORT.." queue [item link]|r")
+				echo("End session: |c"..MemeTracker_color_help_command.."/"..SLASH_COMMAND_SHORT.." end|r")
+				echo("List queued sessions: |c"..MemeTracker_color_help_command.."/"..SLASH_COMMAND_SHORT.." list|r")
+				echo("Remove queued session: |c"..MemeTracker_color_help_command.."/"..SLASH_COMMAND_SHORT.." dequeue <entry_key>|r")
+				echo("Manually add a raider to the current session: |c"..MemeTracker_color_help_command.."/"..SLASH_COMMAND_SHORT.." add <player_name> [current item link]|r")
+				echo("Cancel session: |c"..MemeTracker_color_help_command.."/"..SLASH_COMMAND_SHORT.." cancel|r")
+				echo("Force cancel a bad session: |c"..MemeTracker_color_help_command.."/"..SLASH_COMMAND_SHORT.." force_cancel|r")
+				echo("Print help: |c"..MemeTracker_color_help_command.."/"..SLASH_COMMAND_SHORT.." help|r")
 			 elseif cmd == "add" then
 				local _,_, player_name, item_link = string.find(cmd_msg, "(%S+)%s*(.*)");
 				MemeTracker_Broadcast_RecipientTable_Add(player_name, item_link)
@@ -2111,23 +2116,23 @@ function MemeTracker_SlashCommand(msg)
 					MemeTracker_Session_Queue(item_link)
 					echo("item_id", item_id)
 				else
-					echo("Unknown command "..msg.. ". Type /mt help to see a list of commands")
+					echo("Unknown command "..msg.. ". Type /"..SLASH_COMMAND_SHORT.." help to see a list of commands")
 				end
 			end
 		else
 			if isOfficer() and cmd == "force_cancel" then
 				MemeTracker_Broadcast_Session_ForceCancel()
 			elseif cmd == "help" then
-				echo("MemeTracker v"..MemeTracker_Version.." Commands")
-				echo("Open MemeTracker:   /mt")
+				echo(MT_MESSAGE_PREFIX.." v"..MemeTracker_Version.." Commands")
+				echo("Open "..MT_MESSAGE_PREFIX..":   /"..SLASH_COMMAND_SHORT.."")
 
 				if isOfficer() then
-					echo("Force cancel a bad session: /mt force_cancel")
+					echo("Force cancel a bad session: /"..SLASH_COMMAND_SHORT.." force_cancel")
 				end
 
-				echo("Print help:   /mt help")
+				echo("Print help:   /"..SLASH_COMMAND_SHORT.." help")
 			else
-				echo("Unknown command "..cmd.. ". Type /mt help to see a list of commands")
+				echo("Unknown command "..cmd.. ". Type /"..SLASH_COMMAND_SHORT.." help to see a list of commands")
 			end
 		end
 	end
@@ -2135,7 +2140,7 @@ end
 
 local function getCommand(message)
 	_, _, cmd, arg = string.find(message, "(%S+)%s+(.*)");
-	if (cmd ~= nil and (string.lower(cmd) == "memetracker" or string.lower(cmd)=="mt")) then
+	if (cmd ~= nil and (string.lower(cmd) == SLASH_COMMAND_LONG or string.lower(cmd)==SLASH_COMMAND_SHORT)) then
 		return arg
 	else
 		return nil
@@ -2180,7 +2185,7 @@ function MemeTracker_Main_OnShow()
 end
 
 function MemeTracker_OnLoad()
-	echo("Type /mt or /memetracker for more info");
+	echo("Type /"..SLASH_COMMAND_SHORT.." or /"..SLASH_COMMAND_LONG.." for more info");
 	this:RegisterEvent("VARIABLES_LOADED");
 	this:RegisterEvent("CHAT_MSG_ADDON");
 	this:RegisterEvent("CHAT_MSG_RAID");
@@ -2194,5 +2199,5 @@ function MemeTracker_Initialize()
 end
 
 SlashCmdList["MemeTracker"] = MemeTracker_SlashCommand;
-SLASH_MemeTracker1 = "/memetracker";
-SLASH_MemeTracker2 = "/mt";
+SLASH_MemeTracker1 = "/"..SLASH_COMMAND_LONG;
+SLASH_MemeTracker2 = "/"..SLASH_COMMAND_SHORT;

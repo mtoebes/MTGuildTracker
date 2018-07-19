@@ -1,5 +1,5 @@
 MemeTracker_Title = "MemeTracker"
-MemeTracker_Version = "3.2.4"
+MemeTracker_Version = "3.3.0"
 
 local RAID_CHANNEL				= "RAID"
 local WARN_CHANNEL				= "RAID_WARNING"

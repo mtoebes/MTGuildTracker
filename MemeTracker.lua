@@ -1,11 +1,10 @@
-local MemeTracker_Version = "3.3.1"
+local MemeTracker_Version = "3.3.2"
 
 local GUILD_NAME, _, _ = GetGuildInfo("player")
 
 local SLASH_COMMAND_SHORT = "mt"
 local SLASH_COMMAND_LONG = "MemeTracker"
 local MT_MESSAGE_PREFIX = "MemeTracker"
-
 local MemeTracker_Title = "MemeTracker"
 
 local DEFAULT_VOTES_NEEDED = 5
@@ -127,6 +126,11 @@ function MemeTracker_OnUpdate(elapsed)
 	end
 end
 
+local function getGuildName()
+	local guild_name, _, _ = GetGuildInfo("player")
+	return guild_name
+end
+
 local function isLeader()
 	local lootmethod, masterlooterPartyID, _ = GetLootMethod()
 	if lootmethod == "master" then
@@ -201,13 +205,14 @@ end
 
 
 
-local function addonEcho(msg)
-	SendAddonMessage(MT_MESSAGE_PREFIX, msg, "RAID")
+local function addonEcho(tag, msg)
+	encodedMsg = tag.."#"..GUILD_NAME.."#"..msg.."#"
+	SendAddonMessage(MT_MESSAGE_PREFIX, encodedMsg, "RAID")
 end
 
-local function addonEcho_leader(msg)
+local function addonEcho_leader(tag, msg)
 	if isLeader() then
-		addonEcho(msg)
+		addonEcho(tag, msg)
 	end
 end
 
@@ -954,7 +959,7 @@ end
 
 function MemeTracker_Broadcast_Message_Echo(message)
 	if message then
-		addonEcho_leader("TX_MESSAGE_ECHO#".. message .."#");
+		addonEcho_leader("TX_MESSAGE_ECHO", message);
 	end
 end
 
@@ -974,7 +979,7 @@ function MemeTracker_Broadcast_RecipientTable_Add(player_name, item_link)
 			--return
 		end
 
-		addonEcho_leader("TX_ENTRY_ADD#".. string.format("%s/%s", player_name, item_link) .."#");
+		addonEcho_leader("TX_ENTRY_ADD", string.format("%s/%s", player_name, item_link));
 	else
 		echo_leader("No session in progress")
 	end
@@ -991,9 +996,9 @@ end
 function MemeTracker_Broadcast_VoteTable_Add(player_name)
 	if MemeTracker_OverviewTable.in_session == true then
 		if player_name then
-			addonEcho("TX_VOTE_ADD#".. string.format("%s", player_name) .."#");
+			addonEcho("TX_VOTE_ADD", string.format("%s", player_name));
 		else
-			addonEcho("TX_VOTE_ADD#".. "#");
+			addonEcho("TX_VOTE_ADD", "");
 		end
 	else
 		echo("No session in progress")
@@ -1015,7 +1020,7 @@ function MemeTracker_Broadcast_Session_Start(item_link)
 	elseif item_link == nil or item_link=="" then
 		echo_leader("Cannot start a session without loot")
 	else
-		addonEcho_leader("TX_SESSION_START#"..item_link.."#");
+		addonEcho_leader("TX_SESSION_START", item_link);
 	end
 end
 
@@ -1071,7 +1076,7 @@ function MemeTracker_Broadcast_Session_Cancel()
 end
 
 function MemeTracker_Broadcast_Session_ForceCancel()
-	addonEcho("TX_SESSION_FINISH#".."force_cancel".."#");
+	addonEcho("TX_SESSION_FINISH","force_cancel");
 end
 
 function MemeTracker_Broadcast_Session_Finish(mode)
@@ -1123,7 +1128,7 @@ function MemeTracker_Broadcast_Session_Finish(mode)
 
 		leaderRaidEcho(end_announcement)
 
-		addonEcho("TX_SESSION_FINISH#"..mode.."#");
+		addonEcho("TX_SESSION_FINISH",mode);
 
 		if mode == "end" or mode == DE_BANK then
 			local player_name;
@@ -1165,9 +1170,9 @@ end
 
 function MemeTracker_Broadcast_AutoEnd(autoclose)
 	if autoclose then
-		addonEcho("TX_SESSION_AUTOCLOSE#".."1".."#");
+		addonEcho("TX_SESSION_AUTOCLOSE", "1");
 	else
-		addonEcho("TX_SESSION_AUTOCLOSE#".."0".."#");
+		addonEcho("TX_SESSION_AUTOCLOSE", "0");
 	end
 end
 
@@ -1307,7 +1312,7 @@ end
 -- Version Broadcast
 
 function MemeTracker_Broadcast_PerformSync_Request() 
-	addonEcho("TX_PERFORM_SYNC_REQUEST#".."#");
+	addonEcho("TX_PERFORM_SYNC_REQUEST", "");
 end
 
 function MemeTracker_Handle_PerformSync_Request()
@@ -1328,7 +1333,7 @@ end
 function MemeTracker_Broadcast_Version_Request()
 	if isLeader() then
 		debug("MemeTracker_Broadcast_Version_Request")
-		addonEcho("TX_VERSION_REQUEST#".."#");
+		addonEcho("TX_VERSION_REQUEST", "");
 	end
 end
 
@@ -1341,7 +1346,7 @@ end
 function MemeTracker_Broadcast_Version_Response()
 	if MemeTracker_LastUpdate ~= nil and MemeTracker_LastUpdate["time_stamp"] ~= nil then
 		debug("MemeTracker_Broadcast_Version_Response")
-		addonEcho("TX_VERSION_RESPONSE#"..MemeTracker_LastUpdate["time_stamp"].."#");
+		addonEcho("TX_VERSION_RESPONSE", MemeTracker_LastUpdate["time_stamp"]);
 	end
 end
 
@@ -1379,7 +1384,7 @@ end
 function MemeTracker_Broadcast_Sync_Request(player_name)
 	if isLeader() and not sync_in_progress then
 		debug("MemeTracker_Broadcast_Sync_Request")
-		addonEcho("TX_Sync_REQUEST#"..player_name.."#");
+		addonEcho("TX_SYNC_REQUEST", player_name);
 	end
 end
 
@@ -1397,7 +1402,7 @@ end
 
 function MemeTracker_Broadcast_Sync_Start()
 	debug("MemeTracker_Broadcast_Sync_Start");
-	addonEcho("TX_Sync_START#".."#");
+	addonEcho("TX_SYNC_START", "");
 end
 
 function MemeTracker_Handle_Sync_Start(message, sender)
@@ -1414,7 +1419,7 @@ end
 
 
 function MemeTracker_Broadcast_Sync_Add(table_name, sync_string)
-	addonEcho("TX_Sync_ADD#".. sync_string .."#");
+	addonEcho("TX_SYNC_ADD", sync_string);
 end
 
 function MemeTracker_Handle_Sync_Add(message, sender)
@@ -1435,9 +1440,9 @@ function MemeTracker_Broadcast_Sync_End(clear_table)
 	debug("MemeTracker_Broadcast_Sync_End");
 
 	if clear_table then
-		addonEcho("TX_Sync_END#".."1".."#");
+		addonEcho("TX_SYNC_END","1");
 	else
-		addonEcho("TX_Sync_END#".."0".."#");
+		addonEcho("TX_SYNC_END","0");
 	end
 end
 
@@ -2002,10 +2007,14 @@ end
 function MemeTracker_OnChatMsgAddon(event, prefix, msg, channel, sender)
 	if (prefix == MT_MESSAGE_PREFIX) then
 			--	Split incoming message in Command, Payload (message) and Recipient
-		local _, _, cmd, message, recipient = string.find(msg, "([^#]*)#(.*)#([^#]*)")
+		local _, _, cmd, guild, message, recipient = string.find(msg, "([^#]*)#(.*)#(.*)#([^#]*)")
 
 		if not cmd then
 			return	-- cmd is mandatory, remaining parameters are optional.
+		end
+
+		if not guild or guild ~= getGuildName() then
+			return
 		end
 
 		if not message then
@@ -2022,15 +2031,15 @@ function MemeTracker_OnChatMsgAddon(event, prefix, msg, channel, sender)
 			MemeTracker_Handle_AutoClose(message, sender)
 		elseif cmd == "TX_SESSION_FINISH" then
 			MemeTracker_Handle_Session_Finish(message, sender)
-		elseif cmd == "TX_Sync_REQUEST" then
+		elseif cmd == "TX_SYNC_REQUEST" then
 			MemeTracker_Handle_Sync_Request(message, sender)
 		elseif cmd == "TX_VERSION_REQUEST" then
 			MemeTracker_Handle_Version_Request(message, sender)
-		elseif cmd == "TX_Sync_START" then
+		elseif cmd == "TX_SYNC_START" then
 			MemeTracker_Handle_Sync_Start(message, sender)
-		elseif cmd == "TX_Sync_ADD" then
+		elseif cmd == "TX_SYNC_ADD" then
 			MemeTracker_Handle_Sync_Add(message, sender)
-		elseif cmd == "TX_Sync_END" then
+		elseif cmd == "TX_SYNC_END" then
 			MemeTracker_Handle_Sync_End(message, sender)
 		end
 

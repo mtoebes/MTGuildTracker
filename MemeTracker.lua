@@ -1,11 +1,10 @@
 MemeTracker_Title = "MemeTracker"
-MemeTracker_Version = "3.2.2"
+MemeTracker_Version = "3.2.4"
 
 local RAID_CHANNEL				= "RAID"
 local WARN_CHANNEL				= "RAID_WARNING"
 
-local GUILD_NAME = "meme team"
-local GUILD_RANK_INDEX = 4
+local GUILD_NAME = "Fearless"
 
 MemeTracker_RecipientTable = {}
 MemeTracker_LootHistoryTable = {}
@@ -106,7 +105,6 @@ function MemeTracker_OnUpdate(elapsed)
 	TimeSinceLastSessionStart = TimeSinceLastSessionStart + elapsed
 
 	if version_request_in_progress then
-		--debug("TimeSinceLastUpdate", TimeSinceLastUpdate)
   		if (TimeSinceLastUpdate > version_request_time_limit) then
   			MemeTracker_Version_End();
    			TimeSinceLastUpdate = 0;
@@ -1410,6 +1408,8 @@ function MemeTracker_Handle_Sync_Start(message, sender)
 	end
 end
 
+local GUILD_RANK_INDEX = 4
+
 function MemeTracker_Broadcast_Sync_Add(table_name, sync_string)
 	addonEcho("TX_Sync_ADD#".. sync_string .."#");
 end
@@ -2088,15 +2088,15 @@ function MemeTracker_SlashCommand(msg)
 				MemeTracker_Broadcast_Session_ForceCancel()
 			elseif (cmd == "help") then
 				echo("MemeTracker v"..MemeTracker_Version.." Commands")
-				echo("Open MemeTracker:   /mt")
-				echo("Start/Queue session:   /mt start [item link] OR /mt [item link] OR /mt queue [item link]")
-				echo("End session:  /mt end")
-				echo("List queued sessions:  /mt list")
-				echo("Remove queued session:  /mt dequeue <entry_key>")
-				echo("Manually add a raider to the current session:  /mt add <player_name> <entry_key>")
-				echo("Cancel session:   /mt cancel")
-				echo("Force cancel a bad session: /mt force_cancel")
-				echo("Print help:   /mt help")
+				echo("Open MemeTracker: |cffffff00/mt|r") 
+				echo("Start/Queue session: |cffffff00/mt start [item link]|r OR |cffffff00/mt [item link]|r OR |cffffff00/mt queue [item link]|r")
+				echo("End session: |cffffff00/mt end|r")
+				echo("List queued sessions: |cffffff00/mt list|r")
+				echo("Remove queued session: |cffffff00/mt dequeue <entry_key>|r")
+				echo("Manually add a raider to the current session: |cffffff00/mt add <player_name> <entry_key>|r")
+				echo("Cancel session: |cffffff00/mt cancel|r")
+				echo("Force cancel a bad session: |cffffff00/mt force_cancel|r")
+				echo("Print help: |cffffff00/mt help|r")
 			 elseif cmd == "add" then
 				local _,_, player_name, item_link = string.find(cmd_msg, "(%S+)%s*(.*)");
 				MemeTracker_Broadcast_RecipientTable_Add(player_name, item_link)

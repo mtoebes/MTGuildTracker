@@ -1,5 +1,5 @@
 Overview: 
-MT(oebes)GuildTracker is an addon developed to aid a guild's Loot Council process. It is composed of two parts.
+FearlessTracker is an addon developed to aid a guild's Loot Council process. It is composed of two parts.
 1. An interface for voting at part of the Loot Council 
 2. A history of all loot that has been handed out in past raids.  Results can be filtered based on player name, use commas to show loot received multiple players. This is the same information available within the Guild Tracker Google Sheet.
 

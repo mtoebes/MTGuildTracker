@@ -1,13 +1,14 @@
 local MemeTracker_Version = "3.3.1"
 
-local GUILD_NAME = "meme team"
-local GUILD_NAME_NO_SPACES = "Meme"
+local GUILD_NAME, _, _ = GetGuildInfo("player")
+
 local SLASH_COMMAND_SHORT = "mt"
+local SLASH_COMMAND_LONG = "MemeTracker"
+local MT_MESSAGE_PREFIX = "MemeTracker"
 
-local SLASH_COMMAND_LONG = GUILD_NAME_NO_SPACES.."Tracker"
+local MemeTracker_Title = "MemeTracker"
 
-local MemeTracker_Title = GUILD_NAME_NO_SPACES.."Tracker"
-local MT_MESSAGE_PREFIX = GUILD_NAME_NO_SPACES.."Tracker"
+local DEFAULT_VOTES_NEEDED = 5
 
 MemeTracker_RecipientTable = {}
 MemeTracker_LootHistoryTable = {}
@@ -29,10 +30,10 @@ version_request_in_progress = false
 debug_enabled = false
 
 local session_queue = {}
+local LootHistoryEditorEntry = {}
 
 MemeTracker_color_prefix = "ffa335ee"
 MemeTracker_color_help_command = "ffffff00"
-
 MemeTracker_color_common = "ffffffff"
 MemeTracker_color_uncommon = "ff1eff00"
 MemeTracker_color_rare = "ff0070dd"
@@ -40,7 +41,6 @@ MemeTracker_color_epic = "ffa335ee"
 MemeTracker_color_legendary = "ffff8000"
 
 local default_rgb = {["r"]=0.83, ["g"]=0.83, ["b"]=0.83}
-local LootHistoryEditorEntry = {}
 
 local DE_BANK = "DE-Bank"
 
@@ -77,9 +77,6 @@ local class_colors = {
 	["???"] =     {["r"] = 0.83, ["g"] = 0.68, ["b"] = 0.04},
 	[""] =        {["r"] = 0.83, ["g"] = 0.68, ["b"] = 0.04}
 }
-local class_default_color
-
-local DEFAULT_VOTES_NEEDED = 5
 
 local GUILD_RANK_INDEX = 4
 

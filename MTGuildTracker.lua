@@ -2,10 +2,10 @@ local MTGuildTracker_Version = "4.0.0"
 
 local GUILD_NAME, _, _ = GetGuildInfo("player")
 
-local SLASH_COMMAND_SHORT = "mt"
-local SLASH_COMMAND_LONG = "MTGuildTracker"
-local MT_MESSAGE_PREFIX = "MTGuildTracker"
-local MTGuildTracker_Title = "MTGuildTracker"
+local SLASH_COMMAND_SHORT = "ft"
+local SLASH_COMMAND_LONG = "FearlessTracker"
+local MT_MESSAGE_PREFIX = "FearlessTracker"
+local MTGuildTracker_Title = "FearlessTracker"
 
 local DEFAULT_VOTES_NEEDED = 5
 

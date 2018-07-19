@@ -76,6 +76,7 @@ local class_default_color
 
 local DEFAULT_VOTES_NEEDED = 5
 
+local GUILD_RANK_INDEX = 4
 
 local string_gmatch = lua51 and string.gmatch or string.gfind
 
@@ -1408,7 +1409,7 @@ function MemeTracker_Handle_Sync_Start(message, sender)
 	end
 end
 
-local GUILD_RANK_INDEX = 4
+
 
 function MemeTracker_Broadcast_Sync_Add(table_name, sync_string)
 	addonEcho("TX_Sync_ADD#".. sync_string .."#");

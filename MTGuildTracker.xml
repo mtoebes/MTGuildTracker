@@ -280,7 +280,7 @@
                   </Anchor>
                </Anchors>
             </FontString>
-            <FontString name="$parentTextPlayerAttendanceLast2Weeks" inherits="GameFontNormalSmall" justifyH="RIGHT">
+            <FontString name="$parentTextPlayerAttendanceLast4Weeks" inherits="GameFontNormalSmall" justifyH="RIGHT">
                <Size>
                   <AbsDimension x="60" y="10" />
                </Size>
@@ -292,12 +292,12 @@
                   </Anchor>
                </Anchors>
             </FontString>
-            <FontString name="$parentTextPlayerAttendanceLast4Weeks" inherits="GameFontNormalSmall" justifyH="RIGHT">
+            <FontString name="$parentTextPlayerAttendanceLast8Weeks" inherits="GameFontNormalSmall" justifyH="RIGHT">
                <Size>
                   <AbsDimension x="60" y="10" />
                </Size>
                <Anchors>
-                  <Anchor point="RIGHT" relativeTo="$parentTextPlayerAttendanceLast2Weeks" relativePoint="LEFT">
+                  <Anchor point="RIGHT" relativeTo="$parentTextPlayerAttendanceLast4Weeks" relativePoint="LEFT">
                      <Offset>
                         <AbsDimension x="0" y="0" />
                      </Offset>
@@ -982,12 +982,27 @@
                            <AbsDimension x="140" y="16" />
                         </Size>
                         <Anchors>
-                           <Anchor point="BOTTOMLEFT" relativeTo="MTGuildTracker_RecipientListItem1TextPlayerAttendanceLast4Weeks" relativePoint="TOPLEFt">
+                           <Anchor point="BOTTOMLEFT" relativeTo="MTGuildTracker_RecipientListItem1TextPlayerAttendanceLast8Weeks" relativePoint="TOPLEFt">
                               <Offset>
                                  <AbsDimension x="0" y="12" />
                               </Offset>
                            </Anchor>
                         </Anchors>
+                     </Button>
+                     <Button name="MTGuildTracker_RecipientListSortPlayerAttendanceLast8Weeks" inherits="MTGuildTracker_SortButtonTemplate" text="8 Weeks">
+                        <Size>
+                           <AbsDimension x="60" y="16" />
+                        </Size>
+                        <Anchors>
+                           <Anchor point="BOTTOMRIGHT" relativeTo="MTGuildTracker_RecipientListItem1TextPlayerAttendanceLast8Weeks" relativePoint="TOPRIGHT">
+                              <Offset>
+                                 <AbsDimension x="5" y="2" />
+                              </Offset>
+                           </Anchor>
+                        </Anchors>
+                        <Scripts>
+                           <OnClick>MTGuildTracker_CouncilSession_Sort_OnClick("attendance_last_4_weeks");</OnClick>
+                        </Scripts>
                      </Button>
                      <Button name="MTGuildTracker_RecipientListSortPlayerAttendanceLast4Weeks" inherits="MTGuildTracker_SortButtonTemplate" text="4 Weeks">
                         <Size>
@@ -1002,21 +1017,6 @@
                         </Anchors>
                         <Scripts>
                            <OnClick>MTGuildTracker_CouncilSession_Sort_OnClick("attendance_last_4_weeks");</OnClick>
-                        </Scripts>
-                     </Button>
-                     <Button name="MTGuildTracker_RecipientListSortPlayerAttendanceLast2Weeks" inherits="MTGuildTracker_SortButtonTemplate" text="2 Weeks">
-                        <Size>
-                           <AbsDimension x="60" y="16" />
-                        </Size>
-                        <Anchors>
-                           <Anchor point="BOTTOMRIGHT" relativeTo="MTGuildTracker_RecipientListItem1TextPlayerAttendanceLast2Weeks" relativePoint="TOPRIGHT">
-                              <Offset>
-                                 <AbsDimension x="5" y="2" />
-                              </Offset>
-                           </Anchor>
-                        </Anchors>
-                        <Scripts>
-                           <OnClick>MTGuildTracker_CouncilSession_Sort_OnClick("attendance_last_2_weeks");</OnClick>
                         </Scripts>
                      </Button>
                      <Button name="MTGuildTracker_RecipientListSortItemName" inherits="MTGuildTracker_SortButtonTemplate" text="ItemName">

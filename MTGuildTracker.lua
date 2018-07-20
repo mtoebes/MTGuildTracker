@@ -1,4 +1,4 @@
-local MTGuildTracker_Version = "4.0.0"
+local MTGuildTracker_Version = "4.1.0"
 
 local GUILD_NAME, _, _ = GetGuildInfo("player")
 
@@ -601,13 +601,16 @@ local function RecipientTable_Add(player_name, item_link)
  	local attendance = MTGuildTracker_Attendance[player_name]
 
 	if attendance then
+		last_8_weeks = tonumber(MTGuildTracker_Attendance[player_name].last_8_weeks)
 		last_4_weeks = tonumber(MTGuildTracker_Attendance[player_name].last_4_weeks)
 		last_2_weeks = tonumber(MTGuildTracker_Attendance[player_name].last_2_weeks)
 	else
+		last_8_weeks = 0
 		last_4_weeks = 0
 		last_2_weeks = 0
 	end
 
+	MTGuildTracker_RecipientTable[entry_key].attendance_last_8_weeks = last_8_weeks
 	MTGuildTracker_RecipientTable[entry_key].attendance_last_4_weeks = last_4_weeks
 	MTGuildTracker_RecipientTable[entry_key].attendance_last_2_weeks = last_2_weeks
 
@@ -674,8 +677,8 @@ function MTGuildTracker_RecipientListScrollFrame_Update()
 				getglobal("MTGuildTracker_RecipientListItem"..line.."TextPlayerName"):SetTextColor(rgb.r,rgb.g,rgb.b,1)
 				getglobal("MTGuildTracker_RecipientListItem"..line.."TextPlayerGuildRank"):SetTextColor(.83,.68,.04,1)
 				getglobal("MTGuildTracker_RecipientListItem"..line.."TextItemName"):SetTextColor(.83,.68,.04,1)
+				getglobal("MTGuildTracker_RecipientListItem"..line.."TextPlayerAttendanceLast8Weeks"):SetTextColor(.83,.68,.04,1)
 				getglobal("MTGuildTracker_RecipientListItem"..line.."TextPlayerAttendanceLast4Weeks"):SetTextColor(.83,.68,.04,1)
-				getglobal("MTGuildTracker_RecipientListItem"..line.."TextPlayerAttendanceLast2Weeks"):SetTextColor(.83,.68,.04,1)
 				getglobal("MTGuildTracker_RecipientListItem"..line.."TextVotes"):SetTextColor(.83,.68,.04,1)
 				getglobal("MTGuildTracker_RecipientListItem"..line.."TextVoters"):SetTextColor(.83,.68,.04,1)
 				for i,n in ipairs(recipient.loot_count_table) do
@@ -685,8 +688,8 @@ function MTGuildTracker_RecipientListScrollFrame_Update()
 				getglobal("MTGuildTracker_RecipientListItem"..line.."TextPlayerName"):SetTextColor(.5,.5,.5,1)
 				getglobal("MTGuildTracker_RecipientListItem"..line.."TextPlayerGuildRank"):SetTextColor(.5,.5,.5,1)
 				getglobal("MTGuildTracker_RecipientListItem"..line.."TextItemName"):SetTextColor(.5,.5,.5,1)
+				getglobal("MTGuildTracker_RecipientListItem"..line.."TextPlayerAttendanceLast8Weeks"):SetTextColor(.5,.5,.5,1)
 				getglobal("MTGuildTracker_RecipientListItem"..line.."TextPlayerAttendanceLast4Weeks"):SetTextColor(.5,.5,.5,1)
-				getglobal("MTGuildTracker_RecipientListItem"..line.."TextPlayerAttendanceLast2Weeks"):SetTextColor(.5,.5,.5,1)
 				getglobal("MTGuildTracker_RecipientListItem"..line.."TextVotes"):SetTextColor(.5,.5,.5,1)
 				getglobal("MTGuildTracker_RecipientListItem"..line.."TextVoters"):SetTextColor(.5,.5,.5,1)
 				for i,n in ipairs(recipient.loot_count_table) do
@@ -698,8 +701,8 @@ function MTGuildTracker_RecipientListScrollFrame_Update()
 			getglobal("MTGuildTracker_RecipientListItem"..line.."TextPlayerGuildRank"):SetText(recipient.player_guild_rank)
 			getglobal("MTGuildTracker_RecipientListItem"..line.."TextItemName"):SetText(recipient.item_link)
 
+			getglobal("MTGuildTracker_RecipientListItem"..line.."TextPlayerAttendanceLast8Weeks"):SetText(recipient.attendance_last_8_weeks .. "%")
 			getglobal("MTGuildTracker_RecipientListItem"..line.."TextPlayerAttendanceLast4Weeks"):SetText(recipient.attendance_last_4_weeks .. "%")
-			getglobal("MTGuildTracker_RecipientListItem"..line.."TextPlayerAttendanceLast2Weeks"):SetText(recipient.attendance_last_2_weeks .. "%")
 
 			for i,n in ipairs(recipient.loot_count_table) do
 				getglobal("MTGuildTracker_RecipientListItem"..line.."TextLootCount"..i):SetText(n)
@@ -1734,8 +1737,8 @@ function MTGuildTracker_SessionMinMode()
 	-- 320
 	getglobal("MTGuildTracker_RecipientListSortLootCountTitle"):Hide()
 	getglobal("MTGuildTracker_RecipientListSortPlayerAttendanceTitle"):Hide()
+	getglobal("MTGuildTracker_RecipientListSortPlayerAttendanceLast8Weeks"):Hide()
 	getglobal("MTGuildTracker_RecipientListSortPlayerAttendanceLast4Weeks"):Hide()
-	getglobal("MTGuildTracker_RecipientListSortPlayerAttendanceLast2Weeks"):Hide()
 
 	getglobal("MTGuildTracker_BrowseFrame"):SetHeight(min_width+18)
 	getglobal("MTGuildTracker_LootSessionFrame"):SetHeight(min_width)
@@ -1760,8 +1763,8 @@ function MTGuildTracker_SessionMinMode()
 		getglobal("MTGuildTracker_RecipientListItem"..line.."HighlightTexture"):SetWidth(min_width)
 
 		getglobal("MTGuildTracker_RecipientListItem"..line.."TextPlayerGuildRank"):Hide()
+		getglobal("MTGuildTracker_RecipientListItem"..line.."TextPlayerAttendanceLast8Weeks"):Hide()
 		getglobal("MTGuildTracker_RecipientListItem"..line.."TextPlayerAttendanceLast4Weeks"):Hide()
-		getglobal("MTGuildTracker_RecipientListItem"..line.."TextPlayerAttendanceLast2Weeks"):Hide()
 		getglobal("MTGuildTracker_RecipientListItem"..line.."TextVoters"):Hide()
 		getglobal("MTGuildTracker_RecipientListItem"..line.."TextItemName"):SetWidth(125);
 		getglobal("MTGuildTracker_RecipientListItem"..line.."TextItemName"):SetPoint("LEFT", getglobal("MTGuildTracker_RecipientListItem"..line.."TextPlayerName"), "RIGHT", 5, 0);
@@ -1784,8 +1787,8 @@ function MTGuildTracker_SessionMaxMode()
 	getglobal("MTGuildTracker_RecipientListSortPlayerGuildRank"):Show()
 
 	getglobal("MTGuildTracker_RecipientListSortPlayerAttendanceTitle"):Show()
+	getglobal("MTGuildTracker_RecipientListSortPlayerAttendanceLast8Weeks"):Show()
 	getglobal("MTGuildTracker_RecipientListSortPlayerAttendanceLast4Weeks"):Show()
-	getglobal("MTGuildTracker_RecipientListSortPlayerAttendanceLast2Weeks"):Show()
 
 	getglobal("MTGuildTracker_BrowseFrame"):SetWidth(max_width+43)
 	getglobal("MTGuildTracker_RecipientListSortFrame"):SetWidth(max_width+20)
@@ -1825,8 +1828,8 @@ function MTGuildTracker_SessionMaxMode()
 		getglobal("MTGuildTracker_RecipientListItem"..line):SetWidth(max_width)
 		getglobal("MTGuildTracker_RecipientListItem"..line.."HighlightTexture"):SetWidth(max_width)
 		getglobal("MTGuildTracker_RecipientListItem"..line.."TextPlayerGuildRank"):Show()
+		getglobal("MTGuildTracker_RecipientListItem"..line.."TextPlayerAttendanceLast8Weeks"):Show()
 		getglobal("MTGuildTracker_RecipientListItem"..line.."TextPlayerAttendanceLast4Weeks"):Show()
-		getglobal("MTGuildTracker_RecipientListItem"..line.."TextPlayerAttendanceLast2Weeks"):Show()
 		getglobal("MTGuildTracker_RecipientListItem"..line.."TextItemName"):SetWidth(175);
 		getglobal("MTGuildTracker_RecipientListItem"..line.."TextItemName"):SetPoint("LEFT", getglobal("MTGuildTracker_RecipientListItem"..line.."TextPlayerGuildRank"), "RIGHT", 5, 0);
 

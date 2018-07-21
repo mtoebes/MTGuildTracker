@@ -184,7 +184,7 @@ local function isOfficer()
 	local guild_name, guild_rank, rank_index = GetGuildInfo("player")
 	if isLeader() then
 		return true
-	elseif guild_name == GUILD_NAME and rank_index < GUILD_RANK_INDEX then
+	elseif rank_index < GUILD_RANK_INDEX then
 		return true
 	else
 		return false
@@ -206,7 +206,7 @@ end
 
 
 local function addonEcho(tag, msg)
-	encodedMsg = tag.."#"..GUILD_NAME.."#"..msg.."#"
+	encodedMsg = tag.."#"..getGuildName().."#"..msg.."#"
 	SendAddonMessage(MT_MESSAGE_PREFIX, encodedMsg, "RAID")
 end
 

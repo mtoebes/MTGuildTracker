@@ -77,7 +77,7 @@ local class_colors = {
 	[""] =        {["r"] = 0.83, ["g"] = 0.68, ["b"] = 0.04}
 }
 
-local GUILD_RANK_INDEX = 4
+local GUILD_RANK_INDEX = 5
 
 local string_gmatch = lua51 and string.gmatch or string.gfind
 

@@ -1,4 +1,4 @@
-local MTGuildTracker_Version = "4.0.0"
+local MTGuildTracker_Version = "4.1.1"
 
 local GUILD_NAME, _, _ = GetGuildInfo("player")
 
@@ -227,6 +227,12 @@ end
 local function leaderRaidEcho(msg)
 	if isLeader() then
 		raidEcho(msg)
+	end
+end
+
+local function leaderRaidWarnEcho(msg)
+	if isLeader() then
+		rwEcho(msg)
 	end
 end
 
@@ -1057,7 +1063,7 @@ function MTGuildTracker_Handle_Session_Start(message, sender)
 
 	local sample_itemlink = buildItemLink(8952, "Your Current Item", MTGuildTracker_color_common, nil) 
 
-	leaderRaidEcho("Session started : ".. item_message)
+	leaderRaidWarnEcho("Session started : ".. item_message)
 	leaderRaidEcho("To be considered for the item type in raid chat \""..SLASH_COMMAND_SHORT.." "..sample_itemlink.."\"")
 end
 
@@ -1126,7 +1132,7 @@ function MTGuildTracker_Broadcast_Session_Finish(mode)
 			MTGuildTracker_Broadcast_Message_Echo(summary_string)
 		end
 
-		leaderRaidEcho(end_announcement)
+		leaderRaidWarnEcho(end_announcement)
 
 		addonEcho("TX_SESSION_FINISH",mode);
 

@@ -1,4 +1,4 @@
-local MTGuildTracker_Version = "4.1.1"
+local MTGuildTracker_Version = "4.1.2"
 
 local GUILD_NAME, _, _ = GetGuildInfo("player")
 
@@ -43,6 +43,8 @@ local default_rgb = {["r"]=0.83, ["g"]=0.83, ["b"]=0.83}
 
 local DE_BANK = "DE-Bank"
 
+local HISTORY_DELETED = "Deleted"
+
 local playerClassSlotNames = {
 	{slot = "???", 				    name = "???"},
 	{slot = "Druid",				name = "druid"},
@@ -59,7 +61,8 @@ local lootHistoryUseCase = {
 	[1] = "MS",
 	[2] = "OS",
 	[3] = "RES",
-	[4] = DE_BANK
+	[4] = DE_BANK,
+	[5] = HISTORY_DELETED
 }
 
 local class_colors = {
@@ -166,7 +169,7 @@ end
 
 local function getPlayerClass(player_name)
 
-	if player_name == DE_BANK then
+	if player_name == DE_BANK or player_name == HISTORY_DELETED then
 		return ""
 	end
 
@@ -876,13 +879,22 @@ end
 local function LootHistory_Filter()
 	MTGuildTracker_LootHistoryTable_Filtered = {}
 	for k,v in pairs(MTGuildTracker_LootHistoryTable) do
-		if searchString and searchString ~= "" then
+		
+		if searchString and searchString == HISTORY_DELETED then
+			if v.use_case == HISTORY_DELETED then
+				table.insert(MTGuildTracker_LootHistoryTable_Filtered, v)
+			end
+		elseif searchString and searchString ~= "" then
 			local search_list = Parse_String_List(searchString)
-			if (List_Contains(search_list, v.player_name, true) == true) or (List_Contains(search_list, v.player_class, true) == true) or (List_Contains(search_list, v.item_name, false) == true)then
+			if (List_Contains(search_list, v.player_name, true) == true) or 
+				(List_Contains(search_list, v.player_class, true) == true) or 
+				(List_Contains(search_list, v.item_name, false) == true) then
 				table.insert(MTGuildTracker_LootHistoryTable_Filtered, v)
 			end
 		else
-			table.insert(MTGuildTracker_LootHistoryTable_Filtered, v)
+			if v.use_case ~= HISTORY_DELETED then
+				table.insert(MTGuildTracker_LootHistoryTable_Filtered, v)
+			end
 		end
 	end
 end
@@ -1486,7 +1498,7 @@ function MTGuildTracker_LootHistoryEditorSaveButton_OnClick()
 	if name_box_text4 ~= "" then
 		LootHistoryEditorEntry.player_name = name_box_text
 
-		if LootHistoryEditorEntry["use_case"] == DE_BANK then
+		if LootHistoryEditorEntry["use_case"] == DE_BANK or  LootHistoryEditorEntry["use_case"] == HISTORY_DELETED then
 			LootHistoryEditorEntry.player_class = ""
 		end
 
@@ -1494,6 +1506,7 @@ function MTGuildTracker_LootHistoryEditorSaveButton_OnClick()
 		local sync_string = MTGuildTracker_SendSync_String("loothistory", LootHistoryEditorEntry)
 		MTGuildTracker_Broadcast_Sync_Add("loothistory", sync_string)
 		MTGuildTracker_Broadcast_Sync_End(false);
+		MTGuildTracker_LootHistoryScrollFrame_Update()
 	end
 end
 
@@ -1505,6 +1518,9 @@ function LootTracker_OptionCheckButton_Check(id)
 
 	if id == 4 then
 		player_name= DE_BANK
+		use_index = 1
+	elseif id == 5 then
+		player_name= HISTORY_DELETED
 		use_index = 1
 	else
 		player_name = LootHistoryEditorEntry.player_name
@@ -1571,6 +1587,8 @@ function GetUseCaseDropDownIndex(player_name, use_case)
 
 	if player_name == DE_BANK then
 		use_case_index = 4
+	elseif player_name == HISTORY_DELETED then
+		use_case_index = 5
 	end
 
 	for index, name in ipairs(lootHistoryUseCase) do

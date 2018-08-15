@@ -42,6 +42,7 @@ MTGuildTracker_color_legendary = "ffff8000"
 local default_rgb = {["r"]=0.83, ["g"]=0.83, ["b"]=0.83}
 
 local DE_BANK = "DE-Bank"
+local IGNORE = "IGNORE"
 
 local playerClassSlotNames = {
 	{slot = "???", 				    name = "???"},
@@ -59,7 +60,8 @@ local lootHistoryUseCase = {
 	[1] = "MS",
 	[2] = "OS",
 	[3] = "RES",
-	[4] = DE_BANK
+	[4] = DE_BANK,
+	[5] = IGNORE
 }
 
 local class_colors = {
@@ -870,13 +872,15 @@ end
 local function LootHistory_Filter()
 	MTGuildTracker_LootHistoryTable_Filtered = {}
 	for k,v in pairs(MTGuildTracker_LootHistoryTable) do
-		if searchString and searchString ~= "" then
-			local search_list = Parse_String_List(searchString)
-			if (List_Contains(search_list, v.player_name, true) == true) or (List_Contains(search_list, v.player_class, true) == true) or (List_Contains(search_list, v.item_name, false) == true)then
+		if (v.use_case ~= IGNORE) then
+			if searchString and searchString ~= "" then
+				local search_list = Parse_String_List(searchString)
+				if (List_Contains(search_list, v.player_name, true) == true) or (List_Contains(search_list, v.player_class, true) == true) or (List_Contains(search_list, v.item_name, false) == true)then
+					table.insert(MTGuildTracker_LootHistoryTable_Filtered, v)
+				end
+			else
 				table.insert(MTGuildTracker_LootHistoryTable_Filtered, v)
 			end
-		else
-			table.insert(MTGuildTracker_LootHistoryTable_Filtered, v)
 		end
 	end
 end

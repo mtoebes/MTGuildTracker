@@ -1,4 +1,4 @@
-local MTGuildTracker_Version = "4.1.2"
+local MTGuildTracker_Version = "4.2.0"
 
 local GUILD_NAME, _, _ = GetGuildInfo("player")
 
@@ -17,6 +17,8 @@ MTGuildTracker_OverviewTable = {}
 MTGuildTracker_LootHistoryTable_Temp = {}
 my_vote = nil
 
+last_sync_time = ""
+
 sort_direction = "ascending"
 recipient_sort_field = "player_name"
 recipient_sort_id = 1
@@ -25,7 +27,7 @@ loot_sort_direction = "ascending"
 loot_sort_field = "time_stamp";
 
 version_request_in_progress = false
-
+sync_time_request_in_progress = false 
 debug_enabled = false
 
 local session_queue = {}
@@ -102,27 +104,47 @@ local function debug(tag, msg)
 	end
 end
 
-TimeSinceLastUpdate=0
+local function get_server_time()
+	hour, minutes = GetGameTime();
+	time_string = string.format("%s:%s", hour, minutes)
+	debug(time_string)
+	return time_string
+end
+
+TimeSinceLastSyncRequestStart=0
+TimeSinceVersionRequestStart=0
 TimeSinceLastSessionStart = 0
 local version_request_time_limit = 2;
+local sync_request_time_limit = 2;
+
 function MTGuildTracker_OnUpdate(elapsed)
-	TimeSinceLastUpdate = TimeSinceLastUpdate + elapsed;
+	TimeSinceVersionRequestStart = TimeSinceVersionRequestStart + elapsed;
 	TimeSinceLastSessionStart = TimeSinceLastSessionStart + elapsed
+	TimeSinceLastSyncRequestStart = TimeSinceLastSyncRequestStart + elapsed
 
 	if version_request_in_progress then
-  		if (TimeSinceLastUpdate > version_request_time_limit) then
+  		if (TimeSinceVersionRequestStart > version_request_time_limit) then
   			MTGuildTracker_Version_End();
-   			TimeSinceLastUpdate = 0;
+   			TimeSinceVersionRequestStart = 0;
    		end
 	else
-  		TimeSinceLastUpdate = 0;
+  		TimeSinceVersionRequestStart = 0;
+	end
+
+	if sync_time_request_in_progress then
+		if (TimeSinceLastSyncRequestStart > sync_request_time_limit) then
+			MTGuildTracker_Sync_Time_End()
+			TimeSinceLastSyncRequestStart = 0;
+		end
+	else
+		TimeSinceLastSyncRequestStart = 0
 	end
 
 	if not MTGuildTracker_OverviewTable.in_session and getn(session_queue) > 0 then
 		if TimeSinceLastSessionStart > 1 then
-				item_link = table.remove(session_queue, 1)
-				MTGuildTracker_Broadcast_Session_Start(item_link)
-				TimeSinceLastSessionStart = 0
+			item_link = table.remove(session_queue, 1)
+			MTGuildTracker_Broadcast_Session_Start(item_link)
+			TimeSinceLastSessionStart = 0
 		end
 	else
 		TimeSinceLastSessionStart = 0
@@ -839,6 +861,8 @@ local function LootHistoryTable_UpdateEntry(entry)
 	MTGuildTrackerDB[entry_key] = entry
 end
 
+
+
 local function LootHistoryTable_BuildEntry(item_link, player_name)
 	local time_stamp = date("%y-%m-%d %H:%M:%S")
 	local date = date("%y-%m-%d")
@@ -1038,6 +1062,7 @@ function MTGuildTracker_Broadcast_Session_Start(item_link)
 	elseif item_link == nil or item_link=="" then
 		echo_leader("Cannot start a session without loot")
 	else
+		MTGuildTracker_Sync_Time_Start()
 		addonEcho_leader("TX_SESSION_START", item_link);
 	end
 end
@@ -1298,6 +1323,8 @@ end
 
 function MTGuildTracker_Save_Sync(clear_table)
 
+	last_sync_time = get_server_time()
+
 	-- Loot History Table
 	if clear_table and getn(MTGuildTracker_LootHistoryTable_Temp) > 0 then
 		MTGuildTrackerDB = {}
@@ -1410,11 +1437,11 @@ function MTGuildTracker_Handle_Sync_Request(message, sender)
 	local player_name = message
 	if UnitName("player") == player_name then
 		debug("MTGuildTracker_Handle_Sync_Request");
+		MTGuildTracker_Broadcast_Message_Echo("Sync Started")
 		MTGuildTracker_Broadcast_Sync_Start();
 		MTGuildTracker_Send_Sync();
 		MTGuildTracker_Broadcast_Sync_End(true);
 		MTGuildTracker_Broadcast_Message_Echo("Sync Completed")
-
 	end
 end
 
@@ -1433,8 +1460,6 @@ function MTGuildTracker_Handle_Sync_Start(message, sender)
 		debug("MTGuildTracker_Handle_Sync_Start");
 	end
 end
-
-
 
 function MTGuildTracker_Broadcast_Sync_Add(table_name, sync_string)
 	addonEcho("TX_SYNC_ADD", sync_string);
@@ -1473,6 +1498,65 @@ function MTGuildTracker_Handle_Sync_End(message, sender)
 		getglobal("MTGuildTracker_LootHistorySyncButton"):Enable()
 
 		MTGuildTracker_Save_Sync(clear_table == "1")
+	end
+end
+
+function MTGuildTracker_Sync_Time_Start()
+	debug("MTGuildTracker_Sync_Time_Start")
+	if isLeader() and not sync_time_request_in_progress then
+		sync_time_request_in_progress = true
+		response_sync_times = {}
+		MTGuildTracker_Broadcast_Sync_Time_Request()
+	end
+end
+
+function MTGuildTracker_Sync_Time_End()
+	debug("MTGuildTracker_Sync_Time_End")
+	sync_time_request_in_progress = false
+
+	max_sender = UnitName("player")
+	max_time_stamp = response_sync_times[UnitName("player")]
+	
+	update_needed = false
+
+	for sender,time_stamp in pairs(response_sync_times) do
+		debug("time_stamp", time_stamp)
+		if time_stamp == "" then
+			update_needed = true
+		elseif time_stamp ~= nill and (time_stamp ~= max_time_stamp) then
+			update_needed = true
+		end
+	end
+
+	if update_needed then
+		debug("MTGuildTracker_Sync_Time_End", " update needed");
+		MTGuildTracker_Broadcast_Sync_Request(max_sender)
+	else
+		debug("MTGuildTracker_Sync_Time_End", "no update needed");	
+	end
+end
+
+function MTGuildTracker_Broadcast_Sync_Time_Request()
+	if isLeader() and not sync_in_progress then
+		debug("MTGuildTracker_Broadcast_Get_Last_Sync_Time");
+		addonEcho("TX_SYNC_TIME_REQUEST","");
+	end
+end
+
+function MTGuildTracker_Handle_Sync_Time_Request(message, sender)
+	debug("MTGuildTracker_Handle_Sync_Time_Request")
+	MTGuildTracker_Broadcast_Sync_Time_Response()
+end
+
+function MTGuildTracker_Broadcast_Sync_Time_Response()
+	debug("MTGuildTracker_Broadcast_Sync_Time_Response")
+	addonEcho("TX_SYNC_TIME_RESPONSE",last_sync_time);
+end
+
+function MTGuildTracker_Handle_Sync_Time_Response(message, sender)
+	if isLeader() then
+		debug("MTGuildTracker_Handle_Sync_Time_Response")
+		response_sync_times[sender] = message
 	end
 end
 
@@ -1618,7 +1702,6 @@ function MTGuildTracker_LootHistoryEditor_Open(index)
 	getglobal("MTGuildTracker_LootHistoryEditor_TextItemName"):SetText(LootHistoryEditorEntry.item_link)
 	getglobal("MTGuildTracker_LootHistoryEditor_NameBox"):SetText(LootHistoryEditorEntry.player_name)
 end
-
 
 function MTGuildTracker_LootHistoryEditorFrame_OnShow()
 	
@@ -2065,6 +2148,8 @@ function MTGuildTracker_OnChatMsgAddon(event, prefix, msg, channel, sender)
 			MTGuildTracker_Handle_Sync_Add(message, sender)
 		elseif cmd == "TX_SYNC_END" then
 			MTGuildTracker_Handle_Sync_End(message, sender)
+		elseif cmd == "TX_SYNC_TIME_REQUEST" then
+			MTGuildTracker_Handle_Sync_Time_Request(message, sender)
 		end
 
 		if isLeader() or isOfficer() then
@@ -2078,6 +2163,8 @@ function MTGuildTracker_OnChatMsgAddon(event, prefix, msg, channel, sender)
 		if isLeader() then
 			if cmd == "TX_VERSION_RESPONSE" then
 				MTGuildTracker_Handle_Version_Response(message, sender)
+			elseif cmd == "TX_SYNC_TIME_RESPONSE" then
+				MTGuildTracker_Handle_Sync_Time_Response(message, sender)
 			elseif cmd == "TX_PERFORM_SYNC_REQUEST" then
 				MTGuildTracker_Handle_PerformSync_Request(message, sender)
 			end
@@ -2108,7 +2195,10 @@ function MTGuildTracker_SlashCommand(msg)
 		end
 
 		if isLeader() then
-			if (cmd == "start") or (cmd == "queue") then
+
+			if cmd == 'gettime' then
+				MTGuildTracker_Sync_Time_Start()
+			elseif (cmd == "start") or (cmd == "queue") then
 				_,_, item_link = string.find(cmd_msg, "(.*)");
 				MTGuildTracker_Session_Queue(item_link)
 			elseif (cmd == "list") then

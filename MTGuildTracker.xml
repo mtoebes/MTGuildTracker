@@ -1526,7 +1526,7 @@
    </Frame>
    <Frame name="MTGuildTracker_LootHistoryEditorFrame" frameStrata="DIALOG" toplevel="true" parent="UIParent" movable="true" enableMouse="true" hidden="true" clampedToScreen="true">
       <Size>
-         <AbsDimension x="250" y="270" />
+         <AbsDimension x="250" y="300" />
       </Size>
       <Anchors>
          <Anchor point="CENTER">

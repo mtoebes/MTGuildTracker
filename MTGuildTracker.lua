@@ -1,4 +1,4 @@
-local MTGuildTracker_Version = "4.2.0"
+local MTGuildTracker_Version = "4.2.1"
 
 local GUILD_NAME, _, _ = GetGuildInfo("player")
 

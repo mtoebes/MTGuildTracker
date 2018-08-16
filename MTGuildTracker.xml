@@ -1699,6 +1699,19 @@
                <OnClick>MTGuildTracker_LootHistoryEditor_UseCaseButton_OnClick(this:GetID())</OnClick>
             </Scripts>
          </CheckButton>
+         <CheckButton id="5" name="MTGuildTracker_LootHistoryEditor_UseCase5" inherits="MTGuildTracker_CheckButton">
+            <Anchors>
+               <Anchor point="TOPLEFT" relativeTo="MTGuildTracker_LootHistoryEditor_UseCase4" relativePoint="BOTTOMLEFT">
+                  <Offset>
+                     <AbsDimension x="0" y="0" />
+                  </Offset>
+               </Anchor>
+            </Anchors>
+            <Scripts>
+               <OnLoad>getglobal(this:GetName().."Text"):SetText("Permanently delete this record")</OnLoad>
+               <OnClick>MTGuildTracker_LootHistoryEditor_UseCaseButton_OnClick(this:GetID())</OnClick>
+            </Scripts>
+         </CheckButton>
          <Button name="MTGuildTracker_LootHistoryEditorSaveButton" inherits="UIPanelButtonTemplate" text="Save">
             <Size>
                <AbsDimension x="120" y="22" />

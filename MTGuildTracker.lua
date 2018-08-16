@@ -18,7 +18,7 @@ MTGuildTracker_LootHistoryTable_Temp = {}
 my_vote = nil
 
 last_sync_time = ""
-
+sync_senders = 0
 sort_direction = "ascending"
 recipient_sort_field = "player_name"
 recipient_sort_id = 1
@@ -28,7 +28,7 @@ loot_sort_field = "time_stamp";
 
 version_request_in_progress = false
 sync_time_request_in_progress = false 
-debug_enabled = false
+debug_enabled = true
 
 local session_queue = {}
 local LootHistoryEditorEntry = {}
@@ -111,16 +111,25 @@ local function get_server_time()
 	return time_string
 end
 
+local function get_local_time()
+	-- body
+	local time_stamp = date("%y-%m-%d %H:%M:%S")
+	return time_stamp
+end
+
 TimeSinceLastSyncRequestStart=0
 TimeSinceVersionRequestStart=0
 TimeSinceLastSessionStart = 0
+TimeSinceLastSyncAdd = 0
 local version_request_time_limit = 2;
 local sync_request_time_limit = 2;
+local sync_add_time_limit = 5;
 
 function MTGuildTracker_OnUpdate(elapsed)
 	TimeSinceVersionRequestStart = TimeSinceVersionRequestStart + elapsed;
 	TimeSinceLastSessionStart = TimeSinceLastSessionStart + elapsed
 	TimeSinceLastSyncRequestStart = TimeSinceLastSyncRequestStart + elapsed
+	TimeSinceLastSyncAdd = TimeSinceLastSyncAdd + elapsed
 
 	if version_request_in_progress then
   		if (TimeSinceVersionRequestStart > version_request_time_limit) then
@@ -149,6 +158,15 @@ function MTGuildTracker_OnUpdate(elapsed)
 	else
 		TimeSinceLastSessionStart = 0
 	end
+
+	if sync_in_progress then
+	 	if TimeSinceLastSyncAdd > sync_add_time_limit then
+			MTGuildTracker_Sync_End()
+		end
+	else
+		TimeSinceLastSyncAdd = 0
+	end
+
 end
 
 local function getGuildName()
@@ -824,12 +842,17 @@ local function LootHistoryTable_Build()
 		local item_quality = MTGuildTrackerDB[entry_key].item_quality
 		local item_color = MTGuildTrackerDB[entry_key].item_color
 		local item_id = MTGuildTrackerDB[entry_key].item_id
+		local last_modified = MTGuildTrackerDB[entry_key].last_modified 
 
+		if not last_modified then
+			last_modified = get_local_time()
+		end
 
 		if item_link == nil then
 			item_link = buildItemLink(item_id,  item_name, item_color, item_quality)
 		end
 
+		MTGuildTracker_LootHistoryTable[entry_key].last_modified = last_modified
 		MTGuildTracker_LootHistoryTable[entry_key].entry_key    = entry_key
 		MTGuildTracker_LootHistoryTable[entry_key].time_stamp   = MTGuildTrackerDB[entry_key].time_stamp
 		MTGuildTracker_LootHistoryTable[entry_key].date         = MTGuildTrackerDB[entry_key].date
@@ -854,17 +877,27 @@ local function LootHistoryTable_UpdateEntry(entry)
 
 	entry_key = entry["entry_key"]
 
-	if MTGuildTrackerDB[entry_key] == nil then
-		MTGuildTrackerDB[entry_key] = {}
+	existing_entry = MTGuildTrackerDB[entry_key]
+
+	if existing_entry == nil then
+		existing_entry = {}
 	end
 
-	MTGuildTrackerDB[entry_key] = entry
+		debug("existing_entry", existing_entry["last_modified"])
+		debug( "entry", entry["last_modified"])
+
+	if existing_entry["last_modified"] and existing_entry["last_modified"] >= entry["last_modified"] then
+		debug("Nothing to update")
+	else 
+
+		MTGuildTrackerDB[entry_key] = entry
+		debug("updated")
+	
+	end
 end
 
-
-
 local function LootHistoryTable_BuildEntry(item_link, player_name)
-	local time_stamp = date("%y-%m-%d %H:%M:%S")
+	local time_stamp = get_local_time()
 	local date = date("%y-%m-%d")
 	local item_link, item_quality, item_id, item_name = parseItemLink(item_link)
 
@@ -881,6 +914,7 @@ local function LootHistoryTable_BuildEntry(item_link, player_name)
 	entry["date"] = date
 	entry["use_case"] = lootHistoryUseCase[1]
 	entry["raid_name"] = zone_name
+	entry['last_modified'] = time_stamp
 	entry["time_stamp"] = time_stamp
 	entry["player_class"] = localized_class
 	entry["item_quality"] = item_quality
@@ -1236,7 +1270,7 @@ function MTGuildTracker_SendSync_String(table_name, entry, key)
 	sync_string = "";
 
 	if entry and table_name == "loothistory" then
-		sync_string = string.format("%s/%s/%s/%s/%s/%s/%s/%s/%s/%s/%s",
+		sync_string = string.format("%s/%s/%s/%s/%s/%s/%s/%s/%s/%s/%s/%s",
 			table_name,
 			entry.entry_key,
 			entry.date,
@@ -1247,7 +1281,8 @@ function MTGuildTracker_SendSync_String(table_name, entry, key)
 			entry.item_id,
 			entry.item_quality,
 			entry.player_name,
-			entry.player_class)
+			entry.player_class,
+			entry.last_modified)
 	elseif entry and table_name == "attendance" then
 		sync_string = string.format("%s/%s/%s/%s/%s",
 			table_name,
@@ -1268,8 +1303,8 @@ function MTGuildTracker_ReadSync_Entry(table_name, fields_string)
 
 	entry = {}
 	if table_name == "loothistory" then
-		local _, _, entry_key, date, time_stamp, raid_name, use_case, item_name, item_id, item_quality,  player_name, player_class =
-		string.find(fields_string, "(.*)/(.*)/(.*)/(.*)/(.*)/(.*)/(.*)/(.*)/(.*)/(.*)");
+		local _, _, entry_key, date, time_stamp, raid_name, use_case, item_name, item_id, item_quality,  player_name, player_class, last_modified =
+		string.find(fields_string, "(.*)/(.*)/(.*)/(.*)/(.*)/(.*)/(.*)/(.*)/(.*)/(.*)/(.*)");
 
 		entry["entry_key"] = entry_key
 		entry["date"] = date
@@ -1281,6 +1316,7 @@ function MTGuildTracker_ReadSync_Entry(table_name, fields_string)
 		entry["item_quality"] = item_quality
 		entry["player_name"] = player_name
 		entry["player_class"] = player_class
+		entry["last_modified"] = last_modified
 
 		if item_quality == "common" then
 			browse_rarityhexlink = MTGuildTracker_color_common
@@ -1345,7 +1381,7 @@ function MTGuildTracker_Save_Sync(clear_table)
 		MTGuildTracker_Attendance[k] = v
 	end
 
-	local time_stamp = date("%y-%m-%d %H:%M:%S")
+	local time_stamp = get_local_time()
 	MTGuildTracker_LastUpdate = {}
 	MTGuildTracker_LastUpdate["time_stamp"] = time_stamp
 
@@ -1357,10 +1393,13 @@ end
 -- Version Broadcast
 
 function MTGuildTracker_Broadcast_PerformSync_Request() 
+	debug("MTGuildTracker_Broadcast_PerformSync_Request")
 	addonEcho("TX_PERFORM_SYNC_REQUEST", "");
 end
 
 function MTGuildTracker_Handle_PerformSync_Request()
+	debug("MTGuildTracker_Handle_PerformSync_Request", version_request_in_progress)
+
 	if isLeader() and not version_request_in_progress then
 		MTGuildTracker_Version_Start()
 	end
@@ -1452,7 +1491,7 @@ end
 
 function MTGuildTracker_Handle_Sync_Start(message, sender)
 	getglobal("MTGuildTracker_LootHistorySyncButton"):Disable()
-
+	sync_senders = sync_senders + 1
 	if not sync_in_progress then
 		sync_in_progress = true
 		MTGuildTracker_Attendance_Temp = {}
@@ -1467,6 +1506,7 @@ end
 
 function MTGuildTracker_Handle_Sync_Add(message, sender)
 	if sync_in_progress then
+		TimeSinceLastSyncAdd = 0
 		local _, _, table_name, fields_string = string.find(message, "([^/]*)/(.*)");
 
 		entry = MTGuildTracker_ReadSync_Entry(table_name, fields_string)
@@ -1492,12 +1532,21 @@ end
 function MTGuildTracker_Handle_Sync_End(message, sender)
 	local clear_table = message
 	if sync_in_progress then
+		sync_senders = sync_senders -1
+
+		if sync_senders <= 0 then
+			MTGuildTracker_Sync_End()
+		end
+	end
+end
+
+function MTGuildTracker_Sync_End()
+	if sync_in_progress then
 		sync_in_progress = false
-
-		debug("MTGuildTracker_Handle_Sync_End clear_table", clear_table)
+		sync_senders = 0
+		debug("MTGuildTracker_Handle_Sync_End clear_table", false)
 		getglobal("MTGuildTracker_LootHistorySyncButton"):Enable()
-
-		MTGuildTracker_Save_Sync(clear_table == "1")
+		MTGuildTracker_Save_Sync(false)
 	end
 end
 
@@ -1585,6 +1634,8 @@ function MTGuildTracker_LootHistoryEditorSaveButton_OnClick()
 		if LootHistoryEditorEntry["use_case"] == DE_BANK or  LootHistoryEditorEntry["use_case"] == HISTORY_DELETED then
 			LootHistoryEditorEntry.player_class = ""
 		end
+
+		LootHistoryEditorEntry['last_modified'] = get_local_time()
 
 		MTGuildTracker_Broadcast_Sync_Start();
 		local sync_string = MTGuildTracker_SendSync_String("loothistory", LootHistoryEditorEntry)
@@ -2119,6 +2170,7 @@ function MTGuildTracker_OnChatMsgAddon(event, prefix, msg, channel, sender)
 		if not cmd then
 			return	-- cmd is mandatory, remaining parameters are optional.
 		end
+		echo(cmd)
 
 		if not guild or guild ~= getGuildName() then
 			return
@@ -2127,6 +2179,7 @@ function MTGuildTracker_OnChatMsgAddon(event, prefix, msg, channel, sender)
 		if not message then
 			message = ""
 		end
+
 
 		if cmd == "TX_ENTRY_ADD" then
 			MTGuildTracker_Handle_RecipientTable_Add(message, sender)
@@ -2193,6 +2246,8 @@ function MTGuildTracker_SlashCommand(msg)
 		if not cmd_msg then
 			cmd_msg = ""
 		end
+
+		debug(msg)
 
 		if isLeader() then
 

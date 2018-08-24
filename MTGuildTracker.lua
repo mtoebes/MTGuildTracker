@@ -44,6 +44,7 @@ MTGuildTracker_color_legendary = "ffff8000"
 local default_rgb = {["r"]=0.83, ["g"]=0.83, ["b"]=0.83}
 
 local DE_BANK = "DE-Bank"
+local IGNORE = "IGNORE"
 
 local HISTORY_DELETED = "Deleted"
 
@@ -937,7 +938,6 @@ end
 local function LootHistory_Filter()
 	MTGuildTracker_LootHistoryTable_Filtered = {}
 	for k,v in pairs(MTGuildTracker_LootHistoryTable) do
-		
 		if searchString and searchString == HISTORY_DELETED then
 			if v.use_case == HISTORY_DELETED then
 				table.insert(MTGuildTracker_LootHistoryTable_Filtered, v)

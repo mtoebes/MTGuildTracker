@@ -15,6 +15,8 @@ MTGuildTracker_LootHistoryTable_Filtered = {}
 MTGuildTracker_VoteTable = {}
 MTGuildTracker_OverviewTable = {}
 MTGuildTracker_LootHistoryTable_Temp = {}
+MTGuildTracker_ShowAttendance = true;
+
 my_vote = nil
 
 last_sync_time = ""
@@ -650,11 +652,15 @@ local function RecipientTable_Add(player_name, item_link)
 
  	local attendance = MTGuildTracker_Attendance[player_name]
 
-	if attendance then
+	if attendance and MTGuildTracker_Attendance[player_name].last_4_weeks then
 		last_4_weeks = tonumber(MTGuildTracker_Attendance[player_name].last_4_weeks)
+	else 
+		last_4_weeks = 0
+	end
+	
+	if attendance and MTGuildTracker_Attendance[player_name].last_2_weeks
 		last_2_weeks = tonumber(MTGuildTracker_Attendance[player_name].last_2_weeks)
 	else
-		last_4_weeks = 0
 		last_2_weeks = 0
 	end
 
@@ -846,7 +852,7 @@ local function LootHistoryTable_Build()
 		local last_modified = MTGuildTrackerDB[entry_key].last_modified 
 
 		if not last_modified then
-			last_modified = get_local_time()
+			last_modified = ""; -- get_local_time()
 		end
 
 		if item_link == nil then
@@ -915,7 +921,7 @@ local function LootHistoryTable_BuildEntry(item_link, player_name)
 	entry["date"] = date
 	entry["use_case"] = lootHistoryUseCase[1]
 	entry["raid_name"] = zone_name
-	entry['last_modified'] = time_stamp
+	entry['last_modified'] = ""
 	entry["time_stamp"] = time_stamp
 	entry["player_class"] = localized_class
 	entry["item_quality"] = item_quality
@@ -1473,15 +1479,12 @@ function MTGuildTracker_Broadcast_Sync_Request(player_name)
 end
 
 function MTGuildTracker_Handle_Sync_Request(message, sender)
-	local player_name = message
-	if UnitName("player") == player_name then
-		debug("MTGuildTracker_Handle_Sync_Request");
-		MTGuildTracker_Broadcast_Message_Echo("Sync Started")
-		MTGuildTracker_Broadcast_Sync_Start();
-		MTGuildTracker_Send_Sync();
-		MTGuildTracker_Broadcast_Sync_End(true);
-		MTGuildTracker_Broadcast_Message_Echo("Sync Completed")
-	end
+	debug("MTGuildTracker_Handle_Sync_Request");
+	MTGuildTracker_Broadcast_Message_Echo("Sync Started")
+	MTGuildTracker_Broadcast_Sync_Start();
+	MTGuildTracker_Send_Sync();
+	MTGuildTracker_Broadcast_Sync_End(false);
+	MTGuildTracker_Broadcast_Message_Echo("Sync Completed")
 end
 
 function MTGuildTracker_Broadcast_Sync_Start()
@@ -1491,12 +1494,14 @@ end
 
 function MTGuildTracker_Handle_Sync_Start(message, sender)
 	getglobal("MTGuildTracker_LootHistorySyncButton"):Disable()
-	sync_senders = sync_senders + 1
-	if not sync_in_progress then
-		sync_in_progress = true
-		MTGuildTracker_Attendance_Temp = {}
-		MTGuildTracker_LootHistoryTable_Temp = {}
-		debug("MTGuildTracker_Handle_Sync_Start");
+	if UnitName("player") ~= sender then
+		sync_senders = sync_senders + 1
+		if not sync_in_progress then
+			sync_in_progress = true
+			MTGuildTracker_Attendance_Temp = {}
+			MTGuildTracker_LootHistoryTable_Temp = {}
+			debug("MTGuildTracker_Handle_Sync_Start");
+		end
 	end
 end
 
@@ -1505,7 +1510,7 @@ function MTGuildTracker_Broadcast_Sync_Add(table_name, sync_string)
 end
 
 function MTGuildTracker_Handle_Sync_Add(message, sender)
-	if sync_in_progress then
+	if sync_in_progress and  UnitName("player") ~= sender then
 		TimeSinceLastSyncAdd = 0
 		local _, _, table_name, fields_string = string.find(message, "([^/]*)/(.*)");
 
@@ -1531,7 +1536,7 @@ end
 
 function MTGuildTracker_Handle_Sync_End(message, sender)
 	local clear_table = message
-	if sync_in_progress then
+	if sync_in_progress and  UnitName("player") ~= sender then
 		sync_senders = sync_senders -1
 
 		if sync_senders <= 0 then
@@ -1930,6 +1935,18 @@ function MTGuildTracker_SessionMinMode()
 	end
 end
 
+function MTGuildTracker_UpdateShowAttenance() 
+	if MTGuildTracker_ShowAttendance then
+		getglobal("MTGuildTracker_RecipientListSortPlayerAttendanceTitle"):Show()
+		getglobal("MTGuildTracker_RecipientListSortPlayerAttendanceLast4Weeks"):Show()
+		getglobal("MTGuildTracker_RecipientListSortPlayerAttendanceLast2Weeks"):Show()
+	else 
+		getglobal("MTGuildTracker_RecipientListSortPlayerAttendanceTitle"):Hide()
+		getglobal("MTGuildTracker_RecipientListSortPlayerAttendanceLast4Weeks"):Hide()
+		getglobal("MTGuildTracker_RecipientListSortPlayerAttendanceLast2Weeks"):Hide()	
+	end 
+end
+
 function MTGuildTracker_SessionMaxMode() 
 	local max_width = 700
 	getglobal("MTGuildTracker_OverviewButtonTextVoters"):Show()
@@ -1941,9 +1958,7 @@ function MTGuildTracker_SessionMaxMode()
 
 	getglobal("MTGuildTracker_RecipientListSortPlayerGuildRank"):Show()
 
-	getglobal("MTGuildTracker_RecipientListSortPlayerAttendanceTitle"):Show()
-	getglobal("MTGuildTracker_RecipientListSortPlayerAttendanceLast4Weeks"):Show()
-	getglobal("MTGuildTracker_RecipientListSortPlayerAttendanceLast2Weeks"):Show()
+	MTGuildTracker_UpdateShowAttenance()
 
 	getglobal("MTGuildTracker_BrowseFrame"):SetWidth(max_width+43)
 	getglobal("MTGuildTracker_RecipientListSortFrame"):SetWidth(max_width+20)
@@ -2357,6 +2372,7 @@ end
 
 function MTGuildTracker_Main_OnShow()
 	MTGuildTracker_FrameTitle:SetText(MTGuildTracker_Title .. " v" .. MTGuildTracker_Version);
+	MTGuildTracker_UpdateShowAttenance()
 end
 
 function MTGuildTracker_OnLoad()
